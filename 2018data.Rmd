@@ -8,8 +8,24 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r install_packages}
+install.packages("tidyverse")
+install.packages("dplyr")
+install.packages("devtools")
+library(tidyverse)
+library(dplyr)
+library(devtools)
+```
+
 ```{r read_data}
 # data was saves as RDS 
 data2018 <- readRDS("~/Repos/Penobscot-Water/data/PINCommEngData.RData")
 ```
 
+```{r glimpse_data}
+glimpse(data2018)
+```
+```{r count_runs_sampled}
+ data2018 %>% 
+  count(RunCode)
+```
