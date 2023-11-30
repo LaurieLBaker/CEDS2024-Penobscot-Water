@@ -1,30 +1,34 @@
 ---
-title: "Penobscot Water Quality 2018 data"
+title: "Penobscot Water Quality 2018 Data Exploration"
 author: "Delphine Demaisy"
 date: "11/21/2023"
 output: html_document
 ---
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
-```{r install_packages}
-install.packages("tidyverse")
-install.packages("dplyr")
-install.packages("devtools")
+```{r install_packages_libraries}
+#install.packages("tidyverse")
+#install.packages("dplyr")
+#install.packages("devtools")
+#install.packages("readr")
 library(tidyverse)
 library(dplyr)
 library(devtools)
+library(readr)
 ```
 
 ```{r read_data}
-# data was saves as RDS 
 data2018 <- readRDS("~/Repos/Penobscot-Water/data/PINCommEngData.RData")
 ```
 
+### Data Overview 
 ```{r glimpse_data}
 glimpse(data2018)
 ```
+
+### Measured Runs
 ```{r count_runs_sampled}
  data2018 %>% 
   count(RunCode)
