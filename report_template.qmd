@@ -13,6 +13,7 @@ library(dplyr)
 library(devtools)
 library(readr)
 library(gt) #for tables
+library(htmltools)
 ```
 
 ```{r load_data}
@@ -21,26 +22,28 @@ data2018 <- readRDS("~/Repos/Penobscot-Water/data/PINCommEngData.RData")
 
 ## Site Visit Information {.smaller}
 
-Either a table format
+Option of a table format
 
 ```{r site_info_tables}
-
-data2018 %>% 
+site_info1 <- data2018 %>% 
   filter(SiteVisitID == "JasonS7-2018924111226") %>% 
-  select(SiteVisitID, RunCode, RunDate, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>% 
+  select(SiteVisitID, RunCode, RunDate, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
   distinct() %>% 
   gt() %>%
-  cols_align(align = "center")
+  cols_align(align = "center") %>% 
+  tab_header(title = "Site information") #for the combined tables
+site_info1
 
-data2018 %>% 
+site_info2 <-data2018 %>% 
   filter(SiteVisitID == "JasonS7-2018924111226") %>% 
   select(SamplingAirTemp, Weather, RivCond, WaterLevel, FoamRank, FoamSource, SiteVisitComment) %>% 
   distinct() %>% 
   gt() %>%
   cols_align(align = "center")
+site_info2
 ```
 
-Or more similar template as before
+or a more similar template as in the previous reports
 
 ```{r site_infromation_tibble}
 #| label: tbl-site-visit-information
@@ -63,7 +66,7 @@ cat("```\n")
 
 ## Sample Table
 
-Either 3 separate tables
+Option of 3 separate tables
 
 ```{r HETL_sample_table}
 #| label: tbl-sample_HETL
@@ -104,18 +107,20 @@ data2018 %>%
   cols_align(align = "center")
 ```
 
-OR one table
+Or one big table
 
 ```{r sample_table}
 #| label: tbl-sample
 #| tbl-cap: Sample Table
-data2018 %>% 
+sample_table <- data2018 %>% 
   filter(SiteVisitID == "JasonS7-2018924111226") %>% 
   select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>% 
   group_by(LabAbbrev) %>% 
   distinct() %>% #removes all the row that are the same, unsure if we are keeping them
   gt() %>%
-  cols_align(align = "center")
+  cols_align(align = "center") %>% 
+  tab_header(title = "Sample Table")
+sample_table
 ```
 
 ## Filter Table
@@ -124,12 +129,13 @@ data2018 %>%
 #| label: tbl-filter
 #| tbl-cap: Filter Table
 
-data2018 %>% 
+filter_table <- data2018 %>% 
   filter(SiteVisitID == "JasonS7-2018924111226") %>% 
   select(SampleName, SampleFilterMethod) %>% 
   distinct() %>%
   gt() %>%
-  cols_align(align = "center")
+  cols_align(align = "center") %>% 
+  tab_header(title = "Filter Table")
 ```
 
 ## Result Table
@@ -138,13 +144,30 @@ data2018 %>%
 #| label: tbl-results
 #| tbl-cap: Results Table
 
-data2018 %>% 
+result_table <- data2018 %>% 
   filter(SiteVisitID == "JasonS7-2018924111226") %>% 
   select(SampleName, ProfileDepth, Const, Result) %>% 
   group_by(Const) %>% 
   distinct() %>%
   gt() %>%
-  cols_align(align = "center")
+  cols_align(align = "center") %>% 
+  tab_header(title = "Result Table")
 ```
 
 ## Controls Summary
+
+To add a list/table of the flags that were checked and highlighted during the process
+
+## Template Similar to Other Reports {style="table"}
+
+```{r combined_tables}
+combined_tables <- div(
+  style = "display: flex; flex-direction: column; gap: 10px; align-items: center;",
+  site_info1, site_info2,
+  div(style = "display: flex; gap: 10px; width: 100%;",
+      div(style = "flex: 1;", result_table),
+      div(style = "flex: 1; display: flex; flex-direction: column; gap: 10px;",
+          sample_table,
+          filter_table)))
+combined_tables
+```
