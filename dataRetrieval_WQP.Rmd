@@ -1,0 +1,62 @@
+---
+title: "PIN Data from Water Quality Portal (WQP) with dataRetrieval"
+author: "Delphine Demaisy"
+date: "11/06/2023"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r install_packages}
+# install.packages("tidyverse")
+# install.packages("dplyr")
+# install.packages("devtools")
+# install.packages("dataRetrieval")
+library(tidyverse)
+library(dplyr)
+library(devtools)
+library(dataRetrieval)
+```
+
+```{r get_vignettes}
+vignette("dataRetrieval", package = "dataRetrieval") #to open main package introduction
+```
+
+## Get Information about Sites from the WQP
+To find general information about sites where there is data for a specific characteristic (eg: DO, pH, E.Coli) from the WQP. Using the statecode and CharacteristicName to first get all sites, and then filtering for the OrganizationFormalName to only get the information for the sites of the PIN
+
+```{r all_sites_ME_DO}
+DO_Sites <- whatWQPsites(statecode = "ME",
+                          characteristicName = "Dissolved oxygen (DO)") 
+```
+
+```{r PIN_sites_DO}
+PIN_DO <- DO_Sites %>% 
+  filter(OrganizationFormalName == "Penobscot Nation (Tribal)")
+
+# OrganizationIdentifier = PENOBSCOTINDIANNATIONDNR --> Organization ID
+# MonitoringLocationIdentifier = PENOBSCOTINDIANNATIONDNR-10-EBU2 --> give what is considered the sideid
+# MonitoringLocationName = West Branch Penobscot River - Upriver of Route 11 Bridge --> gives more information about each site 
+
+```
+
+## Get Information and data from from specific site in the WQP
+With the specific sideid of the PIN sites gotten from the MonStat.csv spreadsheet or from the MonitoringLocationIdentifier in the step above, you can get specific site information and site data using the "whatWQPdata()" function and "readWQPdata()" funtions. 
+
+```{r summary_site_AS3}
+sum_site_AS3 <- whatWQPdata(siteid = "PENOBSCOTINDIANNATIONDNR-154-AS3")
+glimpse(sum_site_AS3)
+#this data is only for 2017
+```
+
+```{r read_site_AS3}
+site_AS3 <- readWQPdata(siteid = "PENOBSCOTINDIANNATIONDNR-154-AS3")
+glimpse(site_AS3)
+```
+
+```{r all_characteristics_measured}
+site_AS3 %>% 
+  count(CharacteristicName) 
+```
+
