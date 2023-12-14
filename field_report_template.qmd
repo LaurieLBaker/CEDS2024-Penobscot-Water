@@ -1,0 +1,127 @@
+---
+title: "Water Quality Field Report Template"
+format: html
+editor: visual
+execute:
+  echo: false
+---
+
+```{r install.packages, include=FALSE}
+library(tidyverse)
+library(quarto)
+library(dplyr)
+library(devtools)
+library(readr)
+library(gt) #for tables
+library(htmltools)
+```
+
+```{r load_data}
+data2018 <- readRDS("~/Repos/Penobscot-Water/data/PINCommEngData.RData")
+```
+
+This field report template serves as a guided example of the desired format to strive for when aiming to automate the creation of reports to be used internally by the Water Resources Program. Each single file will be a summary report of various sites from a specific run sampled on a specific date.These reports are intended to be used for assessment of accuracy and completeness in field results, and should therefore highlight missing, repetitive or inaccurate data based on the conditions provided in the document of control flags.
+
+## Report Header {.smaller}
+
+Each report should be created for a single run sampled on a specific date. These reports should then be subdivided by site to display the data. The first header should therefore be grouped by RunCode, RunDate and Collector.
+
+```{r header}
+data2018 %>% 
+  filter(SiteVisitID == "JasonS7-2018924111226") %>% 
+  select(RunCode, RunDate, Collector) %>% 
+  distinct() %>% 
+  gt() 
+```
+
+## Table of Contents {.smaller}
+
+The following sections (site information, sample table, result table, filter table) should be differentiated by site for the specific run, date and collector for which this report is being created. The report should have a table of content allowing to quickly jump to the tables for a specific site. All sites should be displayed one after the other to allow to scroll trough all the information for this specific run sampled on a specific date.
+
+## Site Visit Information {.smaller}
+
+```{r site_info_tables}
+site_info1 <- data2018 %>% 
+  filter(SiteVisitID == "JasonS7-2018924111226") %>% 
+  select(SiteVisitID, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth, SamplingAirTemp) %>%
+  distinct() %>% 
+  gt() %>%
+  cols_align(align = "center") %>% 
+  tab_header(title = "Site information") #to directly title the tables if wanted
+site_info1
+
+site_info2 <-data2018 %>% 
+  filter(SiteVisitID == "JasonS7-2018924111226") %>% 
+  select(Weather, RivCond, WaterLevel, FoamRank, FoamSource, SiteVisitComment) %>% 
+  distinct() %>% 
+  gt() %>%
+  cols_align(align = "center")
+site_info2 #two separate tables to allow for an easier comparision
+```
+
+## Sample Table
+
+This sample table includes an example of a way to flag data by coloring cells in a table. Here, the green was used for a condition that was respected. You should aim to color any violations or erroneous data based on the quality control flag document and requests of the Penobscot Nation Water Resources Planners.
+
+```{r sample_table}
+#| label: tbl-sample
+#| tbl-cap: Sample Table
+sample_table <- data2018 %>% 
+  filter(SiteVisitID == "JasonS7-2018924111226") %>% 
+  select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>% 
+  group_by(LabAbbrev) %>% 
+  distinct() %>% #removes all the row that are the same, unsure if we are keeping them
+  gt() %>%
+  tab_style(style = cell_fill(color = "lightgreen"),
+            locations = cells_body(columns = c(CollMethod, SampleDepth),
+                                   rows = CollMethod == "CO-E" & SampleDepth == 4))%>%
+  cols_align(align = "center")
+sample_table
+```
+
+## Result Table
+
+The result table should allow an easy comparison on the regular and duplicate samples (QCTypes) for both water temperature and dissolved oxygen (Const) as a profile. Both pH and secchi cannot be represented as profiles, but should still be included in this result section. This specific example does not include duplicates, which is something that should be flagged. The secchi and pH measurements should also include duplicates.
+
+```{r result_table}
+#| label: tbl-results
+#| tbl-cap: Results Table
+
+result_table <- data2018 %>% 
+  filter(SiteVisitID == "JasonS7-2018924111226") %>% 
+  select(ProfileDepth, Const, Result, QCType) %>% 
+  filter(Const != c("Secchi","pH")) %>% 
+  pivot_wider(names_from = c(Const, QCType),
+              values_from = Result) %>%
+    gt() %>% 
+  cols_align(align = "center")
+result_table
+
+pH_secchi_table <- data2018 %>% 
+  filter(SiteVisitID == "JasonS7-2018924111226") %>% 
+  select(Const, Result, QCType ) %>% 
+  filter(Const == c("Secchi","pH")) %>% 
+  pivot_wider(names_from = c(Const, QCType),
+              values_from = Result) %>%
+  gt() 
+pH_secchi_table
+```
+
+## Filter Table
+
+```{r fitler_table}
+#| label: tbl-filter
+#| tbl-cap: Filter Table
+
+filter_table <- data2018 %>% 
+  filter(SiteVisitID == "JasonS7-2018924111226") %>% 
+  select(SampleName, SampleFilterMethod) %>% 
+  distinct() %>%
+  gt() %>%
+  cols_align(align = "center")
+filter_table
+```
+
+## Controls Summary
+
+A section at the beginning or at the end of each file summary report for a run sampled on a specific day could also summarize all the flags detected.
