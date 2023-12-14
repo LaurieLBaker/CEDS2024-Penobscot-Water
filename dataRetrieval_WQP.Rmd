@@ -36,7 +36,7 @@ PIN_DO <- DO_Sites %>%
   filter(OrganizationFormalName == "Penobscot Nation (Tribal)")
 
 # OrganizationIdentifier = PENOBSCOTINDIANNATIONDNR --> Organization ID
-# MonitoringLocationIdentifier = PENOBSCOTINDIANNATIONDNR-10-EBU2 --> give what is considered the sideid
+# MonitoringLocationIdentifier = PENOBSCOTINDIANNATIONDNR-10-EBU2 --> gives what is considered the siteid
 # MonitoringLocationName = West Branch Penobscot River - Upriver of Route 11 Bridge --> gives more information about each site 
 
 ```
@@ -54,9 +54,9 @@ glimpse(sum_site_AS3)
 site_AS3 <- readWQPdata(siteid = "PENOBSCOTINDIANNATIONDNR-154-AS3")
 glimpse(site_AS3)
 ```
+## Get all the measured parameters from a specific site in the WQP by counting the CharacteristicName
 
 ```{r all_characteristics_measured}
 site_AS3 %>% 
   count(CharacteristicName) 
 ```
-

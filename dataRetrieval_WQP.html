@@ -392,7 +392,7 @@ the sites of the PIN</p>
   filter(OrganizationFormalName == &quot;Penobscot Nation (Tribal)&quot;)
 
 # OrganizationIdentifier = PENOBSCOTINDIANNATIONDNR --&gt; Organization ID
-# MonitoringLocationIdentifier = PENOBSCOTINDIANNATIONDNR-10-EBU2 --&gt; give what is considered the sideid
+# MonitoringLocationIdentifier = PENOBSCOTINDIANNATIONDNR-10-EBU2 --&gt; gives what is considered the siteid
 # MonitoringLocationName = West Branch Penobscot River - Upriver of Route 11 Bridge --&gt; gives more information about each site </code></pre>
 </div>
 <div id="get-information-and-data-from-from-specific-site-in-the-wqp" class="section level2">
@@ -493,6 +493,10 @@ glimpse(site_AS3)</code></pre>
 ## $ timeZoneEnd                                       &lt;dbl&gt; NA, NA, NA, NA, NA, …
 ## $ ActivityStartDateTime                             &lt;dttm&gt; 2017-09-20 15:08:25…
 ## $ ActivityEndDateTime                               &lt;dttm&gt; NA, NA, NA, NA, NA,…</code></pre>
+</div>
+<div id="get-all-the-measured-parameters-from-a-specific-site-in-the-wqp-by-counting-the-characteristicname" class="section level2">
+<h2>Get all the measured parameters from a specific site in the WQP by
+counting the CharacteristicName</h2>
 <pre class="r"><code>site_AS3 %&gt;% 
   count(CharacteristicName) </code></pre>
 <pre><code>##        CharacteristicName  n
