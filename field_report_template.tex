@@ -1,0 +1,347 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  letterpaper,
+  DIV=11,
+  numbers=noendperiod]{scrartcl}
+
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else  
+    % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% Make \paragraph and \subparagraph free-standing
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{longtable}
+\usepackage{colortbl}
+\usepackage{array}
+\KOMAoption{captions}{tableheading}
+\makeatletter
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\makeatletter
+\@ifpackageloaded{tcolorbox}{}{\usepackage[skins,breakable]{tcolorbox}}
+\makeatother
+\makeatletter
+\@ifundefined{shadecolor}{\definecolor{shadecolor}{rgb}{.97, .97, .97}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\makeatother
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Water Quality Field Report Template},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Water Quality Field Report Template}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[breakable, borderline west={3pt}{0pt}{shadecolor}, enhanced, interior hidden, boxrule=0pt, frame hidden, sharp corners]}{\end{tcolorbox}}\fi
+
+This field report template serves as a guided example of the desired
+format to strive for when aiming to automate the creation of reports to
+be used internally by the Water Resources Program. Each single file will
+be a summary report of various sites from a specific run sampled on a
+specific date.These reports are intended to be used for assessment of
+accuracy and completeness in field results, and should therefore
+highlight missing, repetitive or inaccurate data based on the conditions
+provided in the document of control flags.
+
+\hypertarget{field-report-header}{%
+\subsection{Field Report Header}\label{field-report-header}}
+
+Each report should be created for a single run sampled on a specific
+date. These reports should then be subdivided by site to display the
+data. The first header should therefore be grouped by RunCode, RunDate
+and primary collector. The primary collector is the first set of
+initials found in the ``Collectors'' variable.
+
+\begin{longtable*}{lrl}
+\toprule
+RunCode & RunDate & PrimCollector \\ 
+\midrule\addlinespace[2.5pt]
+LakesEBSS & 17798 & TJM \\ 
+\bottomrule
+\end{longtable*}
+
+\hypertarget{table-of-contents}{%
+\subsection{Table of Contents}\label{table-of-contents}}
+
+The following sections (site information, sample table, result table,
+filter table) should be differentiated by site for the specific run,
+date and collector for which this report is being created. The report
+should have a table of content allowing to quickly jump to the tables
+for a specific site. All sites should be displayed one after the other
+to allow to scroll trough all the information for this specific run
+sampled on a specific date.
+
+\hypertarget{site-visit-information}{%
+\subsection{Site Visit Information}\label{site-visit-information}}
+
+\begin{longtable*}{cccccc}
+\caption*{
+{\large Site information}
+} \\ 
+\toprule
+SiteVisitID & WaterBody & SiteCode & SiteVisitStartTime & SiteDepth & SamplingAirTemp \\ 
+\midrule\addlinespace[2.5pt]
+JasonS7-2018924111226 & Lakes & EBL1 & 9/24/2018 11:12:26 & 5 & 10.4 \\ 
+\bottomrule
+\end{longtable*}
+
+\begin{longtable*}{cccccc}
+\toprule
+Weather & RivCond & WaterLevel & FoamRank & FoamSource & SiteVisitComment \\ 
+\midrule\addlinespace[2.5pt]
+Sunny & Choppy & Low & Few Bubbles Present & Wave Action & NA \\ 
+\bottomrule
+\end{longtable*}
+
+\hypertarget{sample-table}{%
+\subsection{Sample Table}\label{sample-table}}
+
+This sample table includes an example of a way to flag data by coloring
+cells in a table. Here, the green was used for a condition that was
+respected. You should aim to color any violations or erroneous data
+based on the quality control flag document and requests of the Penobscot
+Nation Water Resources Planners.
+
+\hypertarget{tbl-sample}{}
+\begin{longtable}{cccccc}
+\caption{\label{tbl-sample}Sample Table }\tabularnewline
+
+\toprule
+SampleName & ProjectCode & CntrType & QCType & CollMethod & SampleDepth \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{6}{l}{PIN} \\ 
+\midrule\addlinespace[2.5pt]
+EBL1-9244 & Baseline & Plastic Bottle & Regular & \cellcolor[HTML]{90EE90}{CO-E} & \cellcolor[HTML]{90EE90}{4} \\ 
+EBL1-9238 & Baseline & Plastic Bottle & Regular & GS & 0 \\ 
+EBL1-9241 & Baseline & Plastic Bottle & Regular & GS & 0 \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{6}{l}{HETL} \\ 
+\midrule\addlinespace[2.5pt]
+EBL1-9251 & Baseline & Plastic Bottle & Regular & \cellcolor[HTML]{90EE90}{CO-E} & \cellcolor[HTML]{90EE90}{4} \\ 
+EBL1-9247 & Baseline & Plastic Bottle & Regular & \cellcolor[HTML]{90EE90}{CO-E} & \cellcolor[HTML]{90EE90}{4} \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{6}{l}{Msmt} \\ 
+\midrule\addlinespace[2.5pt]
+EBL1- & Baseline & Msmt & Regular & Msmt & NA \\ 
+\bottomrule
+\end{longtable}
+
+\hypertarget{result-table}{%
+\subsection{Result Table}\label{result-table}}
+
+The result table should allow an easy comparison on the regular and
+duplicate samples (QCTypes) for both water temperature and dissolved
+oxygen (Const) as a profile. Both pH and secchi cannot be represented as
+profiles, but should still be included in this result section. This
+specific example does not include duplicates, which is something that
+should be flagged. The secchi and pH measurements should also include
+duplicates.
+
+\begin{verbatim}
+Warning: Values from `Result` are not uniquely identified; output will contain
+list-cols.
+* Use `values_fn = list` to suppress this warning.
+* Use `values_fn = {summary_fun}` to summarise duplicates.
+* Use the following dplyr code to identify duplicates.
+  {data} %>%
+  dplyr::group_by(ProfileDepth, Const, QCType) %>%
+  dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
+  dplyr::filter(n > 1L)
+\end{verbatim}
+
+\begin{table}
+
+\caption{\label{tbl-results}Results
+Table}\begin{minipage}[t]{\linewidth}
+\subcaption{\label{tbl-results-1}}
+
+{\centering 
+
+\begin{longtable*}{cccc}
+\toprule
+ProfileDepth & NA\_Regular & water temperature\_Regular & Dissolved Oxygen\_Regular \\ 
+\midrule\addlinespace[2.5pt]
+0 &  & 17 & 9.13 \\ 
+1 &  & 17 & 9.11 \\ 
+2 &  & 17 & 9.1 \\ 
+3 &  & 17 & 9.08 \\ 
+4 &  & 16.9 & 9.06 \\ 
+5 &  & 16.7 & 9.2 \\ 
+\bottomrule
+\end{longtable*}
+
+}
+
+\end{minipage}%
+\newline
+\begin{minipage}[t]{\linewidth}
+\subcaption{\label{tbl-results-2}}
+
+{\centering 
+
+\begin{longtable*}{rr}
+\toprule
+pH\_Regular & Secchi\_Regular \\ 
+\midrule\addlinespace[2.5pt]
+6.78 & 5 \\ 
+\bottomrule
+\end{longtable*}
+
+}
+
+\end{minipage}%
+
+\end{table}
+
+\hypertarget{filter-table}{%
+\subsection{Filter Table}\label{filter-table}}
+
+\hypertarget{tbl-filter}{}
+\begin{longtable}{c}
+\caption{\label{tbl-filter}Filter Table }\tabularnewline
+
+\toprule
+FilterName \\ 
+\midrule\addlinespace[2.5pt]
+NA \\ 
+EBL1-9247-83 \\ 
+EBL1-9247-79 \\ 
+\bottomrule
+\end{longtable}
+
+\hypertarget{controls-summary}{%
+\subsection{Controls Summary}\label{controls-summary}}
+
+A section at the beginning or at the end of each file summary report for
+a run sampled on a specific day could also summarize all the flags
+detected.
+
+
+
+\end{document}

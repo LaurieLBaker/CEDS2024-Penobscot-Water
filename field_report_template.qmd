@@ -13,23 +13,25 @@ library(dplyr)
 library(devtools)
 library(readr)
 library(gt) #for tables
+library(stringr)
 library(htmltools)
 ```
 
 ```{r load_data}
-data2018 <- readRDS("~/Repos/Penobscot-Water/data/PINCommEngData.RData")
+data2018 <- readRDS("~/Repos/Penobscot-Water/data/PINCommEngData (2).RData")
 ```
 
 This field report template serves as a guided example of the desired format to strive for when aiming to automate the creation of reports to be used internally by the Water Resources Program. Each single file will be a summary report of various sites from a specific run sampled on a specific date.These reports are intended to be used for assessment of accuracy and completeness in field results, and should therefore highlight missing, repetitive or inaccurate data based on the conditions provided in the document of control flags.
 
-## Report Header {.smaller}
+## Field Report Header {.smaller}
 
-Each report should be created for a single run sampled on a specific date. These reports should then be subdivided by site to display the data. The first header should therefore be grouped by RunCode, RunDate and Collector.
+Each report should be created for a single run sampled on a specific date. These reports should then be subdivided by site to display the data. The first header should therefore be grouped by RunCode, RunDate and primary collector. The primary collector is the first set of initials found in the "Collectors" variable.
 
 ```{r header}
 data2018 %>% 
   filter(SiteVisitID == "JasonS7-2018924111226") %>% 
-  select(RunCode, RunDate, Collector) %>% 
+  mutate(PrimCollector = str_extract(Collectors, "^[A-Za-z]{2,3}")) %>%
+  select(RunCode, RunDate, PrimCollector) %>% 
   distinct() %>% 
   gt() 
 ```
@@ -90,17 +92,19 @@ The result table should allow an easy comparison on the regular and duplicate sa
 result_table <- data2018 %>% 
   filter(SiteVisitID == "JasonS7-2018924111226") %>% 
   select(ProfileDepth, Const, Result, QCType) %>% 
-  filter(Const != c("Secchi","pH")) %>% 
+  filter(!(Const %in% c("Secchi", "pH"))) %>%
   pivot_wider(names_from = c(Const, QCType),
-              values_from = Result) %>%
-    gt() %>% 
+              values_from = Result,
+              values_fn = list(Result = list)) %>%
+  filter(!is.na(ProfileDepth)) %>%
+  gt() %>% 
   cols_align(align = "center")
 result_table
 
 pH_secchi_table <- data2018 %>% 
   filter(SiteVisitID == "JasonS7-2018924111226") %>% 
   select(Const, Result, QCType ) %>% 
-  filter(Const == c("Secchi","pH")) %>% 
+  filter(Const %in% c("Secchi","pH")) %>% 
   pivot_wider(names_from = c(Const, QCType),
               values_from = Result) %>%
   gt() 
@@ -115,7 +119,7 @@ pH_secchi_table
 
 filter_table <- data2018 %>% 
   filter(SiteVisitID == "JasonS7-2018924111226") %>% 
-  select(SampleName, SampleFilterMethod) %>% 
+  select(FilterName) %>% 
   distinct() %>%
   gt() %>%
   cols_align(align = "center")

@@ -4,6 +4,8 @@ library(ggplot2)
 
 load("~/Repos/Penobscot-Water/data/ChemFieldLab2018.Rdata")
 
+unique(ChemFieldLab2018$Constituent)
+
 # Get all "Regular" Ecoli samples (ignoring "Split" and "Duplicate")
 ecoli_all <- ChemFieldLab2018 %>%
   filter(Constituent =="E. coli") %>%
