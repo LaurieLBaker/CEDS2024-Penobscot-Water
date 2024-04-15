@@ -19,6 +19,7 @@ library(htmltools)
 
 ```{r load_data, echo = FALSE}
 data2018 <- readRDS("data/PINCommEngData (2).RData")
+data2018_06_13 <- read.csv("data/2018_06_13.csv")
 ```
 
 ## Lab Report Header {.smaller}
