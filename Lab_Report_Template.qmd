@@ -15,20 +15,31 @@ library(readr)
 library(gt) #for tables
 library(stringr)
 library(htmltools)
+library(data.table)
 ```
 
 ```{r load_data, echo = FALSE}
 data2018 <- readRDS("data/PINCommEngData (2).RData")
-data2018_06_13 <- read.csv("data/2018_06_13.csv")
+
+data2018_06_13 <- data2018 %>% 
+  filter(RunDate == "2018-06-13")
 ```
 
 ## Lab Report Header {.smaller}
 
-Run Date: `r unique(data2018$RunDate)`
+Run Date: `r unique(data2018_06_13$RunDate)`
 
-Run Code: `r unique(data2018$RunCode)`
+Run Code: `r unique(data2018_06_13$RunCode)`
 
-Site Code: `r unique(data2018$SiteCode)`
+Site Code: `r unique(data2018_06_13$SiteCode)`
+
+```{r}
+data2018_06_13 %>% 
+  select(RunCode, SiteCode, Collectors) %>% 
+  distinct() %>% 
+  data.table()
+```
+
 
 ## Collection Date {.smaller}
 
