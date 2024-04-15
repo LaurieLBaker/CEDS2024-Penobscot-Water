@@ -1,0 +1,36 @@
+---
+title: Water Quality Lab Report Template
+format: html
+toc: true
+---
+
+```{r install.packages, include=FALSE}
+library(tidyverse)
+library(quarto)
+library(dplyr)
+library(devtools)
+library(readr)
+library(gt) #for tables
+library(stringr)
+library(htmltools)
+```
+
+```{r load_data}
+data2018 <- readRDS("data/PINCommEngData (2).RData")
+```
+
+## Lab Report Header {.smaller}
+
+### Run Date: `r unique(data2018$RunDate)`
+
+#### Run Code: `r unique(data2018$RunCode)`
+
+#### Site Code: `r unique(data2018$SiteCode)`
+
+## Collection Date {.smaller}
+
+## Run {.smaller}
+
+## Site {.smaller}
+
+## Generation Date {.smaller}
