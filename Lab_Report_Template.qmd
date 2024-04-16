@@ -21,30 +21,18 @@ library(data.table)
 ```{r load_data, echo = FALSE}
 data2018 <- readRDS("data/PINCommEngData (2).RData")
 
-data2018_06_13 <- data2018 %>% 
-  filter(RunDate == "2018-06-13")
+JRP <- data2018 %>% 
+  filter(Collectors == "JRP;",
+         SiteVisitID == "JanS5-20189692326")
 ```
 
-## Lab Report Header {.smaller}
+## Run Date: `r unique(JRP$RunDate)` \| Run Code: `r unique(JRP$RunCode)`
 
-Run Date: `r unique(data2018_06_13$RunDate)`
+### Site Code: `r unique(JRP$SiteCode)`
 
-Run Code: `r unique(data2018_06_13$RunCode)`
-
-Site Code: `r unique(data2018_06_13$SiteCode)`
-
-```{r}
-data2018_06_13 %>% 
+```{r echo = FALSE}
+JRP %>% 
   select(RunCode, SiteCode, Collectors) %>% 
   distinct() %>% 
-  data.table()
+  gt()
 ```
-
-
-## Collection Date {.smaller}
-
-## Run {.smaller}
-
-## Site {.smaller}
-
-## Generation Date {.smaller}
