@@ -1,12 +1,13 @@
 ---
 title: Water Quality Lab Report Template
 format: html
-date: today
 toc: true
-toc-location: left
+editor: visual
+execute:
+  echo: false
 ---
 
-```{r install.packages, include = FALSE}
+```{r install.packages, include=FALSE}
 library(tidyverse)
 library(quarto)
 library(dplyr)
@@ -15,24 +16,44 @@ library(readr)
 library(gt) #for tables
 library(stringr)
 library(htmltools)
-library(data.table)
 ```
 
-```{r load_data, echo = FALSE}
+```{r load_data}
 data2018 <- readRDS("data/PINCommEngData (2).RData")
-
-JRP <- data2018 %>% 
-  filter(Collectors == "JRP;",
-         SiteVisitID == "JanS5-20189692326")
 ```
 
-## Run Date: `r unique(JRP$RunDate)` \| Run Code: `r unique(JRP$RunCode)`
+## Lab Report Header {.smaller}
 
-### Site Code: `r unique(JRP$SiteCode)`
+### Run Date: `r unique(data2018$RunDate)`
 
-```{r echo = FALSE}
-JRP %>% 
-  select(RunCode, SiteCode, Collectors) %>% 
-  distinct() %>% 
+#### Run Code: `r unique(data2018$RunCode)`
+
+#### Site Code: `r unique(data2018$SiteCode)`
+
+## Collection Date {.smaller}
+
+## Run {.smaller}
+
+## Site {.smaller}
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+### Collector: JRP
+
+Run Date: **2018-09-19** Run: **Passadumkeag**
+
+```{r}
+c <- data2018 %>%
+  filter(Collector == "JRP", RunCode == "Passadumkeag", RunDate == "2018-09-19")
+
+data2018 %>%
+  mutate(
+    Constituents = case_when(
+      Constituents == "Msmt" ~ Const,
+      TRUE ~ Constituents
+    ),
+    ResultValue = coalesce(Result, ResultValue)) %>%
+  filter(Collector == "JRP", RunCode == "Passadumkeag", RunDate == "2018-09-19") %>%
+  select(SiteCode, SiteVisitStartTime, Constituents, ResultValue, QCType, IncubationLength, LabAnalysisDatetime, SampleDatetime) %>%
   gt()
 ```
