@@ -158,25 +158,10 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[breakable, borderline west={3pt}{0pt}{shadecolor}, enhanced, interior hidden, boxrule=0pt, frame hidden, sharp corners]}{\end{tcolorbox}}\fi
-
-This field report template serves as a guided example of the desired
-format to strive for when aiming to automate the creation of reports to
-be used internally by the Water Resources Program. Each single file will
-be a summary report of various sites from a specific run sampled on a
-specific date.These reports are intended to be used for assessment of
-accuracy and completeness in field results, and should therefore
-highlight missing, repetitive or inaccurate data based on the conditions
-provided in the document of control flags.
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[interior hidden, boxrule=0pt, breakable, enhanced, sharp corners, frame hidden, borderline west={3pt}{0pt}{shadecolor}]}{\end{tcolorbox}}\fi
 
 \hypertarget{field-report-header}{%
 \subsection{Field Report Header}\label{field-report-header}}
-
-Each report should be created for a single run sampled on a specific
-date. These reports should then be subdivided by site to display the
-data. The first header should therefore be grouped by RunCode, RunDate
-and primary collector. The primary collector is the first set of
-initials found in the ``Collectors'' variable.
 
 \begin{longtable*}{lrl}
 \toprule
@@ -188,14 +173,6 @@ LakesEBSS & 17798 & TJM \\
 
 \hypertarget{table-of-contents}{%
 \subsection{Table of Contents}\label{table-of-contents}}
-
-The following sections (site information, sample table, result table,
-filter table) should be differentiated by site for the specific run,
-date and collector for which this report is being created. The report
-should have a table of content allowing to quickly jump to the tables
-for a specific site. All sites should be displayed one after the other
-to allow to scroll trough all the information for this specific run
-sampled on a specific date.
 
 \hypertarget{site-visit-information}{%
 \subsection{Site Visit Information}\label{site-visit-information}}
@@ -221,12 +198,6 @@ Sunny & Choppy & Low & Few Bubbles Present & Wave Action & NA \\
 
 \hypertarget{sample-table}{%
 \subsection{Sample Table}\label{sample-table}}
-
-This sample table includes an example of a way to flag data by coloring
-cells in a table. Here, the green was used for a condition that was
-respected. You should aim to color any violations or erroneous data
-based on the quality control flag document and requests of the Penobscot
-Nation Water Resources Planners.
 
 \hypertarget{tbl-sample}{}
 \begin{longtable}{cccccc}
@@ -254,26 +225,6 @@ EBL1- & Baseline & Msmt & Regular & Msmt & NA \\
 
 \hypertarget{result-table}{%
 \subsection{Result Table}\label{result-table}}
-
-The result table should allow an easy comparison on the regular and
-duplicate samples (QCTypes) for both water temperature and dissolved
-oxygen (Const) as a profile. Both pH and secchi cannot be represented as
-profiles, but should still be included in this result section. This
-specific example does not include duplicates, which is something that
-should be flagged. The secchi and pH measurements should also include
-duplicates.
-
-\begin{verbatim}
-Warning: Values from `Result` are not uniquely identified; output will contain
-list-cols.
-* Use `values_fn = list` to suppress this warning.
-* Use `values_fn = {summary_fun}` to summarise duplicates.
-* Use the following dplyr code to identify duplicates.
-  {data} %>%
-  dplyr::group_by(ProfileDepth, Const, QCType) %>%
-  dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
-  dplyr::filter(n > 1L)
-\end{verbatim}
 
 \begin{table}
 
@@ -337,10 +288,6 @@ EBL1-9247-79 \\
 
 \hypertarget{controls-summary}{%
 \subsection{Controls Summary}\label{controls-summary}}
-
-A section at the beginning or at the end of each file summary report for
-a run sampled on a specific day could also summarize all the flags
-detected.
 
 
 
