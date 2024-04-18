@@ -57,3 +57,5 @@ data2018 %>%
   select(SiteCode, SiteVisitStartTime, Constituents, ResultValue, QCType, IncubationLength, LabAnalysisDatetime, SampleDatetime) %>%
   gt()
 ```
+
+
