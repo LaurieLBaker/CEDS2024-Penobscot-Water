@@ -2,6 +2,9 @@
 title: Water Quality Lab Report Template
 format: html
 toc: true
+editor: visual
+execute:
+  echo: false
 ---
 
 ```{r install.packages, include=FALSE}
@@ -33,4 +36,24 @@ data2018 <- readRDS("data/PINCommEngData (2).RData")
 
 ## Site {.smaller}
 
-## Generation Date {.smaller}
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+### Collector: JRP
+
+Run Date: **2018-09-19** Run: **Passadumkeag**
+
+```{r}
+c <- data2018 %>%
+  filter(Collector == "JRP", RunCode == "Passadumkeag", RunDate == "2018-09-19")
+
+data2018 %>%
+  mutate(
+    Constituents = case_when(
+      Constituents == "Msmt" ~ Const,
+      TRUE ~ Constituents
+    ),
+    ResultValue = coalesce(Result, ResultValue)) %>%
+  filter(Collector == "JRP", RunCode == "Passadumkeag", RunDate == "2018-09-19") %>%
+  select(SiteCode, SiteVisitStartTime, Constituents, ResultValue, QCType, IncubationLength, LabAnalysisDatetime, SampleDatetime) %>%
+  gt()
+```
