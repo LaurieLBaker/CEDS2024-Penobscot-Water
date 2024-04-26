@@ -1,0 +1,61 @@
+---
+title: "Sample Information"
+author: "Cedar Callahan"
+format:
+  html:
+    toc: true
+params:
+  Collectors:
+  RunDate:
+  RunCode:
+  SiteCode:
+---
+
+```{r load-packages-and-data, echo = FALSE, message = FALSE}
+library(tidyverse)
+library(data.table)
+library(gt)
+library(purrr)
+library(quarto)
+library(here)
+
+data2018 <- readRDS("data/PINCommEngData (2).RData")
+```
+
+```{r}
+data2018_reports <- data2018 %>% 
+  distinct(Collectors, RunDate, RunCode, SiteCode, .keep_all = TRUE) %>% 
+  mutate(
+    output_format = "html",             
+    output_file = paste(                
+      tolower(Collectors),              
+      tolower(gsub(" ", "-", RunDate)),           
+      "report.html",
+      sep = "-"
+    ),
+    execute_params = map2(       
+      Collectors,
+      RunDate,
+      RunCode,
+      SiteCode,
+      \(Collectors, RunDate, RunCode, SiteCode) list(Collectors = Collectors, RunDate = RunDate, RunCode = RunCode, SiteCode = SiteCode)))
+```
+
+```{r}
+data2018_subset <- data2018_reports %>% 
+  slice_head(n = 2, by = Collectors) %>% 
+  select(output_file, execute_params)
+
+data2018_subset
+```
+
+```{r}
+pwalk(
+  .l = data2018_subset,                      
+  .f = quarto_render,                   
+  .progress = TRUE                              
+)
+```
+
+
+
