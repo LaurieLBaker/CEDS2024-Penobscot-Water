@@ -128,7 +128,7 @@ A section at the beginning or at the end of each file summary report for a run s
 ```{r}
 result_table <- data2018 %>%
   filter(Collectors == "JRP;", RunCode == "Trib2A", RunDate == "2018-09-25") %>%
-  select(SiteVisitID, WaterBody: SiteVisitStartTime, SiteDepth:ResultFlag_ID) %>%
+  select(SiteVisitID, WaterBody:SiteVisitStartTime, SiteDepth:ResultFlag_ID) %>%
   distinct() %>%
   gt()
 ```
@@ -137,11 +137,3 @@ result_table <- data2018 %>%
 
 j
 :::
-
-```{r}
-result_table <- data2018 %>%
-  filter(Collectors == "JRP;", RunCode == "Trib2A", RunDate == "2018-09-25") %>%
-  select(SiteVisitID, WaterBody: SiteVisitStartTime, SiteDepth:ResultFlag_ID) %>%
-  #distinct() %>%
-  gt()
-```
