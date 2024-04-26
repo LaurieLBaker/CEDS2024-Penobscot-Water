@@ -21,7 +21,9 @@ library(htmltools)
 data2018 <- readRDS("data/PINCommEngData (2).RData")
 ```
 
+
 ## Field Report Header {.smaller}
+
 
 ```{r header}
 data2018 %>% 
@@ -32,7 +34,9 @@ data2018 %>%
   gt() 
 ```
 
+
 ## Site Visit Information {.smaller}
+
 
 ```{r site_info_tables}
 site_info1 <- data2018 %>% 
@@ -53,7 +57,9 @@ site_info2 <-data2018 %>%
 site_info2 #two separate tables to allow for an easier comparision
 ```
 
+
 ## Sample Table
+
 
 ```{r sample_table}
 #| label: tbl-sample
@@ -71,7 +77,9 @@ sample_table <- data2018 %>%
 sample_table
 ```
 
+
 ## Result Table
+
 
 ```{r result_table}
 #| label: tbl-results
@@ -99,7 +107,9 @@ pH_secchi_table <- data2018 %>%
 pH_secchi_table
 ```
 
+
 ## Filter Table
+
 
 ```{r fitler_table}
 #| label: tbl-filter
@@ -114,6 +124,7 @@ filter_table <- data2018 %>%
 filter_table
 ```
 
+
 ## Controls Summary
 
 A section at the beginning or at the end of each file summary report for a run sampled on a specific day could also summarize all the flags detected.
@@ -125,6 +136,7 @@ A section at the beginning or at the end of each file summary report for a run s
 
 ## Samples
 
+
 ```{r}
 result_table <- data2018 %>%
   filter(Collectors == "JRP;", RunCode == "Trib2A", RunDate == "2018-09-25") %>%
@@ -133,10 +145,12 @@ result_table <- data2018 %>%
   gt()
 ```
 
+
 ## DO and Temperature
 
 j
 :::
+
 
 ```{r}
 result_table <- data2018 %>%
@@ -145,3 +159,4 @@ result_table <- data2018 %>%
   #distinct() %>%
   gt()
 ```
+

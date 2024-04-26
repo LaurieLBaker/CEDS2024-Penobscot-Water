@@ -24,7 +24,6 @@ data2018 <- readRDS("data/PINCommEngData (2).RData")
 
 ## Lab Report Header {.smaller}
 
-
 ### Collector: JRP
 
 Run Date: **2018-09-19** Run: **Passadumkeag**
@@ -44,13 +43,3 @@ data2018 %>%
   select(SiteCode, SiteVisitStartTime, Constituents, ResultValue, QCType, IncubationLength, LabAnalysisDatetime, SampleDatetime) %>%
   gt()
 ```
-
-<<<<<<< HEAD
-
-=======
-::: panel-tabset
-## Collection Information
-
-## Results
-:::
->>>>>>> f658a0e458e1b588386df2ef166a818bc6118508
