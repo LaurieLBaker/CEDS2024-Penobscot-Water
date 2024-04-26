@@ -142,6 +142,6 @@ j
 result_table <- data2018 %>%
   filter(Collectors == "JRP;", RunCode == "Trib2A", RunDate == "2018-09-25") %>%
   select(SiteVisitID, WaterBody: SiteVisitStartTime, SiteDepth:ResultFlag_ID) %>%
-  #distinct() %>%
+  distinct() %>%
   gt()
 ```
