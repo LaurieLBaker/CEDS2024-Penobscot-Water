@@ -24,6 +24,7 @@ data2018 <- readRDS("data/PINCommEngData (2).RData")
 
 ## Lab Report Header {.smaller}
 
+<<<<<<< HEAD
 ### Run Date: `r unique(data2018$RunDate)`
 
 #### Run Code: `r unique(data2018$RunCode)`
@@ -38,6 +39,8 @@ data2018 <- readRDS("data/PINCommEngData (2).RData")
 
 \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
 
+=======
+>>>>>>> f658a0e458e1b588386df2ef166a818bc6118508
 ### Collector: JRP
 
 Run Date: **2018-09-19** Run: **Passadumkeag**
@@ -58,4 +61,12 @@ data2018 %>%
   gt()
 ```
 
+<<<<<<< HEAD
 
+=======
+::: panel-tabset
+## Collection Information
+
+## Results
+:::
+>>>>>>> f658a0e458e1b588386df2ef166a818bc6118508
