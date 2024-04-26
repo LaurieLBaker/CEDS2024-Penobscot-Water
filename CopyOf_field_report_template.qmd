@@ -118,16 +118,30 @@ filter_table
 
 A section at the beginning or at the end of each file summary report for a run sampled on a specific day could also summarize all the flags detected.
 
+------------------------------------------------------------------------
+
 ::: panel-tabset
 ## Collection Information
 
-l
+## Samples
 
-## Results
-
-l
+```{r}
+result_table <- data2018 %>%
+  filter(Collectors == "JRP;", RunCode == "Trib2A", RunDate == "2018-09-25") %>%
+  select(SiteVisitID, WaterBody: SiteVisitStartTime, SiteDepth:ResultFlag_ID) %>%
+  distinct() %>%
+  gt()
+```
 
 ## DO and Temperature
 
 j
 :::
+
+```{r}
+result_table <- data2018 %>%
+  filter(Collectors == "JRP;", RunCode == "Trib2A", RunDate == "2018-09-25") %>%
+  select(SiteVisitID, WaterBody: SiteVisitStartTime, SiteDepth:ResultFlag_ID) %>%
+  #distinct() %>%
+  gt()
+```
