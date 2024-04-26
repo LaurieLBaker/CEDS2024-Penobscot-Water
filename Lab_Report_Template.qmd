@@ -24,20 +24,6 @@ data2018 <- readRDS("data/PINCommEngData (2).RData")
 
 ## Lab Report Header {.smaller}
 
-### Run Date: `r unique(data2018$RunDate)`
-
-#### Run Code: `r unique(data2018$RunCode)`
-
-#### Site Code: `r unique(data2018$SiteCode)`
-
-## Collection Date {.smaller}
-
-## Run {.smaller}
-
-## Site {.smaller}
-
-------------------------------------------------------------------------------------------------------
-
 ### Collector: JRP
 
 Run Date: **2018-09-19** Run: **Passadumkeag**
@@ -57,3 +43,9 @@ data2018 %>%
   select(SiteCode, SiteVisitStartTime, Constituents, ResultValue, QCType, IncubationLength, LabAnalysisDatetime, SampleDatetime) %>%
   gt()
 ```
+
+::: panel-tabset
+## Collection Information
+
+## Results
+:::

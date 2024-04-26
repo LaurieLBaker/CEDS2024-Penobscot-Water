@@ -18,14 +18,10 @@ library(htmltools)
 ```
 
 ```{r load_data}
-data2018 <- readRDS("~/Repos/Penobscot-Water/data/PINCommEngData (2).RData")
+data2018 <- readRDS("data/PINCommEngData (2).RData")
 ```
 
-This field report template serves as a guided example of the desired format to strive for when aiming to automate the creation of reports to be used internally by the Water Resources Program. Each single file will be a summary report of various sites from a specific run sampled on a specific date.These reports are intended to be used for assessment of accuracy and completeness in field results, and should therefore highlight missing, repetitive or inaccurate data based on the conditions provided in the document of control flags.
-
 ## Field Report Header {.smaller}
-
-Each report should be created for a single run sampled on a specific date. These reports should then be subdivided by site to display the data. The first header should therefore be grouped by RunCode, RunDate and primary collector. The primary collector is the first set of initials found in the "Collectors" variable.
 
 ```{r header}
 data2018 %>% 
@@ -35,10 +31,6 @@ data2018 %>%
   distinct() %>% 
   gt() 
 ```
-
-## Table of Contents {.smaller}
-
-The following sections (site information, sample table, result table, filter table) should be differentiated by site for the specific run, date and collector for which this report is being created. The report should have a table of content allowing to quickly jump to the tables for a specific site. All sites should be displayed one after the other to allow to scroll trough all the information for this specific run sampled on a specific date.
 
 ## Site Visit Information {.smaller}
 
@@ -63,8 +55,6 @@ site_info2 #two separate tables to allow for an easier comparision
 
 ## Sample Table
 
-This sample table includes an example of a way to flag data by coloring cells in a table. Here, the green was used for a condition that was respected. You should aim to color any violations or erroneous data based on the quality control flag document and requests of the Penobscot Nation Water Resources Planners.
-
 ```{r sample_table}
 #| label: tbl-sample
 #| tbl-cap: Sample Table
@@ -82,8 +72,6 @@ sample_table
 ```
 
 ## Result Table
-
-The result table should allow an easy comparison on the regular and duplicate samples (QCTypes) for both water temperature and dissolved oxygen (Const) as a profile. Both pH and secchi cannot be represented as profiles, but should still be included in this result section. This specific example does not include duplicates, which is something that should be flagged. The secchi and pH measurements should also include duplicates.
 
 ```{r result_table}
 #| label: tbl-results
@@ -129,3 +117,17 @@ filter_table
 ## Controls Summary
 
 A section at the beginning or at the end of each file summary report for a run sampled on a specific day could also summarize all the flags detected.
+
+::: panel-tabset
+## Collection Information
+
+l
+
+## Results
+
+l
+
+## DO and Temperature
+
+j
+:::
