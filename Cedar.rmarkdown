@@ -24,6 +24,7 @@ library(rlang)
 data2018 <- readRDS("data/PINCommEngData (2).RData")
 ```
 
+
 # ```{r}
 # data2018_reports <- data2018 %>% 
 #   distinct(Collectors, RunDate, RunCode, SiteCode, .keep_all = TRUE) %>% 
@@ -61,6 +62,7 @@ data2018 <- readRDS("data/PINCommEngData (2).RData")
 # ```
 
 
+
 ```{r}
 collectors <- data2018 %>% 
   filter(SiteCode == params$SiteCode) %>% 
@@ -79,7 +81,4 @@ Collector <- map_chr(collectors, \(current_collectors){
 
 cat(Collector, sep = "\n")
 ```
-
-
-
 
