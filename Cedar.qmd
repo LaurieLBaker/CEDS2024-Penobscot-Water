@@ -5,7 +5,7 @@ format:
   html:
     toc: true
 params:
-  Collectors: "DHK;"
+  Collectors:
   RunDate:
   RunCode:
   SiteName: 
@@ -20,6 +20,8 @@ library(quarto)
 library(here)
 library(knitr)
 library(rlang)
+library(kableExtra)
+library(tibble)
 
 data2018 <- readRDS("data/PINCommEngData (2).RData")
 ```
