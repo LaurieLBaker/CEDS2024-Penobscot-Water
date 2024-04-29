@@ -125,15 +125,34 @@ A section at the beginning or at the end of each file summary report for a run s
 
 ## Samples
 
-```{r}
+```{r, xq}
 result_table <- data2018 %>%
   filter(Collectors == "JRP;", RunCode == "Trib2A", RunDate == "2018-09-25") %>%
   select(SiteVisitID, WaterBody:SiteVisitStartTime, SiteDepth:ResultFlag_ID) %>%
   distinct() %>%
   gt()
+result_table
 ```
 
 ## DO and Temperature
 
-j
+```{r, table}
+data2018$SampleDatetime <- as.POSIXct(data2018$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
+
+data2018$Date <- as.Date(data2018$SampleDatetime)
+data2018$Time <- format(data2018$SampleDatetime, format = "%H:%M:%S")
+
+  data2018 %>% 
+    filter(Collector == "JRP", RunCode == "Passadumkeag", RunDate == "2018-07-18") %>% 
+  select(Const, Result, QCType, Date, Time ) %>% 
+  filter(Const %in% c("Secchi","pH")) %>% 
+  pivot_wider(names_from = c(Const, QCType),
+              values_from = Result) %>%
+  gt() %>% 
+    cols_move(
+    columns = "pH_Duplicate",
+    after = "pH_Regular"
+  ) %>% 
+      opt_row_striping()
+```
 :::
