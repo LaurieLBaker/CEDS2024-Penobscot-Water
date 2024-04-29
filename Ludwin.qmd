@@ -1,0 +1,84 @@
+---
+Author: 
+Format: html
+execute:
+  echo: false
+---
+
+```{r install.packages, include=FALSE}
+library(tidyverse)
+library(quarto)
+library(dplyr)
+library(devtools)
+library(readr)
+library(gt) #for tables
+library(stringr)
+library(htmltools)
+```
+
+```{r load_data}
+data2018 <- readRDS("data/PINCommEngData (2).RData")
+```
+
+## Depth Table
+
+```{r, depth_tabble}
+
+data2018$SampleDatetime <- as.POSIXct(data2018$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
+
+data2018$Date <- as.Date(data2018$SampleDatetime)
+data2018$Time <- format(data2018$SampleDatetime, format = "%H:%M:%S")
+
+
+
+data2018 %>%
+  filter(Collector == "JRP", RunCode == "Passadumkeag", RunDate == "2018-07-18") %>% 
+  filter(Const %in% c("Dissolved Oxygen", "water temperature"),
+         SiteDepthMethod == "Secchi disk") %>% 
+  select(Date, Time ,QCType, ProfileDepth,Const, Result, SiteCode, SiteVisitID) %>%
+  na.omit() %>%
+  pivot_wider(names_from = "Const", values_from = "Result") %>%
+  gt() %>% 
+    opt_row_striping()
+
+```
+
+## Filter Table
+
+```{r}
+# pH_secchi_table <- 
+  
+  data2018 %>% 
+    filter(Collector == "JRP", RunCode == "Passadumkeag", RunDate == "2018-07-18") %>% 
+  select(Const, Result, QCType, Date, Time ) %>% 
+  filter(Const %in% c("Secchi","pH")) %>% 
+  pivot_wider(names_from = c(Const, QCType),
+              values_from = Result) %>%
+  gt() %>% 
+    cols_move(
+    columns = "pH_Duplicate",
+    after = "pH_Regular"
+  ) %>% 
+      opt_row_striping()
+  
+  
+
+```
+
+## Method Table
+
+```{r sample_table}
+#| label: tbl-sample
+#| tbl-cap: Sample Table
+sample_table <- data2018 %>% 
+  filter(SiteVisitID == "JanS7-201871875659") %>% 
+  select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>% 
+  group_by(LabAbbrev) %>% 
+  distinct() %>% #removes all the row that are the same, unsure if we are keeping them
+  gt() %>%
+  tab_style(style = cell_fill(color = "lightgreen"),
+            locations = cells_body(columns = c(CollMethod, SampleDepth),
+                                   rows = CollMethod == "CO-E" & SampleDepth == 4))%>%
+  cols_align(align = "center")
+sample_table
+```
