@@ -1,0 +1,124 @@
+### `r paste("Collector", which(collectors == current_collectors), ":", current_collectors)`
+
+## Sample Table
+
+```{r}
+#| tbl-cap: Sample Table
+sample_table <- data2018 %>% 
+  select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>% 
+  group_by(LabAbbrev) %>% 
+  distinct() %>% #removes all the row that are the same, unsure if we are keeping them
+  gt() %>%
+  tab_style(style = cell_fill(color = "lightgreen"),
+            locations = cells_body(columns = c(CollMethod, SampleDepth),
+                                   rows = CollMethod == "CO-E" & SampleDepth == 4))%>%
+  cols_align(align = "center")
+sample_table
+```
+
+## Result Table
+
+```{r}
+#| tbl-cap: Results Table
+
+result_table <- data2018 %>% 
+  select(ProfileDepth, Const, Result, QCType) %>% 
+  filter(!(Const %in% c("Secchi", "pH"))) %>%
+  pivot_wider(names_from = c(Const, QCType),
+              values_from = Result,
+              values_fn = list(Result = list)) %>%
+  filter(!is.na(ProfileDepth)) %>%
+  gt() %>% 
+  cols_align(align = "center")
+result_table
+
+pH_secchi_table <- data2018 %>% 
+  select(Const, Result, QCType ) %>% 
+  filter(Const %in% c("Secchi","pH")) %>% 
+  pivot_wider(names_from = c(Const, QCType),
+              values_from = Result) %>%
+  gt() 
+pH_secchi_table
+```
+
+## Filter Table
+
+```{r}
+#| tbl-cap: Filter Table
+
+filter_table <- data2018 %>% 
+  select(FilterName) %>% 
+  distinct() %>%
+  gt() %>%
+  cols_align(align = "center")
+filter_table
+```
+
+## Controls Summary
+
+A section at the beginning or at the end of each file summary report for a run sampled on a specific day could also summarize all the flags detected.
+
+------------------------------------------------------------------------
+
+::: panel-tabset
+## Collection Information
+
+```{r}
+data2018 %>% 
+  mutate(PrimCollector = str_extract(Collectors, "^[A-Za-z]{2,3}")) %>%
+  select(RunCode, RunDate, PrimCollector) %>% 
+  distinct() %>% 
+  gt() 
+
+data2018 %>% 
+  select(SiteVisitID, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
+  distinct() %>% 
+  gt() %>%
+  cols_align(align = "center") %>% 
+  tab_header(title = "Site information")
+
+data2018 %>% 
+  select(Weather, SamplingAirTemp, RivCond, WaterLevel, FoamRank, FoamSource, SiteVisitComment) %>% 
+  distinct() %>% 
+  gt() %>%
+  cols_align(align = "center") %>%
+  tab_header(title = "Abiotic Factors")
+
+
+```
+
+## Samples
+
+```{r}
+data2018 %>%
+  select(SiteVisitID, WaterBody:SiteVisitStartTime, SiteDepth:ResultFlag_ID) %>%
+  distinct() %>%
+  gt()
+```
+
+## DO and Temperature
+
+```{r}
+data2018$SampleDatetime <- as.POSIXct(data2018$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
+
+data2018$Date <- as.Date(data2018$SampleDatetime)
+data2018$Time <- format(data2018$SampleDatetime, format = "%H:%M:%S")
+
+data2018 %>% 
+  select(Const, Result, QCType, Date, Time ) %>% 
+  filter(Const %in% c("Secchi","pH")) %>% 
+  pivot_wider(names_from = c(Const, QCType),
+              values_from = Result) %>%
+  gt() %>% 
+    cols_move(
+    columns = "pH_Duplicate",
+    after = "pH_Regular"
+  ) %>% 
+      opt_row_striping()
+```
+:::
+
+
+
+
+
