@@ -3,6 +3,7 @@ Author:
 Format: html
 execute:
   echo: false
+  warning: false
 ---
 
 ```{r install.packages, include=FALSE}
@@ -23,6 +24,8 @@ data2018 <- readRDS("data/PINCommEngData (2).RData")
 ## Depth Table
 
 ```{r, depth_tabble}
+#| label: tbl-temp-DO
+#| tbl-cap: DO & Temperature Table
 
 data2018$SampleDatetime <- as.POSIXct(data2018$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
 
@@ -32,10 +35,10 @@ data2018$Time <- format(data2018$SampleDatetime, format = "%H:%M:%S")
 
 
 data2018 %>%
-  filter(Collector == "JRP", RunCode == "Passadumkeag", RunDate == "2018-07-18") %>% 
+   filter(SiteVisitID == "JanS7-201871875659") %>%
   filter(Const %in% c("Dissolved Oxygen", "water temperature"),
          SiteDepthMethod == "Secchi disk") %>% 
-  select(Date, Time ,QCType, ProfileDepth,Const, Result, SiteCode, SiteVisitID) %>%
+  select(QCType, ProfileDepth,Const, Result) %>%
   na.omit() %>%
   pivot_wider(names_from = "Const", values_from = "Result") %>%
   gt() %>% 
@@ -46,14 +49,25 @@ data2018 %>%
 ## Filter Table
 
 ```{r}
-# pH_secchi_table <- 
+#| label: tbl-PH-Secchi
+#| tbl-cap: pH and Secchi Table
   
   data2018 %>% 
-    filter(Collector == "JRP", RunCode == "Passadumkeag", RunDate == "2018-07-18") %>% 
-  select(Const, Result, QCType, Date, Time ) %>% 
+    # filter(Collector == "JRP", RunCode == "Passadumkeag", RunDate == "2018-07-18") %>%
+  select(Const, Result, QCType, Date, Time, SiteVisitID ) %>% 
   filter(Const %in% c("Secchi","pH")) %>% 
   pivot_wider(names_from = c(Const, QCType),
               values_from = Result) %>%
+  mutate(pH_Duplicate = as.character(pH_Duplicate),
+    pH_Duplicate = replace_na(pH_Duplicate, "-"),
+    Secchi_Duplicate = as.character(Secchi_Duplicate),
+    Secchi_Duplicate = replace_na(Secchi_Duplicate, "-"),
+     Secchi_Regular = as.character(Secchi_Regular),
+    Secchi_Regular = replace_na(Secchi_Regular, "-"),
+        pH_Regular = as.character(pH_Regular),
+    pH_Regular = replace_na(pH_Regular, "-")) %>% 
+    filter(SiteVisitID == "JanS7-201871875659") %>%
+    select(!SiteVisitID) %>% 
   gt() %>% 
     cols_move(
     columns = "pH_Duplicate",
@@ -61,8 +75,23 @@ data2018 %>%
   ) %>% 
       opt_row_striping()
   
+ 
+  
   
 
+```
+
+```{r fitler_table}
+#| label: tbl-filter
+#| tbl-cap: Filter Table
+
+filter_table <- data2018 %>% 
+  filter(SiteVisitID == "JanS7-201871875659") %>% 
+  select(FilterName) %>% 
+  distinct() %>%
+  gt() %>%
+  cols_align(align = "center")
+filter_table
 ```
 
 ## Method Table
@@ -70,15 +99,24 @@ data2018 %>%
 ```{r sample_table}
 #| label: tbl-sample
 #| tbl-cap: Sample Table
-sample_table <- data2018 %>% 
+data2018 %>% 
   filter(SiteVisitID == "JanS7-201871875659") %>% 
   select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>% 
   group_by(LabAbbrev) %>% 
-  distinct() %>% #removes all the row that are the same, unsure if we are keeping them
+  distinct() %>% 
   gt() %>%
-  tab_style(style = cell_fill(color = "lightgreen"),
-            locations = cells_body(columns = c(CollMethod, SampleDepth),
-                                   rows = CollMethod == "CO-E" & SampleDepth == 4))%>%
+tab_style(
+    style = cell_fill(color = "lightgreen"),
+    locations = cells_body(columns = c(SampleDepth),
+                           rows = CollMethod == "GS" & SampleDepth == 0)) %>%
+  tab_style(
+    style = cell_fill(color = "red"),
+    locations = cells_body(columns = c(SampleDepth),
+                           rows = CollMethod == "CO-E" & SampleDepth == 0)) %>%
+  tab_style(
+    style = cell_fill(color = "red"),
+    locations = cells_body(columns = c(SampleDepth),
+                           rows = CollMethod == "GS" & SampleDepth != 0)) %>%
   cols_align(align = "center")
-sample_table
+
 ```
