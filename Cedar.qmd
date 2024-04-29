@@ -52,7 +52,7 @@ data2018_subset
 ```{r}
 pwalk(
   .l = data2018_subset,                      
-  .f = quarto_render,                   
+  .f = quarto_render, 
   .progress = TRUE                              
 )
 ```
