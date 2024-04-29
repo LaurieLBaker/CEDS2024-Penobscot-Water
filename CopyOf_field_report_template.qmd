@@ -21,27 +21,6 @@ library(htmltools)
 data2018 <- readRDS("data/PINCommEngData (2).RData")
 ```
 
-## Site Visit Information {.smaller}
-
-```{r site_info_tables}
-site_info1 <- data2018 %>% 
-  filter(SiteVisitID == "JasonS7-2018924111226") %>% 
-  select(SiteVisitID, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth, SamplingAirTemp) %>%
-  distinct() %>% 
-  gt() %>%
-  cols_align(align = "center") %>% 
-  tab_header(title = "Site information") #to directly title the tables if wanted
-site_info1
-
-site_info2 <-data2018 %>% 
-  filter(SiteVisitID == "JasonS7-2018924111226") %>% 
-  select(Weather, RivCond, WaterLevel, FoamRank, FoamSource, SiteVisitComment) %>% 
-  distinct() %>% 
-  gt() %>%
-  cols_align(align = "center")
-site_info2 #two separate tables to allow for an easier comparision
-```
-
 ## Sample Table
 
 ```{r sample_table}
@@ -120,12 +99,23 @@ data2018 %>%
   distinct() %>% 
   gt() 
 
-data2018 %>%
-  filter(SiteVisitID == "JanS5-2018925102747") %>% 
-  mutate(PrimCollector = str_extract(Collectors, "^[A-Za-z]{2,3}")) %>%
-  select(SiteCode, SiteVisitStartTime, SampleDepth, SiteDepthMethod, SamplingAirTemp, RivCond, FoamRank, FoamSource, Weather, WaterLevel) %>%
-  distinct() %>%
-  gt()
+data2018 %>% 
+  filter(SiteVisitID == "JasonS7-2018924111226") %>% 
+  select(SiteVisitID, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
+  distinct() %>% 
+  gt() %>%
+  cols_align(align = "center") %>% 
+  tab_header(title = "Site information")
+
+data2018 %>% 
+  filter(SiteVisitID == "JasonS7-2018924111226") %>% 
+  select(Weather, SamplingAirTemp, RivCond, WaterLevel, FoamRank, FoamSource, SiteVisitComment) %>% 
+  distinct() %>% 
+  gt() %>%
+  cols_align(align = "center") %>%
+  tab_header(title = "Abiotic Factors")
+
+
 ```
 
 ## Samples
