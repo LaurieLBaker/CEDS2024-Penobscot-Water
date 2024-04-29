@@ -52,7 +52,8 @@ data2018_subset
 ```{r}
 pwalk(
   .l = data2018_subset,                      
-  .f = quarto_render, 
+  .f = quarto_render,
+  input = here("CopyOf_field_report_template.qmd"),
   .progress = TRUE                              
 )
 ```
