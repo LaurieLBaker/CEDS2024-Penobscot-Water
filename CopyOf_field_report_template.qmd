@@ -123,15 +123,30 @@ A section at the beginning or at the end of each file summary report for a run s
 ::: panel-tabset
 ## Collection Information
 
+```{r}
+data2018 %>% 
+  filter(SiteVisitID == "JanS5-2018925102747") %>% 
+  mutate(PrimCollector = str_extract(Collectors, "^[A-Za-z]{2,3}")) %>%
+  select(RunCode, RunDate, PrimCollector) %>% 
+  distinct() %>% 
+  gt() 
+
+data2018 %>%
+  filter(SiteVisitID == "JanS5-2018925102747") %>% 
+  mutate(PrimCollector = str_extract(Collectors, "^[A-Za-z]{2,3}")) %>%
+  select(SiteCode, SiteVisitStartTime, SampleDepth, SiteDepthMethod, SamplingAirTemp, RivCond, FoamRank, FoamSource, Weather, WaterLevel) %>%
+  distinct() %>%
+  gt()
+```
+
 ## Samples
 
 ```{r, xq}
-result_table <- data2018 %>%
+data2018 %>%
   filter(Collectors == "JRP;", RunCode == "Trib2A", RunDate == "2018-09-25") %>%
   select(SiteVisitID, WaterBody:SiteVisitStartTime, SiteDepth:ResultFlag_ID) %>%
   distinct() %>%
   gt()
-result_table
 ```
 
 ## DO and Temperature
