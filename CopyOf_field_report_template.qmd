@@ -21,17 +21,6 @@ library(htmltools)
 data2018 <- readRDS("data/PINCommEngData (2).RData")
 ```
 
-## Field Report Header {.smaller}
-
-```{r header}
-data2018 %>% 
-  filter(SiteVisitID == "JasonS7-2018924111226") %>% 
-  mutate(PrimCollector = str_extract(Collectors, "^[A-Za-z]{2,3}")) %>%
-  select(RunCode, RunDate, PrimCollector) %>% 
-  distinct() %>% 
-  gt() 
-```
-
 ## Site Visit Information {.smaller}
 
 ```{r site_info_tables}
