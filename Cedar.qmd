@@ -5,10 +5,7 @@ format:
   html:
     toc: true
 params:
-  Collectors:
-  RunDate:
-  RunCode:
-  SiteName: 
+  Collectors: "placeholder"
 ---
 
 ```{r load-packages-and-data, echo = FALSE, message = FALSE}
@@ -22,8 +19,11 @@ library(knitr)
 library(rlang)
 library(kableExtra)
 library(tibble)
+library(rmarkdown)
 
 data2018 <- readRDS("data/PINCommEngData (2).RData")
+
+data <- filter(data2018, Collectors == params$Collectors)
 ```
 
 ```{r}
@@ -33,53 +33,34 @@ collectors <- data2018 %>%
 ```
 
 ```{r}
-Collector <- map_chr(collectors, \(current_collectors){
-  knit_child(
-    input = "field_child_doc.qmd",
-    quiet = TRUE
-    )
-})
-
-cat(Collector, sep = "\n")
+# Collector <- map_chr(collectors, \(current_collectors){
+#   knit_child(
+#     input = "field_child_doc.qmd",
+#     quiet = TRUE
+#     )
+# })
+# 
+# cat(Collector, sep = "\n")
 ```
-
-::: panel-tabset
-## Collection Information
 
 ```{r}
-Collector <- map_chr(collectors, \(current_collectors){
-  knit_child(
-    input = "collection_child_doc.qmd",
-    quiet = TRUE
-    )
-})
+#| output: asis
 
-cat(Collector, sep = "\n")
+collectors <- unique(data2018$Collectors)
+
+files_out <- tolower(collectors) %>% 
+  str_replace_all(" ", "_") %>% 
+  paste0(., "_report.html")
+
+
+map2(
+  collectors, 
+  files_out,
+  knit(
+    input = "test_field_child_doc.qmd", 
+    output = NULL
+  )
+)
 ```
 
-## Sample Information
 
-```{r}
-Collector <- map_chr(collectors, \(current_collectors){
-  knit_child(
-    input = "samples_child_doc.qmd",
-    quiet = TRUE
-    )
-})
-
-cat(Collector, sep = "\n")
-```
-
-## DO & Temperature
-
-```{r}
-Collector <- map_chr(collectors, \(current_collectors){
-  knit_child(
-    input = "do_temp_child_doc.qmd",
-    quiet = TRUE
-    )
-})
-
-cat(Collector, sep = "\n")
-```
-:::
