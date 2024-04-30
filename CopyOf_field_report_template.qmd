@@ -24,7 +24,6 @@ data2018 <- readRDS("data/PINCommEngData (2).RData")
 
 ## Controls Summary
 
-
 ### Collector: JRP
 
 Run Date: **2018-09-19** Run: **Passadumkeag**
@@ -51,7 +50,7 @@ data2018 %>%
 
 data2018 %>% 
   filter(SiteVisitID == "JanS5-2018925102747") %>% 
-  select(Weather, SamplingAirTemp, RivCond, WaterLevel, FoamRank, FoamSource, SiteVisitComment) %>% 
+  select(Weather, SamplingAirTemp, RivCond, WaterLevel, FoamRank, FoamSource) %>% 
   rename("Air Temp" = "SamplingAirTemp",
          "River Cond" = "RivCond", 
          "Water Level" = "WaterLevel",
@@ -79,22 +78,28 @@ data2018 %>%
 
 data2018 %>% 
   filter(SiteVisitID == "JanS7-201871875659") %>% 
-  select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>% 
+  select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>%
+  rename("Sample Name" = "SampleName", 
+         "Project" = "ProjectCode", 
+         "Container" = "CntrType", 
+         "QC" = "QCType",
+         "Method" = "CollMethod",
+         "Depth" = "SampleDepth") %>%
   group_by(LabAbbrev) %>% 
   distinct() %>% 
   gt() %>%
 tab_style(
     style = cell_fill(color = "lightgreen"),
-    locations = cells_body(columns = c(SampleDepth),
-                           rows = CollMethod == "GS" & SampleDepth == 0)) %>%
+    locations = cells_body(columns = c(Depth),
+                           rows = Method == "GS" & Depth == 0)) %>%
   tab_style(
     style = cell_fill(color = "red"),
-    locations = cells_body(columns = c(SampleDepth),
-                           rows = CollMethod == "CO-E" & SampleDepth == 0)) %>%
+    locations = cells_body(columns = c(Depth),
+                           rows = Method == "CO-E" & Depth == 0)) %>%
   tab_style(
     style = cell_fill(color = "red"),
-    locations = cells_body(columns = c(SampleDepth),
-                           rows = CollMethod == "GS" & SampleDepth != 0)) %>%
+    locations = cells_body(columns = c(Depth),
+                           rows = Method == "GS" & Depth != 0)) %>%
   cols_align(align = "center")
 ```
 
@@ -114,8 +119,9 @@ data2018 %>%
   filter(Const %in% c("Dissolved Oxygen", "water temperature"),
          SiteDepthMethod == "Secchi disk") %>% 
   select(QCType, ProfileDepth,Const, Result) %>%
+  rename("QC" = "QCType", "Depth" = "ProfileDepth", "Constituant" = "Const") %>%
   na.omit() %>%
-  pivot_wider(names_from = "Const", values_from = "Result") %>%
+  pivot_wider(names_from = "Constituant", values_from = "Result") %>%
   gt() %>% 
     opt_row_striping()
 
@@ -135,17 +141,22 @@ data2018 %>%
     pH_Regular = replace_na(pH_Regular, "-")) %>% 
     filter(SiteVisitID == "JanS7-201871875659") %>%
     select(!SiteVisitID) %>% 
+   rename("pH Regular" = "pH_Regular",
+          "pH Duplicate" = "pH_Duplicate",
+          "Secchi Regular" = "Secchi_Regular",
+          "Secchi Duplicate" = "Secchi_Duplicate") %>%
   gt() %>% 
     cols_move(
-    columns = "pH_Duplicate",
-    after = "pH_Regular"
+    columns = "pH Duplicate",
+    after = "pH Regular"
   ) %>% 
       opt_row_striping()
 
 
 data2018 %>% 
   filter(SiteVisitID == "JanS7-201871875659") %>% 
-  select(FilterName) %>% 
+  select(FilterName) %>%
+  rename("Filter Name" = "FilterName") %>%
   distinct() %>%
   gt() %>%
   cols_align(align = "center")
