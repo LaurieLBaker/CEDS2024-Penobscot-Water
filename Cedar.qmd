@@ -57,8 +57,8 @@ map2(
   collectors, 
   files_out,
   knit(
-    input = "test_field_child_doc.qmd", 
-    output = NULL
+    input = "test_field_child_doc.qmd" 
+    
   )
 )
 ```
