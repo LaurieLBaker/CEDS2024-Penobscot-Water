@@ -27,8 +27,8 @@ data2018 <- readRDS("data/PINCommEngData (2).RData")
 ```
 
 ```{r}
-collectors <- data2018 %>% 
-  distinct(Collectors) %>% 
+collectors <- data2018 %>%
+  distinct(Collectors) %>%
   pull()
 ```
 
@@ -36,7 +36,6 @@ collectors <- data2018 %>%
 Collector <- map_chr(collectors, \(current_collectors){
   knit_child(
     input = "field_child_doc.qmd",
-    envir = env(),
     quiet = TRUE
     )
 })
@@ -44,6 +43,43 @@ Collector <- map_chr(collectors, \(current_collectors){
 cat(Collector, sep = "\n")
 ```
 
+::: panel-tabset
+## Collection Information
 
+```{r}
+Collector <- map_chr(collectors, \(current_collectors){
+  knit_child(
+    input = "collection_child_doc.qmd",
+    quiet = TRUE
+    )
+})
 
+cat(Collector, sep = "\n")
+```
 
+## Sample Information
+
+```{r}
+Collector <- map_chr(collectors, \(current_collectors){
+  knit_child(
+    input = "samples_child_doc.qmd",
+    quiet = TRUE
+    )
+})
+
+cat(Collector, sep = "\n")
+```
+
+## DO & Temperature
+
+```{r}
+Collector <- map_chr(collectors, \(current_collectors){
+  knit_child(
+    input = "do_temp_child_doc.qmd",
+    quiet = TRUE
+    )
+})
+
+cat(Collector, sep = "\n")
+```
+:::
