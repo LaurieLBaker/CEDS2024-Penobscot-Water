@@ -17,6 +17,7 @@ library(readr)
 library(gt) #for tables
 library(stringr)
 library(htmltools)
+library(lubridate)
 ```
 
 ```{r load_data}
@@ -30,17 +31,35 @@ data2018 <- readRDS("data/PINCommEngData (2).RData")
 Run Date: **2018-09-19** Run: **Passadumkeag**
 
 ```{r}
-c <- data2018 %>%
-  filter(Collector == "JRP", RunCode == "Passadumkeag", RunDate == "2018-09-19")
+
+LabAnalysisDate <- as.Date(data2018$LabAnalysisDatetime)
+
+SampleCollectionDate <- as.Date(as.numeric(data2018$SiteVisitStartTime))
 
 data2018 %>%
-  mutate(
-    Constituents = case_when(
-      Constituents == "Msmt" ~ Const,
-      TRUE ~ Constituents
-    ),
-    ResultValue = coalesce(Result, ResultValue)) %>%
-  filter(Collector == "JRP", RunCode == "Passadumkeag", RunDate == "2018-09-19") %>%
-  select(SiteCode, SiteVisitStartTime, Constituents, ResultValue, QCType, IncubationLength, LabAnalysisDatetime, SampleDatetime) %>%
-  gt()
+  mutate(HoldTime = LabAnalysisDate - SampleCollectionDate)
+
+data2018 %>%
+  filter(SiteVisitID == "JanS5-2018925102747") %>%
+  select(SiteCode, SiteVisitStartTime, ResultValue, QCType, IncubationLength, LabAnalysisDatetime) %>%
+  distinct() %>% 
+  gt() %>%
+  cols_align(align = "center") 
+
+```
+
+```{r}
+#c <- data2018 %>%
+#  filter(Collector == "JRP", RunCode == "Passadumkeag", #RunDate == "2018-09-19")
+
+#data2018 %>%
+#  mutate(
+ #   Constituents = case_when(
+ #     Constituents == "Msmt" ~ Const,
+#      TRUE ~ Constituents
+#    ),
+ #   ResultValue = coalesce(Result, ResultValue)) %>%
+ # filter(Collector == "JRP", RunCode == "Passadumkeag", #RunDate == "2018-09-19") %>%
+#  select(SiteCode, SiteVisitStartTime, Constituents, ResultValue, QCType, IncubationLength, LabAnalysisDatetime, SampleDatetime) %>%
+ # gt()
 ```
