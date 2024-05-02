@@ -1,10 +1,10 @@
-### `r paste("Collector", which(collectors == current_collectors), ":", current_collectors)`
+### `r paste("Collector", which(collectors == current_Collectors), ":", current_Collectors)`
 
 ## Samples
 
-```{r echo = FALSE, message = FALSE}
+```{r echo = FALSE, message = FALSE, warning = FALSE}
 data2018 %>%
-  filter(Collectors == current_collectors) %>%
+  filter(Collectors == current_Collectors) %>%
   select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>%
   group_by(LabAbbrev) %>%
   distinct()

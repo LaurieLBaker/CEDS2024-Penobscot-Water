@@ -5,10 +5,10 @@ format:
   html:
     toc: true
 params:
-  Collectors: "placeholder"
+  Collectors: "JRP;"
 ---
 
-```{r load-packages-and-data, echo = FALSE, message = FALSE}
+```{r load-packages-and-data, echo = FALSE, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(data.table)
 library(gt)
@@ -26,28 +26,44 @@ data2018 <- readRDS("data/PINCommEngData (2).RData")
 data <- filter(data2018, Collectors == params$Collectors)
 ```
 
-```{r}
-collectors <- data2018 %>%
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+collectors <- data %>%
+  filter(Collectors == params$Collectors) %>% 
   distinct(Collectors) %>%
+  pull()
+
+rundate <- data %>% 
+  filter(RunDate == RunDate) %>%
+  select(RunDate) %>% 
+  pull()
+
+runcode <- data %>% 
+  filter(RunCode == RunCode) %>% 
+  select(RunCode) %>% 
+  pull()
+
+sitecode <- data %>% 
+  filter(SiteCode == SiteCode) %>% 
+  select(SiteCode) %>% 
   pull()
 ```
 
-```{r}
-# Collector <- map_chr(collectors, \(current_collectors){
-#   knit_child(
-#     input = "field_child_doc.qmd",
-#     quiet = TRUE
-#     )
-# })
-# 
-# cat(Collector, sep = "\n")
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+#| output: asis
+#|
+Collector <- map_chr(collectors, \(current_Collectors){
+  knit_child(
+    input = "samples_child_doc.qmd",
+    envir = env(), 
+    quiet = TRUE
+    )
+})
+
+cat(Collector, sep = "\n")
 ```
 
-```{r}
-#| output: asis
-
-collectors <- unique(data2018$Collectors)
-
+<<<<<<< HEAD
 files_out <- tolower(collectors) %>% 
   str_replace_all(" ", "_") %>% 
   paste0(., "_report.html")
@@ -61,6 +77,26 @@ map2(
     output = NULL
   )
 )
+=======
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# #| output: asis
+# 
+# collectors <- unique(data2018$Collectors)
+# 
+# files_out <- tolower(collectors) %>%
+#   str_replace_all(" ", "_") %>%
+#   paste0(., "_report.html")
+# 
+# 
+# map2(
+#   collectors,
+#   files_out,
+#   knit(
+#     input = "samples_child_doc.qmd",
+#     output = NULL
+#   )
+# )
+>>>>>>> 8e32040 (Create additional vectors for parameters)
 ```
 
 

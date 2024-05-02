@@ -8,7 +8,7 @@ params:
   Collectors: "JRP;"
 ---
 
-```{r echo = FALSE, message = FALSE}
+```{r echo = FALSE, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(data.table)
 library(gt)
@@ -22,6 +22,12 @@ library(tibble)
 
 data2018 <- readRDS("data/PINCommEngData (2).RData")
 ```
+
+# `r data2018$RunDate`
+
+## `r data2018$RunCode` 
+
+### `r data2018$SiteCode`
 
 ::: panel-tabset
 ## Collection Information
