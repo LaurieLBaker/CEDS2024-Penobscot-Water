@@ -125,6 +125,8 @@ data2018 %>%
   gt() %>% 
     opt_row_striping()
 
+  #pivot_wider(names_from = "QC", values_from = "Dissolved Oxygen") %>%
+  
 data2018 %>% 
     # filter(Collector == "JRP", RunCode == "Passadumkeag", RunDate == "2018-07-18") %>%
   select(Const, Result, QCType, Time, SiteVisitID ) %>% 
