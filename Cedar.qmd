@@ -63,21 +63,6 @@ Collector <- map_chr(collectors, \(current_Collectors){
 cat(Collector, sep = "\n")
 ```
 
-<<<<<<< HEAD
-files_out <- tolower(collectors) %>% 
-  str_replace_all(" ", "_") %>% 
-  paste0(., "_report.html")
-
-
-map2(
-  collectors, 
-  files_out,
-  knit(
-    input = "test_field_child_doc.qmd",
-    output = NULL
-  )
-)
-=======
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # #| output: asis
 # 
@@ -96,7 +81,6 @@ map2(
 #     output = NULL
 #   )
 # )
->>>>>>> 8e32040 (Create additional vectors for parameters)
 ```
 
 
