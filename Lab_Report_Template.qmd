@@ -5,6 +5,7 @@ toc: true
 editor: visual
 execute:
   echo: false
+  warning: false
 ---
 
 ```{r install.packages, include=FALSE}
