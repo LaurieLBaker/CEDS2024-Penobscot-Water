@@ -37,7 +37,7 @@ Run Date: **2018-09-19** Run: **Passadumkeag**
 
 data2018 %>% 
   filter(SiteVisitID == "JanS5-2018925102747") %>% 
-  select(RunCode ,WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
+  select(RunCode, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
   rename("Water Body" = "WaterBody",
          "Site" = "SiteCode",
          "Run Code" = "RunCode",
@@ -127,7 +127,7 @@ data2018 %>%
 
 data2018 %>% 
     # filter(Collector == "JRP", RunCode == "Passadumkeag", RunDate == "2018-07-18") %>%
-  select(Const, Result, QCType, Date, Time, SiteVisitID ) %>% 
+  select(Const, Result, QCType, Time, SiteVisitID ) %>% 
   filter(Const %in% c("Secchi","pH")) %>% 
   pivot_wider(names_from = c(Const, QCType),
               values_from = Result) %>%
