@@ -1,11 +1,17 @@
 ---
 title: "Sample Information"
-author: "Cedar Callahan"
 format:
   html:
     toc: true
 params:
   Collectors: "JRP;"
+  RunDate: "data2018$RunDate"
+  RunCode: "data2018$RunCode"
+  SiteCode: "data2018$SiteCode"
+execute:
+  echo: false
+  warning: false
+  message: false
 ---
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
@@ -67,52 +73,52 @@ data2018 %>%
 ## Samples
 
 ```{r echo = FALSE, message = FALSE}
-# data2018 %>%
-#   filter(Collectors == params$Collectors) %>%
-#   select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>%
-#   group_by(LabAbbrev) %>%
-#   distinct()
+data2018 %>%
+  filter(Collectors == params$Collectors) %>%
+  select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>%
+  group_by(LabAbbrev) %>%
+  distinct()
 ```
 
 ## DO and Temperature
 
 ```{r echo = FALSE, message = FALSE}
-# data2018$SampleDatetime <- as.POSIXct(data2018$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
-# 
-# data2018$Date <- as.Date(data2018$SampleDatetime)
-# data2018$Time <- format(data2018$SampleDatetime, format = "%H:%M:%S")
-# 
-# 
-# 
-# data2018 %>%
-#   filter(Collectors == params$Collectors) %>%
-#   filter(Const %in% c("Dissolved Oxygen", "water temperature"),
-#          SiteDepthMethod == "Secchi disk") %>%
-#   select(QCType, ProfileDepth,Const, Result) %>%
-#   na.omit() %>%
-#   pivot_wider(names_from = "Const", values_from = "Result")
-# 
-# data2018 %>%
-#   filter(Collectors == params$Collectors) %>%
-#   select(Const, Result, QCType, Date, Time, SiteVisitID ) %>%
-#   filter(Const %in% c("Secchi","pH")) %>%
-#   pivot_wider(names_from = c(Const, QCType),
-#               values_from = Result) %>%
-#   mutate(pH_Duplicate = as.character(pH_Duplicate),
-#     pH_Duplicate = replace_na(pH_Duplicate, "-"),
-#     Secchi_Duplicate = as.character(Secchi_Duplicate),
-#     Secchi_Duplicate = replace_na(Secchi_Duplicate, "-"),
-#      Secchi_Regular = as.character(Secchi_Regular),
-#     Secchi_Regular = replace_na(Secchi_Regular, "-"),
-#         pH_Regular = as.character(pH_Regular),
-#     pH_Regular = replace_na(pH_Regular, "-")) %>%
-#     filter(SiteVisitID == "JanS7-201871875659") %>%
-#     select(!SiteVisitID)
-# 
-# 
-# data2018 %>%
-#   filter(Collectors == params$Collectors) %>%
-#   select(FilterName) %>%
-#   distinct()
+data2018$SampleDatetime <- as.POSIXct(data2018$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
+
+data2018$Date <- as.Date(data2018$SampleDatetime)
+data2018$Time <- format(data2018$SampleDatetime, format = "%H:%M:%S")
+
+
+
+data2018 %>%
+  filter(Collectors == params$Collectors) %>%
+  filter(Const %in% c("Dissolved Oxygen", "water temperature"),
+         SiteDepthMethod == "Secchi disk") %>%
+  select(QCType, ProfileDepth,Const, Result) %>%
+  na.omit() %>%
+  pivot_wider(names_from = "Const", values_from = "Result")
+
+data2018 %>%
+  filter(Collectors == params$Collectors) %>%
+  select(Const, Result, QCType, Date, Time, SiteVisitID ) %>%
+  filter(Const %in% c("Secchi","pH")) %>%
+  pivot_wider(names_from = c(Const, QCType),
+              values_from = Result) %>%
+  mutate(pH_Duplicate = as.character(pH_Duplicate),
+    pH_Duplicate = replace_na(pH_Duplicate, "-"),
+    Secchi_Duplicate = as.character(Secchi_Duplicate),
+    Secchi_Duplicate = replace_na(Secchi_Duplicate, "-"),
+     Secchi_Regular = as.character(Secchi_Regular),
+    Secchi_Regular = replace_na(Secchi_Regular, "-"),
+        pH_Regular = as.character(pH_Regular),
+    pH_Regular = replace_na(pH_Regular, "-")) %>%
+    filter(SiteVisitID == "JanS7-201871875659") %>%
+    select(!SiteVisitID)
+
+
+data2018 %>%
+  filter(Collectors == params$Collectors) %>%
+  select(FilterName) %>%
+  distinct()
 ```
 :::

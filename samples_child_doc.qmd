@@ -1,10 +1,16 @@
-### `r paste("Collector", which(collectors == current_Collectors), ":", current_Collectors)`
+# `r paste("RunDate", which(rundate == current_RunDate), ":", current_RunDate)`
+## `paste("RunCode", which(runcode == current_RunCode), ":", current_RunCode)`
+### `paste("SiteCode", which(sitecode == current_SiteCode), ":", current_SiteCode)`
+
+
 
 ## Samples
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 data2018 %>%
-  filter(Collectors == current_Collectors) %>%
+  filter(RunDate == as_date(current_RunDate),
+         RunCode == current_RunCode,
+         SiteCode == current_SiteCode) %>%
   select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>%
   group_by(LabAbbrev) %>%
   distinct()

@@ -1,11 +1,14 @@
 ---
-title: "Sample Information"
+title: "`r paste(params$Collectors)`"
 author: "Cedar Callahan"
 format:
   html:
     toc: true
 params:
   Collectors: "JRP;"
+  RunDate: "data2018$RunDate"
+  RunCode: "data2018$RunCode"
+  SiteCode: "data2018$SiteCode"
 ---
 
 ```{r load-packages-and-data, echo = FALSE, message = FALSE, warning = FALSE}
@@ -26,61 +29,59 @@ data2018 <- readRDS("data/PINCommEngData (2).RData")
 data <- filter(data2018, Collectors == params$Collectors)
 ```
 
+# Collector: `r params$Collector`
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 collectors <- data %>%
-  filter(Collectors == params$Collectors) %>% 
+  filter(Collectors == params$Collectors) %>%
   distinct(Collectors) %>%
   pull()
 
-rundate <- data %>% 
+rundate <- data %>%
   filter(RunDate == RunDate) %>%
-  select(RunDate) %>% 
+  select(RunDate) %>%
+  mutate(RunDate = as.character(RunDate)) %>%
   pull()
 
-runcode <- data %>% 
-  filter(RunCode == RunCode) %>% 
-  select(RunCode) %>% 
+runcode <- data %>%
+  filter(RunCode == RunCode) %>%
+  select(RunCode) %>%
   pull()
 
-sitecode <- data %>% 
-  filter(SiteCode == SiteCode) %>% 
-  select(SiteCode) %>% 
+sitecode <- data %>%
+  filter(SiteCode == SiteCode) %>%
+  select(SiteCode) %>%
   pull()
-```
-
-```{r echo = FALSE, message = FALSE, warning = FALSE}
-#| output: asis
-#|
-Collector <- map_chr(collectors, \(current_Collectors){
-  knit_child(
-    input = "samples_child_doc.qmd",
-    envir = env(), 
-    quiet = TRUE
-    )
-})
-
-cat(Collector, sep = "\n")
 ```
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # #| output: asis
 # 
-# collectors <- unique(data2018$Collectors)
+# pmap_list <- list(rundate, runcode, sitecode)
 # 
-# files_out <- tolower(collectors) %>%
-#   str_replace_all(" ", "_") %>%
-#   paste0(., "_report.html")
-# 
-# 
-# map2(
-#   collectors,
-#   files_out,
-#   knit(
+# RunDate <- pmap(pmap_list, \(current_RunDate, current_RunCode, current_SiteCode){
+#   knit_child(
 #     input = "samples_child_doc.qmd",
-#     output = NULL
-#   )
-# )
+#     envir = env(),
+#     quiet = TRUE
+#     )
+# })
+# 
+# print(RunDate, sep = "\n")
 ```
+
+```{r}
+collector <- tibble(collectors)
+
+reports <- tibble(
+  input = "test_field_child_doc.qmd",
+  output_file = str_glue("{collectors}.html"),
+  execute_params = map(collector, ~list(collector = .))
+)
+
+reports %>% 
+  pwalk(quarto_render)
+```
+
 
 

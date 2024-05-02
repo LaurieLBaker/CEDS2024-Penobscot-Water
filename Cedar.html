@@ -46,8 +46,15 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#collector-1-jrp" id="toc-collector-1-jrp" class="nav-link active" data-scroll-target="#collector-1-jrp">Collector 1 : JRP;</a></li>
+  <li><a href="#collector-jrp" id="toc-collector-jrp" class="nav-link active" data-scroll-target="#collector-jrp">Collector: JRP;</a></li>
+  <li><a href="#rundate-jrp" id="toc-rundate-jrp" class="nav-link" data-scroll-target="#rundate-jrp">RunDate : JRP;</a>
+  <ul class="collapse">
+  <li><a href="#pasteruncode-whichruncode-current_runcode-current_runcode" id="toc-pasteruncode-whichruncode-current_runcode-current_runcode" class="nav-link" data-scroll-target="#pasteruncode-whichruncode-current_runcode-current_runcode"><code>paste("RunCode", which(runcode == current_RunCode), ":", current_RunCode)</code></a>
+  <ul class="collapse">
+  <li><a href="#pastesitecode-whichsitecode-current_sitecode-current_sitecode" id="toc-pastesitecode-whichsitecode-current_sitecode-current_sitecode" class="nav-link" data-scroll-target="#pastesitecode-whichsitecode-current_sitecode-current_sitecode"><code>paste("SiteCode", which(sitecode == current_SiteCode), ":", current_SiteCode)</code></a></li>
+  </ul></li>
   <li><a href="#samples" id="toc-samples" class="nav-link" data-scroll-target="#samples">Samples</a></li>
+  </ul></li>
   </ul>
 </nav>
 </div>
@@ -76,106 +83,29 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<section id="collector-1-jrp" class="level3">
-<h3 class="anchored" data-anchor-id="collector-1-jrp">Collector 1 : JRP;</h3>
+<section id="collector-jrp" class="level1">
+<h1>Collector: JRP;</h1>
+</section>
+<section id="rundate-jrp" class="level1">
+<h1>RunDate : JRP;</h1>
+<section id="pasteruncode-whichruncode-current_runcode-current_runcode" class="level2">
+<h2 class="anchored" data-anchor-id="pasteruncode-whichruncode-current_runcode-current_runcode"><code>paste("RunCode", which(runcode == current_RunCode), ":", current_RunCode)</code></h2>
+<section id="pastesitecode-whichsitecode-current_sitecode-current_sitecode" class="level3">
+<h3 class="anchored" data-anchor-id="pastesitecode-whichsitecode-current_sitecode-current_sitecode"><code>paste("SiteCode", which(sitecode == current_SiteCode), ":", current_SiteCode)</code></h3>
+</section>
 </section>
 <section id="samples" class="level2">
 <h2 class="anchored" data-anchor-id="samples">Samples</h2>
 <div class="cell">
-<<<<<<< HEAD
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>collectors <span class="ot">&lt;-</span> data2018 <span class="sc">%&gt;%</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(Collectors) <span class="sc">%&gt;%</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Collector &lt;- map_chr(collectors, \(current_collectors){</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   knit_child(</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#     input = "field_child_doc.qmd",</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#     quiet = TRUE</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#     )</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># })</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># cat(Collector, sep = "\n")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>collectors <span class="ot">&lt;-</span> <span class="fu">unique</span>(data2018<span class="sc">$</span>Collectors)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>files_out <span class="ot">&lt;-</span> <span class="fu">tolower</span>(collectors) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_replace_all</span>(<span class="st">" "</span>, <span class="st">"_"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(., <span class="st">"_report.html"</span>)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">map2</span>(</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  collectors, </span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  files_out,</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">knit</span>(</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">input =</span> <span class="st">"test_field_child_doc.qmd"</span> </span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>
-
-processing file: test_field_child_doc.qmd</code></pre>
-<p>|<br>
-| | 0% |<br>
-|…… | 11%<br>
-|<br>
-|……….. | 22% [unnamed-chunk-8] |<br>
-|…………….. | 33%<br>
-|<br>
-|………………….. | 44% [unnamed-chunk-9] |<br>
-|………………………. | 56%<br>
-|<br>
-|……………………………. | 67% [unnamed-chunk-10] |<br>
-|…………………………………. | 78%<br>
-|<br>
-|……………………………………… | 89% [unnamed-chunk-11] |<br>
-|……………………………………………| 100%</p>
-<pre><code>output file: test_field_child_doc.md</code></pre>
-<p>[[1]] NULL</p>
-<p>[[2]] NULL</p>
-<p>[[3]] NULL</p>
-<p>[[4]] NULL</p>
-<p>[[5]] NULL</p>
-<p>[[6]] NULL</p>
-<p>[[7]] NULL</p>
-<p>[[8]] NULL</p>
-<p>[[9]] NULL</p>
-<p>[[10]] NULL</p>
-<p>[[11]] NULL</p>
-<p>[[12]] NULL</p>
-<p>[[13]] NULL</p>
-<p>[[14]] NULL</p>
-<p>[[15]] NULL</p>
-<p>[[16]] NULL</p>
-<p>[[17]] NULL</p>
-<p>[[18]] NULL</p>
-<p>[[19]] NULL</p>
-<p>[[20]] NULL</p>
-<p>[[21]] NULL</p>
-<p>[[22]] NULL</p>
-<p>[[23]] NULL</p>
-<p>[[24]] NULL</p>
-=======
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 963 × 7
-# Groups:   LabAbbrev [3]
-   SampleName  ProjectCode CntrType      QCType CollMethod SampleDepth LabAbbrev
-   &lt;chr&gt;       &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;  &lt;chr&gt;            &lt;dbl&gt; &lt;chr&gt;    
- 1 TPIR9-      Baseline    Msmt          Regul… Msmt                NA Msmt     
- 2 TPIR9-9259  Baseline    Plastic Bott… Regul… GS                   0 PIN      
- 3 TPIR9-9271  Baseline    Plastic Bott… Regul… GS                   0 PIN      
- 4 TPIR14-     Baseline    Msmt          Regul… Msmt                NA Msmt     
- 5 TPIR14-     Baseline    Msmt          Dupli… Msmt                NA Msmt     
- 6 DUP-9265    Baseline    Plastic Bott… Dupli… GS                   0 PIN      
- 7 TPIR14-9266 Baseline    Plastic Bott… Split  GS                   0 PIN      
- 8 DUP-9277    Baseline    Plastic Bott… Dupli… GS                   0 PIN      
- 9 TPIR14-9278 Baseline    Plastic Bott… Split  GS                   0 PIN      
-10 TPIR16-     Baseline    Msmt          Regul… Msmt                NA Msmt     
-# ℹ 953 more rows</code></pre>
+<pre><code># A tibble: 0 × 7
+# Groups:   LabAbbrev [0]
+# ℹ 7 variables: SampleName &lt;chr&gt;, ProjectCode &lt;chr&gt;, CntrType &lt;chr&gt;,
+#   QCType &lt;chr&gt;, CollMethod &lt;chr&gt;, SampleDepth &lt;dbl&gt;, LabAbbrev &lt;chr&gt;</code></pre>
 </div>
 </div>
 </section>
->>>>>>> 8e32040 (Create additional vectors for parameters)
+</section>
 
 </main>
 <!-- /main column -->
