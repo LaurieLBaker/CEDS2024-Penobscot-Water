@@ -46,7 +46,14 @@ data2018 %>%
   distinct() %>% 
   gt() %>%
   cols_align(align = "center") %>% 
-  tab_header(title = "Site information")
+  tab_header(title = "Site information") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
 
 data2018 %>% 
   filter(SiteVisitID == "JanS5-2018925102747") %>% 
@@ -59,7 +66,14 @@ data2018 %>%
   distinct() %>% 
   gt() %>%
   cols_align(align = "center") %>%
-  tab_header(title = "Abiotic Factors")
+  tab_header(title = "Abiotic Factors") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
 
 data2018 %>% 
   filter(SiteVisitID == "JanS5-2018925102747") %>% 
@@ -67,7 +81,14 @@ data2018 %>%
   rename("Site Visit Notes" = "SiteVisitComment") %>%
   distinct() %>% 
   gt() %>%
-  cols_align(align = "center")
+  cols_align(align = "center") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
 
 
 ```
@@ -85,7 +106,7 @@ data2018 %>%
          "QC" = "QCType",
          "Method" = "CollMethod",
          "Depth" = "SampleDepth") %>%
-  group_by(LabAbbrev) %>% 
+  group_by(LabAbbrev) %>%
   distinct() %>% 
   gt() %>%
 tab_style(
@@ -100,7 +121,14 @@ tab_style(
     style = cell_fill(color = "red"),
     locations = cells_body(columns = c(Depth),
                            rows = Method == "GS" & Depth != 0)) %>%
-  cols_align(align = "center")
+  cols_align(align = "center") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
 ```
 
 ## DO and Temperature
@@ -133,7 +161,15 @@ data2018 %>%
     filter(SiteVisitID == "JanS7-201871875659") %>%
     select(!SiteVisitID) %>% 
   gt() %>% 
-      opt_row_striping()
+      opt_row_striping() %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
+
 
   
 
@@ -162,7 +198,14 @@ data2018 %>%
     columns = "pH Duplicate",
     after = "pH Regular"
   ) %>% 
-      opt_row_striping()
+      opt_row_striping() %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
 
 
 data2018 %>% 
@@ -171,7 +214,14 @@ data2018 %>%
   rename("Filter Name" = "FilterName") %>%
   distinct() %>%
   gt() %>%
-  cols_align(align = "center")
+  cols_align(align = "center") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
 
 ```
 :::

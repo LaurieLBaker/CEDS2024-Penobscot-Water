@@ -23,6 +23,64 @@ data2018 <- readRDS("data/PINCommEngData (2).RData")
 ```
 
 ```{r}
+data2018 %>% 
+  filter(SiteVisitID == "JanS5-2018925102747") %>% 
+  select(RunCode, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
+  rename("Water Body" = "WaterBody",
+         "Site" = "SiteCode",
+         "Run Code" = "RunCode",
+         "Time" = "SiteVisitStartTime",
+         "Depth" = "SiteDepth") %>%
+  distinct() %>% 
+  gt() %>%
+  cols_align(align = "center") %>% 
+  tab_header(title = "Site information") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
+
+data2018 %>% 
+  filter(SiteVisitID == "JanS5-2018925102747") %>% 
+  select(Weather, SamplingAirTemp, RivCond, WaterLevel, FoamRank, FoamSource) %>% 
+  rename("Air Temp" = "SamplingAirTemp",
+         "River Cond" = "RivCond", 
+         "Water Level" = "WaterLevel",
+         "Foam Rank" = "FoamRank",
+         "Foam Source" = "FoamSource") %>%
+  distinct() %>% 
+  gt() %>%
+  cols_align(align = "center") %>%
+  tab_header(title = "Abiotic Factors") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
+
+data2018 %>% 
+  filter(SiteVisitID == "JanS5-2018925102747") %>% 
+  select(SiteVisitComment) %>% 
+  rename("Site Visit Notes" = "SiteVisitComment") %>%
+  distinct() %>% 
+  gt() %>%
+  cols_align(align = "center") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
+```
+
+
+```{r}
 data2018$SampleDatetime <- as.POSIXct(data2018$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
 
 data2018$Date <- as.Date(data2018$SampleDatetime)
