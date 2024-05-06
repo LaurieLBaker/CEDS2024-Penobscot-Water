@@ -1,7 +1,6 @@
 ---
-title: Water Quality Lab Report Template
+title: "Water Quality Lab Report Template"
 format: html
-toc: true
 editor: visual
 execute:
   echo: false
@@ -32,19 +31,32 @@ Run Date: **2018-09-19** Run: **Passadumkeag**
 
 ```{r}
 
-LabAnalysisDate <- as.Date(data2018$LabAnalysisDatetime)
 
-SampleCollectionDate <- as.Date(as.numeric(data2018$SiteVisitStartTime))
+#LabAnalysisDate <- as.Date(data2018$LabAnalysisDatetime)
+#SampleCollectionDate <- as.Date(as.numeric(data2018$SiteVisitStartTime))
 
-data2018 %>%
-  mutate(HoldTime = LabAnalysisDate - SampleCollectionDate)
+SampleCollectionDate <- as.numeric(data2018$SiteVisitStartTime)
+LabAnalysisDate <- as.numeric(data2018$LabAnalysisDatetime)
+
+
+#HoldTime <- period(09-25-2018 10:41:09, 09-25-2018 10:29:07)
+
 
 data2018 %>%
   filter(SiteVisitID == "JanS5-2018925102747") %>%
-  select(SiteCode, SiteVisitStartTime, ResultValue, QCType, IncubationLength, LabAnalysisDatetime) %>%
+  select(SiteCode, SampleDatetime, ResultValue, QCType, ResultFlag_ID, IncubationLength, LabAnalysisDatetime) %>%
+  #period(c("2018-09-26 10:41:09", "9/25/2018 10:29:07"), c("day", "hour", "minute")) %>%
+  #mutate(HoldTime = LabAnalysisDate - SampleCollectionDate) %>%
   distinct() %>% 
   gt() %>%
-  cols_align(align = "center") 
+  cols_align(align = "center") %>%
+   tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
 
 ```
 
