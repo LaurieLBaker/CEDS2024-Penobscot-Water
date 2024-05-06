@@ -109,3 +109,38 @@ data2018 %>%
   gt() %>% 
       opt_row_striping()
 ```
+```{r}
+HoldTime2 <- as.double(difftime(lubridate::ymd_hms(data2018$SampleDatetime),
+                       lubridate::ymd_hms(data2018$LabAnalysisDatetime),
+                       units = "secs"), na.rm = TRUE) %>%
+  seconds_to_period()
+
+#LabAnalysisDate <- as.Date(data2018$LabAnalysisDatetime)
+#SampleCollectionDate <- as.Date(as.numeric(data2018$SampleDatetime)) %>%
+  #is.na() %>%
+  #format(SampleCollectionDate, "%Y-%m-%d")
+
+#SampleCollectionDate <- as.numeric(data2018$SiteVisitStartTime)
+#LabAnalysisDate <- as.numeric(data2018$LabAnalysisDatetime)
+
+
+#HoldTime <- period("09-25-2018 10:41:09", "09-25-2018 10:29:07")
+
+#date_1 = as.Date("2020-05-01") 
+#date_2 = as.Date("2020-06-01")
+
+#difftime(date_1, date_2, "days")
+
+#HoldTime <- difftime(time1 = "2018-09-25 10:29:53", time2 = "2018-09-26 10:41:09", units = "mins")
+
+#HoldTime <- period(data2018$SampleDatetime, data$LabAnalysisDatetime,"hours", na.rm = TRUE)
+
+#period(c("2018-09-26 10:41:09", "9/25/2018 10:29:07"), c("day", "hour", "minute")) %>%
+  #mutate(HoldTime = LabAnalysisDate - SampleCollectionDate) %>%
+
+HoldTime <- as.double(difftime(lubridate::ymd_hms("2018-09-26 10:41:09"),
+                   lubridate::ymd_hms("2018-09-25 10:29:53"),
+                   units = "secs")) %>%
+  seconds_to_period()
+```
+
