@@ -57,17 +57,17 @@ sitecode <- data %>%
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 #| output: asis
 
-pmap_list <- list(rundate, runcode, sitecode)
-
-RunDate <- pmap(pmap_list, \(current_RunDate, current_RunCode, current_SiteCode){
-  knit_child(
-    input = "samples_child_doc.qmd",
-    envir = env(),
-    quiet = TRUE
-    )
-})
-
-print(RunDate, sep = "\n")
+# pmap_list <- list(rundate, runcode, sitecode)
+# 
+# RunDate <- pmap(pmap_list, \(current_RunDate, current_RunCode, current_SiteCode){
+#   knit_child(
+#     input = "samples_child_doc.qmd",
+#     envir = env(),
+#     quiet = TRUE
+#     )
+# })
+# 
+# print(RunDate, sep = "\n")
 ```
 
 ```{r}
@@ -83,5 +83,24 @@ print(RunDate, sep = "\n")
 #   map2()
 ```
 
+```{r}
+data_reports <- data2018 %>% 
+  filter(Collectors == "JRP;") %>% 
+  mutate(output_format = "html",
+         output_file = paste(
+           str_remove(Collectors, ";"),
+           ".html",
+           sep = ""),
+  execute_params = map2(
+    rundate,
+    runcode,
+    \(rundate, runcode) list(rundate = rundate, runcode = runcode)
+  ))
+
+pwalk(
+  .l = data_reports,
+  .f = render,
+  input = here("test_field_child_doc.qmd")) 
+```
 
 
