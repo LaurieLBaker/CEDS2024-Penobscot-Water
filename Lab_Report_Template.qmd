@@ -47,8 +47,12 @@ Run Date: **2018-09-19** Run: **Passadumkeag**
 
 #difftime(date_1, date_2, "days")
 
-data2018$SampleDatetime <- as.POSIXct(data2018$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
-data2018$LabAnalysisDatetime <- as.POSIXct(data2018$LabAnalysisDatetime, format = "%m/%d/%Y %H:%M:%S")
+data2018$SampleDatetime <- as.numeric(as.POSIXct(data2018$SampleDatetime, format = "%m/%d/%Y %H:%M:%S"))
+data2018$LabAnalysisDatetime <- as.numeric(as.POSIXct(data2018$LabAnalysisDatetime, format = "%m/%d/%Y %H:%M:%S"))
+
+HoldTime <- difftime(time1 = "2018-09-25 10:29:53", time2 = "2018-09-26 10:41:09", units = "mins")
+
+#HoldTime <- period(data2018$SampleDatetime, data$LabAnalysisDatetime,"hours", na.rm = TRUE)
 
 data2018 %>%
   filter(SiteVisitID == "JanS5-2018925102747") %>%
