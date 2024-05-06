@@ -1,0 +1,18 @@
+
+
+```{r}
+data2018 %>% 
+  filter(SiteVisitID == current_SiteVisitID) %>% 
+  select(RunCode ,WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
+  rename("Water Body" = "WaterBody",
+         "Site" = "SiteCode",
+         "Run Code" = "RunCode",
+         "Time" = "SiteVisitStartTime",
+         "Depth" = "SiteDepth") %>%
+  distinct() %>% 
+  gt() %>%
+  cols_align(align = "center") %>% 
+  tab_header(title = "Site information")
+```
+
+
