@@ -1,0 +1,124 @@
+---
+title: "Sample Information"
+format:
+  html:
+    toc: true
+params:
+  Collectors: "JRP;"
+  RunDate: "2018-09-25"
+  RunCode: "Trib2A"
+  SiteCode: "TPIR9"
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(data.table)
+library(gt)
+library(purrr)
+library(quarto)
+library(here)
+library(knitr)
+library(rlang)
+library(kableExtra)
+library(tibble)
+
+# data2018 <- readRDS("../data/PINCommEngData (2).RData")
+```
+
+# `r params$RunDate`
+
+## `r params$RunCode`
+
+### `r params$SiteCode`
+
+::: panel-tabset
+## Collection Information
+
+```{r echo = FALSE, message = FALSE}
+data2018 %>% 
+  filter(Collectors == "JRP;",
+         RunDate == "2018-09-25",
+         RunCode == "Trib2A",
+         SiteCode == "TPIR9") %>% 
+  select(RunCode ,WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
+  rename("Water Body" = "WaterBody",
+         "Site" = "SiteCode",
+         "Run Code" = "RunCode",
+         "Time" = "SiteVisitStartTime",
+         "Depth" = "SiteDepth") %>%
+  distinct() %>% 
+  data.table()
+
+data2018 %>%
+  filter(Collectors == "JRP;",
+         RunDate == "2018-09-25",
+         RunCode == "Trib2A",
+         SiteCode == "TPIR9") %>%
+  select(Weather, SamplingAirTemp, RivCond, WaterLevel, FoamRank, FoamSource, SiteVisitComment) %>%
+  rename("Air Temp" = "SamplingAirTemp",
+         "River Cond" = "RivCond",
+         "Water Level" = "WaterLevel",
+         "Foam Rank" = "FoamRank",
+         "Foam Source" = "FoamSource") %>%
+  distinct() %>%
+  data.table()
+
+data2018 %>%
+  filter(Collectors == "JRP;",
+         RunDate == "2018-09-25",
+         RunCode == "Trib2A",
+         SiteCode == "TPIR9") %>%
+  select(SiteVisitComment) %>%
+  rename("Site Visit Notes" = "SiteVisitComment") %>%
+  distinct() %>%
+  data.table()
+
+```
+
+## Samples
+
+```{r echo = FALSE, message = FALSE}
+data2018 %>%
+  filter(Collectors == "JRP;",
+         RunDate == "2018-09-25",
+         RunCode == "Trib2A",
+         SiteCode == "TPIR9") %>%
+  select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>%
+  group_by(LabAbbrev) %>%
+  distinct()
+```
+
+## DO and Temperature
+
+```{r echo = FALSE, message = FALSE}
+# data2018$SampleDatetime <- as.POSIXct(data2018$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
+# 
+# data2018$Date <- as.Date(data2018$SampleDatetime)
+# data2018$Time <- format(data2018$SampleDatetime, format = "%H:%M:%S")
+# 
+# 
+# 
+# data2018 %>%
+#   filter(Collectors == "JRP;",
+#          RunDate == "2018-09-25",
+#          RunCode == "Trib2A",
+#          SiteCode == "TPIR9") %>%
+#   filter(Const %in% c("Dissolved Oxygen", "water temperature"),
+#          SiteDepthMethod == "Secchi disk") %>%
+#   select(QCType, ProfileDepth,Const, Result) %>%
+#   na.omit() %>%
+#   pivot_wider(names_from = "Const", values_from = "Result")
+# 
+# data2018 %>%
+#   filter(Collectors == "JRP;",
+#          RunDate == "2018-09-25",
+#          RunCode == "Trib2A",
+#          SiteCode == "TPIR9") %>%
+#   select(FilterName) %>%
+#   distinct()
+```
+:::

@@ -6,7 +6,6 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Cedar Callahan">
 
 <title>Sample Information</title>
 <style>
@@ -67,12 +66,6 @@ ul.task-list li input[type="checkbox"] {
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Cedar Callahan </p>
-          </div>
-  </div>
     
   
     
@@ -93,149 +86,45 @@ ul.task-list li input[type="checkbox"] {
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>     Run Code Water Body   Site               Time Depth
-  1:   Trib2A  Tributary  TPIR9 9/25/2018 10:27:47  0.75
-  2:   Trib2A  Tributary TPIR14 9/25/2018 11:02:00  0.50
-  3:   Trib2A  Tributary TPIR16 9/25/2018 11:29:24  1.00
-  4:   Trib2A  Tributary   TSES  9/25/2018 8:38:06  0.50
-  5:   Trib2A  Tributary  TPUS1 9/25/2018 12:38:05  0.50
- ---                                                    
-299:   Trib2A  Tributary   TPLR  7/10/2018 8:23:29  0.50
-300:   Trib2A  Tributary  TPUS1 7/10/2018 13:21:07  0.50
-301:   Trib2A  Tributary  TPIR3  7/10/2018 9:09:46  0.50
-302:   Trib2A  Tributary   TSER  7/10/2018 8:48:55  0.50
-303:   Trib2A  Tributary   TSES  7/10/2018 7:21:19  0.50</code></pre>
+<pre><code>   Run Code Water Body  Site               Time Depth
+1:   Trib2A  Tributary TPIR9 9/25/2018 10:27:47  0.75</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>          Weather Air Temp River Cond Water Level           Foam Rank
-  1:     Overcast     10.0    Ripples      Normal Few Bubbles Present
-  2:     Overcast     10.3    Ripples      Normal Few Bubbles Present
-  3:     Overcast     11.8    Ripples      Normal Few Bubbles Present
-  4: Partly Sunny      4.6    Ripples      Normal Few Bubbles Present
-  5:     Overcast     15.2    Ripples      Normal Few Bubbles Present
- ---                                                                 
-289: Partly Sunny     22.7    Ripples      Normal Few Bubbles Present
-290:        Sunny     34.7    Ripples      Normal Few Bubbles Present
-291: Partly Sunny     23.4    Ripples      Normal     No Foam Present
-292: Partly Sunny     23.9    Ripples      Normal Few Bubbles Present
-293: Partly Sunny     19.6    Ripples      Normal Few Bubbles Present
-        Foam Source                                  SiteVisitComment
-  1: Natural Causes                                              &lt;NA&gt;
-  2: Natural Causes                                              &lt;NA&gt;
-  3: Natural Causes                                              &lt;NA&gt;
-  4: Natural Causes                                              &lt;NA&gt;
-  5: Natural Causes                                              &lt;NA&gt;
- ---                                                                 
-289: Natural Causes     forgot to turn gps on before running droud db
-290: Natural Causes                                              &lt;NA&gt;
-291:           &lt;NA&gt;                                              &lt;NA&gt;
-292:      Municipal     forgot to turn gps on before running droid db
-293: Natural Causes forgot to put location on before running droid db</code></pre>
+<pre><code>    Weather Air Temp River Cond Water Level           Foam Rank    Foam Source
+1: Overcast       10    Ripples      Normal Few Bubbles Present Natural Causes
+   SiteVisitComment
+1:             &lt;NA&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                                                                                                      Site Visit Notes
- 1:                                                                                                               &lt;NA&gt;
- 2:                                                                                            can see secci on bottom
- 3:                                                                                                    Secchi Scoping;
- 4:                                                                                                     can see bottom
- 5:                                                                     first gps coordinates didnt register correctly
- 6:                                            Secchi Scoping; DO meter scoping, waves are pulling boat away from site
- 7:                                                                                           battery in DO meter died
- 8:                                          Edited;Secchi Scoping; did not due profile due to thunderstorm closing in
- 9:                                           Edited;Secchi Scoping; did not do profile due to thunderstorm closing in
-10:                                                                                         batteries in DO meter died
-11:                                                             batteries in DO meter died, will buy some back in town
-12:                                                                                   Secchi Scoping; do meter scoping
-13:                                                                              Secchi Scoping; air temp battery died
-14:                                                              ph meter was getting odd readings so i did not record
-15: accidentally deleted site visit so there is about a 20 minute time difference between the visit and sample/results
-16:                                                                                AMR manually changed time at office
-17:                                                                      forgot to turn gps on before running droud db
-18:                                                                      forgot to turn gps on before running droid db
-19:                                                                  forgot to put location on before running droid db</code></pre>
+<pre><code>   Site Visit Notes
+1:             &lt;NA&gt;</code></pre>
 </div>
 </div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 963 × 7
-# Groups:   LabAbbrev [3]
-   SampleName  ProjectCode CntrType      QCType CollMethod SampleDepth LabAbbrev
-   &lt;chr&gt;       &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;  &lt;chr&gt;            &lt;dbl&gt; &lt;chr&gt;    
- 1 TPIR9-      Baseline    Msmt          Regul… Msmt                NA Msmt     
- 2 TPIR9-9259  Baseline    Plastic Bott… Regul… GS                   0 PIN      
- 3 TPIR9-9271  Baseline    Plastic Bott… Regul… GS                   0 PIN      
- 4 TPIR14-     Baseline    Msmt          Regul… Msmt                NA Msmt     
- 5 TPIR14-     Baseline    Msmt          Dupli… Msmt                NA Msmt     
- 6 DUP-9265    Baseline    Plastic Bott… Dupli… GS                   0 PIN      
- 7 TPIR14-9266 Baseline    Plastic Bott… Split  GS                   0 PIN      
- 8 DUP-9277    Baseline    Plastic Bott… Dupli… GS                   0 PIN      
- 9 TPIR14-9278 Baseline    Plastic Bott… Split  GS                   0 PIN      
-10 TPIR16-     Baseline    Msmt          Regul… Msmt                NA Msmt     
-# ℹ 953 more rows</code></pre>
+<pre><code># A tibble: 3 × 7
+# Groups:   LabAbbrev [2]
+  SampleName ProjectCode CntrType       QCType  CollMethod SampleDepth LabAbbrev
+  &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;          &lt;chr&gt;   &lt;chr&gt;            &lt;dbl&gt; &lt;chr&gt;    
+1 TPIR9-     Baseline    Msmt           Regular Msmt                NA Msmt     
+2 TPIR9-9259 Baseline    Plastic Bottle Regular GS                   0 PIN      
+3 TPIR9-9271 Baseline    Plastic Bottle Regular GS                   0 PIN      </code></pre>
 </div>
 </div>
 </div>
 <div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <div class="cell">
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Values from `Result` are not uniquely identified; output will contain
-list-cols.
-• Use `values_fn = list` to suppress this warning.
-• Use `values_fn = {summary_fun}` to summarise duplicates.
-• Use the following dplyr code to identify duplicates.
-  {data} %&gt;%
-  dplyr::group_by(QCType, ProfileDepth, Const) %&gt;%
-  dplyr::summarise(n = dplyr::n(), .groups = "drop") %&gt;%
-  dplyr::filter(n &gt; 1L)</code></pre>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 0 × 2
+# ℹ 2 variables: QCType &lt;chr&gt;, ProfileDepth &lt;dbl&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 4 × 4
-  QCType  ProfileDepth `water temperature` `Dissolved Oxygen`
-  &lt;chr&gt;          &lt;dbl&gt; &lt;list&gt;              &lt;list&gt;            
-1 Regular            0 &lt;dbl [11]&gt;          &lt;dbl [11]&gt;        
-2 Regular            1 &lt;dbl [8]&gt;           &lt;dbl [8]&gt;         
-3 Regular            2 &lt;dbl [7]&gt;           &lt;dbl [7]&gt;         
-4 Regular            3 &lt;dbl [5]&gt;           &lt;dbl [5]&gt;         </code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Values from `Result` are not uniquely identified; output will contain
-list-cols.
-• Use `values_fn = list` to suppress this warning.
-• Use `values_fn = {summary_fun}` to summarise duplicates.
-• Use the following dplyr code to identify duplicates.
-  {data} %&gt;%
-  dplyr::group_by(Date, Time, SiteVisitID, Const, QCType) %&gt;%
-  dplyr::summarise(n = dplyr::n(), .groups = "drop") %&gt;%
-  dplyr::filter(n &gt; 1L)</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 0 × 6
-# ℹ 6 variables: Date &lt;date&gt;, Time &lt;chr&gt;, pH_Regular &lt;chr&gt;, pH_Duplicate &lt;chr&gt;,
-#   Secchi_Regular &lt;chr&gt;, Secchi_Duplicate &lt;chr&gt;</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 17 × 1
-   FilterName  
-   &lt;chr&gt;       
- 1 &lt;NA&gt;        
- 2 DUP-9355-88 
- 3 DUP-9355-87 
- 4 ML1-9354-86 
- 5 ML1-9354-85 
- 6 LML1-9353-84
- 7 LML1-9353-83
- 8 DUP-8784-76 
- 9 DUP-8784-75 
-10 MCP1-8783-74
-11 MCP1-8783-73
-12 DUP-8417-70 
-13 DUP-8417-69 
-14 SBL1-8415-68
-15 SBL1-8415-67
-16 USL1-8416-72
-17 USL1-8416-71</code></pre>
+<pre><code># A tibble: 1 × 1
+  FilterName
+  &lt;chr&gt;     
+1 &lt;NA&gt;      </code></pre>
 </div>
 </div>
 </div>
