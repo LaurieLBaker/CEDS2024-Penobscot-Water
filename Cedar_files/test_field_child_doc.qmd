@@ -26,7 +26,7 @@ library(rlang)
 library(kableExtra)
 library(tibble)
 
-# data2018 <- readRDS("../data/PINCommEngData (2).RData")
+data2018 <- readRDS("../data/PINCommEngData (2).RData")
 ```
 
 # `r params$RunDate`
@@ -40,10 +40,7 @@ library(tibble)
 
 ```{r echo = FALSE, message = FALSE}
 data2018 %>% 
-  filter(Collectors == "JRP;",
-         RunDate == "2018-09-25",
-         RunCode == "Trib2A",
-         SiteCode == "TPIR9") %>% 
+  filter(Collectors == params$Collectors) %>% 
   select(RunCode ,WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
   rename("Water Body" = "WaterBody",
          "Site" = "SiteCode",
@@ -54,10 +51,7 @@ data2018 %>%
   data.table()
 
 data2018 %>%
-  filter(Collectors == "JRP;",
-         RunDate == "2018-09-25",
-         RunCode == "Trib2A",
-         SiteCode == "TPIR9") %>%
+  filter(Collectors == params$Collectors) %>%
   select(Weather, SamplingAirTemp, RivCond, WaterLevel, FoamRank, FoamSource, SiteVisitComment) %>%
   rename("Air Temp" = "SamplingAirTemp",
          "River Cond" = "RivCond",
@@ -68,10 +62,7 @@ data2018 %>%
   data.table()
 
 data2018 %>%
-  filter(Collectors == "JRP;",
-         RunDate == "2018-09-25",
-         RunCode == "Trib2A",
-         SiteCode == "TPIR9") %>%
+  filter(Collectors == params$Collectors) %>%
   select(SiteVisitComment) %>%
   rename("Site Visit Notes" = "SiteVisitComment") %>%
   distinct() %>%
@@ -83,10 +74,7 @@ data2018 %>%
 
 ```{r echo = FALSE, message = FALSE}
 data2018 %>%
-  filter(Collectors == "JRP;",
-         RunDate == "2018-09-25",
-         RunCode == "Trib2A",
-         SiteCode == "TPIR9") %>%
+  filter(Collectors == params$Collectors) %>%
   select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>%
   group_by(LabAbbrev) %>%
   distinct()
