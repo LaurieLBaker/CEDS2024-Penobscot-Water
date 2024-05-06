@@ -26,14 +26,14 @@ library(rlang)
 library(kableExtra)
 library(tibble)
 
-data2018 <- readRDS("data/PINCommEngData (2).RData")
+# data2018 <- readRDS("../data/PINCommEngData (2).RData")
 ```
 
-# `r data2018$RunDate`
+# `r params$RunDate`
 
-## `r data2018$RunCode`
+## `r params$RunCode`
 
-### `r data2018$SiteCode`
+### `r params$SiteCode`
 
 ::: panel-tabset
 ## Collection Information
@@ -95,51 +95,30 @@ data2018 %>%
 ## DO and Temperature
 
 ```{r echo = FALSE, message = FALSE}
-data2018$SampleDatetime <- as.POSIXct(data2018$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
-
-data2018$Date <- as.Date(data2018$SampleDatetime)
-data2018$Time <- format(data2018$SampleDatetime, format = "%H:%M:%S")
-
-
-
-data2018 %>%
-  filter(Collectors == "JRP;",
-         RunDate == "2018-09-25",
-         RunCode == "Trib2A",
-         SiteCode == "TPIR9") %>%
-  filter(Const %in% c("Dissolved Oxygen", "water temperature"),
-         SiteDepthMethod == "Secchi disk") %>%
-  select(QCType, ProfileDepth,Const, Result) %>%
-  na.omit() %>%
-  pivot_wider(names_from = "Const", values_from = "Result")
-
+# data2018$SampleDatetime <- as.POSIXct(data2018$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
+# 
+# data2018$Date <- as.Date(data2018$SampleDatetime)
+# data2018$Time <- format(data2018$SampleDatetime, format = "%H:%M:%S")
+# 
+# 
+# 
 # data2018 %>%
 #   filter(Collectors == "JRP;",
 #          RunDate == "2018-09-25",
 #          RunCode == "Trib2A",
 #          SiteCode == "TPIR9") %>%
-#   select(Const, Result, QCType, Date, Time, SiteVisitID ) %>%
-#   filter(Const %in% c("Secchi","pH")) %>%
-#   pivot_wider(names_from = c(Const, QCType),
-#               values_from = Result) %>%
-#   mutate(pH_Duplicate = as.character(pH_Duplicate),
-#     pH_Duplicate = replace_na(pH_Duplicate, "-"),
-#     Secchi_Duplicate = as.character(Secchi_Duplicate),
-#     Secchi_Duplicate = replace_na(Secchi_Duplicate, "-"),
-#      Secchi_Regular = as.character(Secchi_Regular),
-#     Secchi_Regular = replace_na(Secchi_Regular, "-"),
-#         pH_Regular = as.character(pH_Regular),
-#     pH_Regular = replace_na(pH_Regular, "-")) %>%
-#     filter(SiteVisitID == "JanS7-201871875659") %>%
-#     select(!SiteVisitID)
-
-
-data2018 %>%
-  filter(Collectors == "JRP;",
-         RunDate == "2018-09-25",
-         RunCode == "Trib2A",
-         SiteCode == "TPIR9") %>%
-  select(FilterName) %>%
-  distinct()
+#   filter(Const %in% c("Dissolved Oxygen", "water temperature"),
+#          SiteDepthMethod == "Secchi disk") %>%
+#   select(QCType, ProfileDepth,Const, Result) %>%
+#   na.omit() %>%
+#   pivot_wider(names_from = "Const", values_from = "Result")
+# 
+# data2018 %>%
+#   filter(Collectors == "JRP;",
+#          RunDate == "2018-09-25",
+#          RunCode == "Trib2A",
+#          SiteCode == "TPIR9") %>%
+#   select(FilterName) %>%
+#   distinct()
 ```
 :::

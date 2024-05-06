@@ -1,0 +1,45 @@
+---
+title: "Sample Information"
+format:
+  html:
+    toc: true
+params:
+  Collectors: "JRP;"
+  RunDate: "2018-09-25"
+  RunCode: "Trib2A"
+  SiteCode: "TPIR9"
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(data.table)
+library(gt)
+library(purrr)
+library(quarto)
+library(here)
+library(knitr)
+library(rlang)
+library(kableExtra)
+library(tibble)
+```
+
+# `r params$RunDate`
+
+## `r params$RunCode`
+
+### `r params$SiteCode`
+
+::: panel-tabset
+## Collection Information
+
+
+## Samples
+
+
+## DO and Temperature
+
+:::

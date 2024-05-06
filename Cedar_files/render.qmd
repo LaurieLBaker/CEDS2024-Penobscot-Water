@@ -1,0 +1,46 @@
+
+```{r}
+library(tidyverse)
+library(quarto)
+
+data2018 <- readRDS("../data/PINCommEngData (2).RData")
+```
+
+```{r}
+Collectors <- data2018 %>%
+  filter(Collectors == params$Collectors) %>%
+  distinct(Collectors) %>%
+  pull()
+
+RunDate <- data2018 %>%
+  filter(Collectors == params$Collectors, 
+         RunDate == RunDate) %>%
+  select(RunDate) %>%
+  mutate(RunDate = as.character(RunDate)) %>%
+  pull()
+
+RunCode <- data2018 %>%
+  filter(Collectors == params$Collectors,
+         RunCode == RunCode) %>%
+  select(RunCode) %>%
+  pull()
+
+SiteCode <- data2018 %>%
+  filter(Collectors == params$Collectors,
+         SiteCode == SiteCode) %>%
+  select(SiteCode) %>%
+  pull()
+```
+
+```{r}
+reports <- tibble(
+  input = "test_field_child_doc.qmd",
+  output_file = str_glue("{Collectors}.html"),
+  execute_params = map(RunDate, ~list(RunDate = .))
+)
+
+reports %>% 
+  pwalk(quarto_render)
+```
+
+
