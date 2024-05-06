@@ -37,7 +37,7 @@ Run Date: **2018-09-19** Run: **Passadumkeag**
 
 data2018 %>% 
   filter(SiteVisitID == "JanS5-2018925102747") %>% 
-  select(RunCode ,WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
+  select(RunCode, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
   rename("Water Body" = "WaterBody",
          "Site" = "SiteCode",
          "Run Code" = "RunCode",
@@ -46,7 +46,14 @@ data2018 %>%
   distinct() %>% 
   gt() %>%
   cols_align(align = "center") %>% 
-  tab_header(title = "Site information")
+  tab_header(title = "Site information") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
 
 data2018 %>% 
   filter(SiteVisitID == "JanS5-2018925102747") %>% 
@@ -59,7 +66,14 @@ data2018 %>%
   distinct() %>% 
   gt() %>%
   cols_align(align = "center") %>%
-  tab_header(title = "Abiotic Factors")
+  tab_header(title = "Abiotic Factors") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
 
 data2018 %>% 
   filter(SiteVisitID == "JanS5-2018925102747") %>% 
@@ -67,7 +81,14 @@ data2018 %>%
   rename("Site Visit Notes" = "SiteVisitComment") %>%
   distinct() %>% 
   gt() %>%
-  cols_align(align = "center")
+  cols_align(align = "center") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
 
 
 ```
@@ -85,7 +106,7 @@ data2018 %>%
          "QC" = "QCType",
          "Method" = "CollMethod",
          "Depth" = "SampleDepth") %>%
-  group_by(LabAbbrev) %>% 
+  group_by(LabAbbrev) %>%
   distinct() %>% 
   gt() %>%
 tab_style(
@@ -100,7 +121,14 @@ tab_style(
     style = cell_fill(color = "red"),
     locations = cells_body(columns = c(Depth),
                            rows = Method == "GS" & Depth != 0)) %>%
-  cols_align(align = "center")
+  cols_align(align = "center") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
 ```
 
 ## DO and Temperature
@@ -113,21 +141,41 @@ data2018$Date <- as.Date(data2018$SampleDatetime)
 data2018$Time <- format(data2018$SampleDatetime, format = "%H:%M:%S")
 
 
-
-data2018 %>%
-   filter(SiteVisitID == "JanS7-201871875659") %>%
-  filter(Const %in% c("Dissolved Oxygen", "water temperature"),
-         SiteDepthMethod == "Secchi disk") %>% 
-  select(QCType, ProfileDepth,Const, Result) %>%
-  rename("QC" = "QCType", "Depth" = "ProfileDepth", "Constituant" = "Const") %>%
-  na.omit() %>%
-  pivot_wider(names_from = "Constituant", values_from = "Result") %>%
+data2018 %>% 
+  select(QCType, ProfileDepth,Const, Result, SiteVisitID) %>% 
+  filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>% 
+  pivot_wider(names_from = c(Const, QCType),
+              values_from = Result) %>%
+  rename("water_temp_regular" = "water temperature_Regular",
+         "water_temp_duplicate" = "water temperature_Duplicate",
+         "DO_regular" = "Dissolved Oxygen_Regular",
+         "DO_duplicate" = "Dissolved Oxygen_Duplicate") %>%
+  mutate(water_temp_regular = as.character(water_temp_regular),
+     water_temp_regular = replace_na(water_temp_regular, "-"),
+  water_temp_duplicate = as.character(water_temp_duplicate),
+    water_temp_duplicate = replace_na(water_temp_duplicate, "-"),
+     DO_regular = as.character(DO_regular),
+    DO_regular = replace_na(DO_regular, "-"),
+        DO_duplicate = as.character(DO_duplicate),
+    DO_duplicate = replace_na("DO_duplicate", "-")) %>%
+    filter(SiteVisitID == "JanS7-201871875659") %>%
+    select(!SiteVisitID) %>% 
   gt() %>% 
-    opt_row_striping()
+      opt_row_striping() %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
+
+
+  
 
 data2018 %>% 
     # filter(Collector == "JRP", RunCode == "Passadumkeag", RunDate == "2018-07-18") %>%
-  select(Const, Result, QCType, Date, Time, SiteVisitID ) %>% 
+  select(Const, Result, QCType, Time, SiteVisitID ) %>% 
   filter(Const %in% c("Secchi","pH")) %>% 
   pivot_wider(names_from = c(Const, QCType),
               values_from = Result) %>%
@@ -150,7 +198,14 @@ data2018 %>%
     columns = "pH Duplicate",
     after = "pH Regular"
   ) %>% 
-      opt_row_striping()
+      opt_row_striping() %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
 
 
 data2018 %>% 
@@ -159,7 +214,14 @@ data2018 %>%
   rename("Filter Name" = "FilterName") %>%
   distinct() %>%
   gt() %>%
-  cols_align(align = "center")
+  cols_align(align = "center") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
 
 ```
 :::

@@ -1,0 +1,146 @@
+---
+title: "Linnea"
+format: html
+editor: visual
+execute:
+  echo: false
+  warning: false
+---
+
+```{r install.packages, include=FALSE}
+library(tidyverse)
+library(quarto)
+library(dplyr)
+library(devtools)
+library(readr)
+library(gt) #for tables
+library(stringr)
+library(htmltools)
+```
+
+```{r load_data}
+data2018 <- readRDS("data/PINCommEngData (2).RData")
+```
+
+```{r}
+data2018 %>% 
+  filter(SiteVisitID == "JanS5-2018925102747") %>% 
+  select(RunCode, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
+  rename("Water Body" = "WaterBody",
+         "Site" = "SiteCode",
+         "Run Code" = "RunCode",
+         "Time" = "SiteVisitStartTime",
+         "Depth" = "SiteDepth") %>%
+  distinct() %>% 
+  gt() %>%
+  cols_align(align = "center") %>% 
+  tab_header(title = "Site information") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
+
+data2018 %>% 
+  filter(SiteVisitID == "JanS5-2018925102747") %>% 
+  select(Weather, SamplingAirTemp, RivCond, WaterLevel, FoamRank, FoamSource) %>% 
+  rename("Air Temp" = "SamplingAirTemp",
+         "River Cond" = "RivCond", 
+         "Water Level" = "WaterLevel",
+         "Foam Rank" = "FoamRank",
+         "Foam Source" = "FoamSource") %>%
+  distinct() %>% 
+  gt() %>%
+  cols_align(align = "center") %>%
+  tab_header(title = "Abiotic Factors") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
+
+data2018 %>% 
+  filter(SiteVisitID == "JanS5-2018925102747") %>% 
+  select(SiteVisitComment) %>% 
+  rename("Site Visit Notes" = "SiteVisitComment") %>%
+  distinct() %>% 
+  gt() %>%
+  cols_align(align = "center") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
+```
+
+
+```{r}
+data2018$SampleDatetime <- as.POSIXct(data2018$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
+
+data2018$Date <- as.Date(data2018$SampleDatetime)
+data2018$Time <- format(data2018$SampleDatetime, format = "%H:%M:%S")
+
+
+data2018 %>% 
+  select(QCType, ProfileDepth,Const, Result, SiteVisitID) %>% 
+  filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>% 
+  pivot_wider(names_from = c(Const, QCType),
+              values_from = Result) %>%
+  rename("water_temp_regular" = "water temperature_Regular",
+         "water_temp_duplicate" = "water temperature_Duplicate",
+         "DO_regular" = "Dissolved Oxygen_Regular",
+         "DO_duplicate" = "Dissolved Oxygen_Duplicate") %>%
+  mutate(water_temp_regular = as.character(water_temp_regular),
+     water_temp_regular = replace_na(water_temp_regular, "-"),
+  water_temp_duplicate = as.character(water_temp_duplicate),
+    water_temp_duplicate = replace_na(water_temp_duplicate, "-"),
+     DO_regular = as.character(DO_regular),
+    DO_regular = replace_na(DO_regular, "-"),
+        DO_duplicate = as.character(DO_duplicate),
+    DO_duplicate = replace_na("DO_duplicate", "-")) %>%
+    filter(SiteVisitID == "JanS7-201871875659") %>%
+    select(!SiteVisitID) %>% 
+  gt() %>% 
+      opt_row_striping()
+```
+```{r}
+HoldTime2 <- as.double(difftime(lubridate::ymd_hms(data2018$SampleDatetime),
+                       lubridate::ymd_hms(data2018$LabAnalysisDatetime),
+                       units = "secs"), na.rm = TRUE) %>%
+  seconds_to_period()
+
+#LabAnalysisDate <- as.Date(data2018$LabAnalysisDatetime)
+#SampleCollectionDate <- as.Date(as.numeric(data2018$SampleDatetime)) %>%
+  #is.na() %>%
+  #format(SampleCollectionDate, "%Y-%m-%d")
+
+#SampleCollectionDate <- as.numeric(data2018$SiteVisitStartTime)
+#LabAnalysisDate <- as.numeric(data2018$LabAnalysisDatetime)
+
+
+#HoldTime <- period("09-25-2018 10:41:09", "09-25-2018 10:29:07")
+
+#date_1 = as.Date("2020-05-01") 
+#date_2 = as.Date("2020-06-01")
+
+#difftime(date_1, date_2, "days")
+
+#HoldTime <- difftime(time1 = "2018-09-25 10:29:53", time2 = "2018-09-26 10:41:09", units = "mins")
+
+#HoldTime <- period(data2018$SampleDatetime, data$LabAnalysisDatetime,"hours", na.rm = TRUE)
+
+#period(c("2018-09-26 10:41:09", "9/25/2018 10:29:07"), c("day", "hour", "minute")) %>%
+  #mutate(HoldTime = LabAnalysisDate - SampleCollectionDate) %>%
+
+HoldTime <- as.double(difftime(lubridate::ymd_hms("2018-09-26 10:41:09"),
+                   lubridate::ymd_hms("2018-09-25 10:29:53"),
+                   units = "secs")) %>%
+  seconds_to_period()
+```
+

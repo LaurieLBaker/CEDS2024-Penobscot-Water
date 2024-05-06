@@ -1,0 +1,12 @@
+# `r paste("RunDate", which(RunDate == current_RunDate), ":", current_RunDate)`
+
+## Samples
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+data2018 %>%
+  filter(RunDate == as_date(current_RunDate),) %>%
+  select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>%
+  group_by(LabAbbrev) %>%
+  distinct() %>% 
+  gt()
+```

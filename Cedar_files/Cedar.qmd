@@ -1,0 +1,111 @@
+---
+title: "`r paste(params$Collectors)`"
+author: "Cedar Callahan"
+format:
+  html:
+    toc: true
+params:
+  Collectors: "JRP;"
+  RunDate: "data2018$RunDate"
+  RunCode: "data2018$RunCode"
+  SiteCode: "data2018$SiteCode"
+---
+
+```{r load-packages-and-data, echo = FALSE, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(data.table)
+library(gt)
+library(purrr)
+library(quarto)
+library(here)
+library(knitr)
+library(rlang)
+library(kableExtra)
+library(tibble)
+library(rmarkdown)
+
+data2018 <- readRDS("../data/PINCommEngData (2).RData")
+
+data2018 %>% 
+  mutate(year = str_extract(RunDate, "2018")) %>% 
+  mutate(month = str_sub(RunDate, start = 6, end = 7)) %>% 
+  mutate(day = str_sub(RunDate, start = 9, end = 10)) %>% 
+  mutate(rundate = str_c(month, day, year, sep = "/")) %>% 
+  mutate(rundate = mdy(rundate))
+
+# data <- filter(data2018, Collectors == params$Collectors)
+```
+
+# Collector: `r params$Collector`
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+Collectors <- data2018 %>%
+  filter(Collectors == params$Collectors) %>%
+  distinct(Collectors) %>%
+  pull()
+
+RunDate <- data2018 %>%
+  filter(RunDate == RunDate) %>%
+  select(RunDate) %>%
+  pull()
+
+RunCode <- data2018 %>%
+  filter(RunCode == RunCode) %>%
+  select(RunCode) %>%
+  pull()
+
+SiteCode <- data2018 %>%
+  filter(SiteCode == SiteCode) %>%
+  select(SiteCode) %>%
+  pull()
+```
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+#| output: asis
+
+RunDates <- map_vec(data2018, \(current_RunDate) {
+  knit_child(
+    input = "test_field_child_doc.qmd",
+    envir = env(),
+    quiet = TRUE
+    )
+})
+
+print(RunDates, sep = "\n")
+```
+
+```{r}
+# collector <- tibble(collectors)
+# 
+# reports <- tibble(
+#   input = "test_field_child_doc.qmd",
+#   output_file = str_glue("{collectors}.html"),
+#   execute_params = map(collector, ~list(collector = .))
+# )
+# 
+# reports %>% 
+#   map2()
+```
+
+```{r}
+# data_reports <- data2018 %>% 
+#   filter(Collectors == "JRP;") %>% 
+#   mutate(output_format = "html",
+#          output_file = paste(
+#            str_remove(Collectors, ";"),
+#            ".html",
+#            sep = ""),
+#   execute_params = map2(
+#     rundate,
+#     runcode,
+#     \(rundate, runcode) list(rundate = rundate, runcode = runcode)
+#   ))
+# 
+# pwalk(
+#   .l = data_reports,
+#   .f = render,
+#   input = here("test_field_child_doc.qmd")) 
+```
+
+
+
