@@ -47,18 +47,34 @@ Run Date: **2018-09-19** Run: **Passadumkeag**
 
 #difftime(date_1, date_2, "days")
 
-data2018$SampleDatetime <- as.numeric(as.POSIXct(data2018$SampleDatetime, format = "%m/%d/%Y %H:%M:%S"))
-data2018$LabAnalysisDatetime <- as.numeric(as.POSIXct(data2018$LabAnalysisDatetime, format = "%m/%d/%Y %H:%M:%S"))
-
-HoldTime <- difftime(time1 = "2018-09-25 10:29:53", time2 = "2018-09-26 10:41:09", units = "mins")
+#HoldTime <- difftime(time1 = "2018-09-25 10:29:53", time2 = "2018-09-26 10:41:09", units = "mins")
 
 #HoldTime <- period(data2018$SampleDatetime, data$LabAnalysisDatetime,"hours", na.rm = TRUE)
+
+#period(c("2018-09-26 10:41:09", "9/25/2018 10:29:07"), c("day", "hour", "minute")) %>%
+  #mutate(HoldTime = LabAnalysisDate - SampleCollectionDate) %>%
+
+HoldTime <- as.double(difftime(lubridate::ymd_hms("2018-09-26 10:41:09"),
+                   lubridate::ymd_hms("2018-09-25 10:29:53"),
+                   units = "secs")) %>%
+  seconds_to_period()
+
+data2018$SampleDatetime <- (as.POSIXct(data2018$SampleDatetime, format = "%m/%d/%Y %H:%M:%S"))
+data2018$LabAnalysisDatetime <- (as.POSIXct(data2018$LabAnalysisDatetime, format = "%m/%d/%Y %H:%M:%S"))
+
+
+HoldTime2 <- as.double(difftime(lubridate::ymd_hms(data2018$SampleDatetime),
+                       lubridate::ymd_hms(data2018$LabAnalysisDatetime),
+                       units = "secs"), na.rm = TRUE) %>%
+  seconds_to_period()
 
 data2018 %>%
   filter(SiteVisitID == "JanS5-2018925102747") %>%
   select(SiteCode, SampleDatetime, ResultValue, QCType, ResultFlag_ID, IncubationLength, LabAnalysisDatetime) %>%
-  #period(c("2018-09-26 10:41:09", "9/25/2018 10:29:07"), c("day", "hour", "minute")) %>%
-  #mutate(HoldTime = LabAnalysisDate - SampleCollectionDate) %>%
+  mutate(HoldTime = seconds_to_period(as.double(difftime(lubridate::ymd_hms(LabAnalysisDatetime),
+                       lubridate::ymd_hms(SampleDatetime),
+                       units = "secs"), na.rm = TRUE)
+                       )) %>%
   distinct() %>% 
   gt() %>%
   cols_align(align = "center") %>%
