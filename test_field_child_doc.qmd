@@ -5,9 +5,9 @@ format:
     toc: true
 params:
   Collectors: "JRP;"
-  RunDate: "data2018$RunDate"
-  RunCode: "data2018$RunCode"
-  SiteCode: "data2018$SiteCode"
+  RunDate: "2018-09-25"
+  RunCode: "Trib2A"
+  SiteCode: "TPIR9"
 execute:
   echo: false
   warning: false
@@ -31,7 +31,7 @@ data2018 <- readRDS("data/PINCommEngData (2).RData")
 
 # `r data2018$RunDate`
 
-## `r data2018$RunCode` 
+## `r data2018$RunCode`
 
 ### `r data2018$SiteCode`
 
@@ -40,7 +40,10 @@ data2018 <- readRDS("data/PINCommEngData (2).RData")
 
 ```{r echo = FALSE, message = FALSE}
 data2018 %>% 
-  filter(Collectors == params$Collectors) %>% 
+  filter(Collectors == "JRP;",
+         RunDate == "2018-09-25",
+         RunCode == "Trib2A",
+         SiteCode == "TPIR9") %>% 
   select(RunCode ,WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
   rename("Water Body" = "WaterBody",
          "Site" = "SiteCode",
@@ -51,7 +54,10 @@ data2018 %>%
   data.table()
 
 data2018 %>%
-  filter(Collectors == params$Collectors) %>%
+  filter(Collectors == "JRP;",
+         RunDate == "2018-09-25",
+         RunCode == "Trib2A",
+         SiteCode == "TPIR9") %>%
   select(Weather, SamplingAirTemp, RivCond, WaterLevel, FoamRank, FoamSource, SiteVisitComment) %>%
   rename("Air Temp" = "SamplingAirTemp",
          "River Cond" = "RivCond",
@@ -62,7 +68,10 @@ data2018 %>%
   data.table()
 
 data2018 %>%
-  filter(Collectors == params$Collectors) %>%
+  filter(Collectors == "JRP;",
+         RunDate == "2018-09-25",
+         RunCode == "Trib2A",
+         SiteCode == "TPIR9") %>%
   select(SiteVisitComment) %>%
   rename("Site Visit Notes" = "SiteVisitComment") %>%
   distinct() %>%
@@ -74,7 +83,10 @@ data2018 %>%
 
 ```{r echo = FALSE, message = FALSE}
 data2018 %>%
-  filter(Collectors == params$Collectors) %>%
+  filter(Collectors == "JRP;",
+         RunDate == "2018-09-25",
+         RunCode == "Trib2A",
+         SiteCode == "TPIR9") %>%
   select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>%
   group_by(LabAbbrev) %>%
   distinct()
@@ -91,33 +103,42 @@ data2018$Time <- format(data2018$SampleDatetime, format = "%H:%M:%S")
 
 
 data2018 %>%
-  filter(Collectors == params$Collectors) %>%
+  filter(Collectors == "JRP;",
+         RunDate == "2018-09-25",
+         RunCode == "Trib2A",
+         SiteCode == "TPIR9") %>%
   filter(Const %in% c("Dissolved Oxygen", "water temperature"),
          SiteDepthMethod == "Secchi disk") %>%
   select(QCType, ProfileDepth,Const, Result) %>%
   na.omit() %>%
   pivot_wider(names_from = "Const", values_from = "Result")
 
-data2018 %>%
-  filter(Collectors == params$Collectors) %>%
-  select(Const, Result, QCType, Date, Time, SiteVisitID ) %>%
-  filter(Const %in% c("Secchi","pH")) %>%
-  pivot_wider(names_from = c(Const, QCType),
-              values_from = Result) %>%
-  mutate(pH_Duplicate = as.character(pH_Duplicate),
-    pH_Duplicate = replace_na(pH_Duplicate, "-"),
-    Secchi_Duplicate = as.character(Secchi_Duplicate),
-    Secchi_Duplicate = replace_na(Secchi_Duplicate, "-"),
-     Secchi_Regular = as.character(Secchi_Regular),
-    Secchi_Regular = replace_na(Secchi_Regular, "-"),
-        pH_Regular = as.character(pH_Regular),
-    pH_Regular = replace_na(pH_Regular, "-")) %>%
-    filter(SiteVisitID == "JanS7-201871875659") %>%
-    select(!SiteVisitID)
+# data2018 %>%
+#   filter(Collectors == "JRP;",
+#          RunDate == "2018-09-25",
+#          RunCode == "Trib2A",
+#          SiteCode == "TPIR9") %>%
+#   select(Const, Result, QCType, Date, Time, SiteVisitID ) %>%
+#   filter(Const %in% c("Secchi","pH")) %>%
+#   pivot_wider(names_from = c(Const, QCType),
+#               values_from = Result) %>%
+#   mutate(pH_Duplicate = as.character(pH_Duplicate),
+#     pH_Duplicate = replace_na(pH_Duplicate, "-"),
+#     Secchi_Duplicate = as.character(Secchi_Duplicate),
+#     Secchi_Duplicate = replace_na(Secchi_Duplicate, "-"),
+#      Secchi_Regular = as.character(Secchi_Regular),
+#     Secchi_Regular = replace_na(Secchi_Regular, "-"),
+#         pH_Regular = as.character(pH_Regular),
+#     pH_Regular = replace_na(pH_Regular, "-")) %>%
+#     filter(SiteVisitID == "JanS7-201871875659") %>%
+#     select(!SiteVisitID)
 
 
 data2018 %>%
-  filter(Collectors == params$Collectors) %>%
+  filter(Collectors == "JRP;",
+         RunDate == "2018-09-25",
+         RunCode == "Trib2A",
+         SiteCode == "TPIR9") %>%
   select(FilterName) %>%
   distinct()
 ```
