@@ -98,7 +98,7 @@ data2018 %>%
 ```{r}
 
 data2018 %>% 
-  filter(SiteVisitID == "JanS7-201871875659") %>% 
+  filter(SiteVisitID == "JanS7-201871875659", CntrType != "Msmt") %>% 
   select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>%
   rename("Sample Name" = "SampleName", 
          "Project" = "ProjectCode", 
