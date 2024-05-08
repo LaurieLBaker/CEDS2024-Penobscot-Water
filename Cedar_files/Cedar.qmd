@@ -24,31 +24,37 @@ library(kableExtra)
 library(tibble)
 library(rmarkdown)
 
-data2018 <- readRDS("data/PINCommEngData (2).RData")
+data2018 <- readRDS("../data/PINCommEngData (2).RData")
 
-data <- filter(data2018, Collectors == params$Collectors)
+data2018 %>% 
+  mutate(year = str_extract(RunDate, "2018")) %>% 
+  mutate(month = str_sub(RunDate, start = 6, end = 7)) %>% 
+  mutate(day = str_sub(RunDate, start = 9, end = 10)) %>% 
+  mutate(rundate = str_c(month, day, year, sep = "/")) %>% 
+  mutate(rundate = mdy(rundate))
+
+# data <- filter(data2018, Collectors == params$Collectors)
 ```
 
 # Collector: `r params$Collector`
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
-collectors <- data %>%
+Collectors <- data2018 %>%
   filter(Collectors == params$Collectors) %>%
   distinct(Collectors) %>%
   pull()
 
-rundate <- data %>%
+RunDate <- data2018 %>%
   filter(RunDate == RunDate) %>%
   select(RunDate) %>%
-  mutate(RunDate = as.character(RunDate)) %>%
   pull()
 
-runcode <- data %>%
+RunCode <- data2018 %>%
   filter(RunCode == RunCode) %>%
   select(RunCode) %>%
   pull()
 
-sitecode <- data %>%
+SiteCode <- data2018 %>%
   filter(SiteCode == SiteCode) %>%
   select(SiteCode) %>%
   pull()
@@ -57,17 +63,15 @@ sitecode <- data %>%
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 #| output: asis
 
-# pmap_list <- list(rundate, runcode, sitecode)
-
-RunDate <- map_chr(data, \(current_RunDate){
+RunDates <- map_vec(data2018, \(current_RunDate) {
   knit_child(
-    input = "samples_child_doc.qmd",
+    input = "test_field_child_doc.qmd",
     envir = env(),
     quiet = TRUE
     )
 })
 
-print(RunDate, sep = "\n")
+print(RunDates, sep = "\n")
 ```
 
 ```{r}
