@@ -26,12 +26,11 @@ library(rmarkdown)
 
 data2018 <- readRDS("../data/PINCommEngData (2).RData")
 
-data2018 %>% 
-  mutate(year = str_extract(RunDate, "2018")) %>% 
-  mutate(month = str_sub(RunDate, start = 6, end = 7)) %>% 
-  mutate(day = str_sub(RunDate, start = 9, end = 10)) %>% 
-  mutate(rundate = str_c(month, day, year, sep = "/")) %>% 
-  mutate(rundate = mdy(rundate))
+data2018 <- data2018 %>%
+  mutate(year = str_extract(RunDate, "2018")) %>%
+  mutate(month = str_sub(RunDate, start = 6, end = 7)) %>%
+  mutate(day = str_sub(RunDate, start = 9, end = 10)) %>%
+  mutate(rundate = mdy(str_c(month, day, year, sep = "/")))
 
 # data <- filter(data2018, Collectors == params$Collectors)
 ```
@@ -44,9 +43,10 @@ Collectors <- data2018 %>%
   distinct(Collectors) %>%
   pull()
 
-RunDate <- data2018 %>%
-  filter(RunDate == RunDate) %>%
-  select(RunDate) %>%
+rundate <- data2018 %>%
+  filter(rundate == rundate) %>%
+  select(rundate) %>%
+  mutate(rundate = as_date(rundate)) %>% 
   pull()
 
 RunCode <- data2018 %>%
@@ -63,7 +63,7 @@ SiteCode <- data2018 %>%
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 #| output: asis
 
-RunDates <- map_vec(data2018, \(current_RunDate) {
+rundates <- map_chr(data2018, \(current_rundate) {
   knit_child(
     input = "test_field_child_doc.qmd",
     envir = env(),
@@ -71,7 +71,7 @@ RunDates <- map_vec(data2018, \(current_RunDate) {
     )
 })
 
-print(RunDates, sep = "\n")
+print(rundates, sep = "\n")
 ```
 
 ```{r}

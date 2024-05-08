@@ -1,4 +1,4 @@
-### `r paste("Run Date", which(RunDate == current_RunDate), ":", current_RunDate)`
+### `r paste("Run Date", which(rundate == current_rundate), ":", current_rundate)`
 
 ::: panel-tabset
 ## Collection Information
@@ -6,7 +6,7 @@
 
 ```{r}
 data2018 %>% 
-  filter(RunDate == current_RunDate) %>% 
+  filter(rundate == current_rundate) %>% 
   select(RunCode, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
   rename("Water Body" = "WaterBody",
          "Site" = "SiteCode",
