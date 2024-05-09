@@ -1,45 +1,33 @@
----
-title: "Sample Information"
-format:
-  html:
-    toc: true
-params:
-  Collectors: "JRP;"
-  RunDate: "2018-09-25"
-  RunCode: "Trib2A"
-  SiteCode: "TPIR9"
-execute:
-  echo: false
-  warning: false
-  message: false
----
+## Run Date: `r current_RunDate`
 
-```{r echo = FALSE, message = FALSE, warning = FALSE}
-library(tidyverse)
-library(data.table)
-library(gt)
-library(purrr)
-library(quarto)
-library(here)
-library(knitr)
-library(rlang)
-library(kableExtra)
-library(tibble)
-```
-
-# `r params$RunDate`
-
-## `r params$RunCode`
-
-### `r params$SiteCode`
-
-::: panel-tabset
 ## Collection Information
+```{r}
+data2018 %>% 
+  filter(Collectors == params$Collectors,
+         RunDate == current_RunDate,
+         RunCode == current_RunCode,
+         SiteCode == current_SiteCode) %>% 
+  select(RunCode, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
+  rename("Water Body" = "WaterBody",
+         "Site" = "SiteCode",
+         "Run Code" = "RunCode",
+         "Time" = "SiteVisitStartTime",
+         "Depth" = "SiteDepth") %>%
+  distinct() %>% 
+  gt() %>%
+  cols_align(align = "center") %>% 
+  tab_header(title = "Site information") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
+```
 
 
 ## Samples
 
 
 ## DO and Temperature
-
-:::

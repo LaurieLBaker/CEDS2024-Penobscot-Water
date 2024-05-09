@@ -5,10 +5,10 @@ format:
   html:
     toc: true
 params:
-  Collectors: "JRP;"
-  RunDate: "data2018$RunDate"
-  RunCode: "data2018$RunCode"
-  SiteCode: "data2018$SiteCode"
+  Collectors: "DHK;"
+  RunDate: current_rundate
+  RunCode: current_runcode
+  SiteCode: current_sitecode
 ---
 
 ```{r load-packages-and-data, echo = FALSE, message = FALSE, warning = FALSE}
@@ -30,7 +30,7 @@ data2018 <- data2018 %>%
   mutate(year = str_extract(RunDate, "2018")) %>%
   mutate(month = str_sub(RunDate, start = 6, end = 7)) %>%
   mutate(day = str_sub(RunDate, start = 9, end = 10)) %>%
-  mutate(rundate = mdy(str_c(month, day, year, sep = "/")))
+  mutate(rundate = str_c(month, day, year, sep = "/"))
 
 # data <- filter(data2018, Collectors == params$Collectors)
 ```
@@ -43,35 +43,39 @@ Collectors <- data2018 %>%
   distinct(Collectors) %>%
   pull()
 
-rundate <- data2018 %>%
-  filter(rundate == rundate) %>%
+RunDate <- data2018 %>%
+  filter(Collectors == params$Collectors, 
+         rundate == rundate) %>%
   select(rundate) %>%
-  mutate(rundate = as_date(rundate)) %>% 
+  mutate(rundate = as.character(rundate)) %>% 
   pull()
 
 RunCode <- data2018 %>%
-  filter(RunCode == RunCode) %>%
+  filter(Collectors == params$Collectors,
+         RunCode == RunCode) %>%
   select(RunCode) %>%
   pull()
 
 SiteCode <- data2018 %>%
-  filter(SiteCode == SiteCode) %>%
+  filter(Collectors == params$Collectors,
+         SiteCode == SiteCode) %>%
   select(SiteCode) %>%
   pull()
+
 ```
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 #| output: asis
 
-rundates <- map_chr(data2018, \(current_rundate) {
+RunDates <- pmap_chr(list(RunCode, RunDate, SiteCode), \(current_RunDate, current_RunCode, current_SiteCode){
   knit_child(
-    input = "test_field_child_doc.qmd",
+    input = "dataless_template.qmd",
     envir = env(),
     quiet = TRUE
     )
 })
 
-print(rundates, sep = "\n")
+cat(RunDates, sep = "\n")
 ```
 
 ```{r}
