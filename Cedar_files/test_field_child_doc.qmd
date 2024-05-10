@@ -1,12 +1,14 @@
-### `r paste("Run Date", which(rundate == current_rundate), ":", current_rundate)`
+### `r paste("Run Date", which(rundate == as.character(current_rundate)), ":", current_rundate)`
 
-::: panel-tabset
 ## Collection Information
 
+```{r echo = FALSE, message = FALSE, warning = FALSE}
 
-```{r}
 data2018 %>% 
-  filter(rundate == current_rundate) %>% 
+  filter(Collectors == params$Collectors,
+         rundate == as.character(current_rundate),
+         runcode == current_runcode,
+         sitecode == current_sitecode) %>% 
   select(RunCode, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
   rename("Water Body" = "WaterBody",
          "Site" = "SiteCode",
@@ -59,16 +61,16 @@ data2018 %>%
 #       weight = px(1),
 #       style = "solid"),
 #     locations = list(cells_body(), cells_column_labels()))
-# 
-# 
-# ```
-# 
-# ## Samples
-# 
-# ```{r}
-# 
+
+
+```
+
+## Samples
+
+```{r}
+
 # data2018 %>% 
-#   filter(SiteVisitID == "JanS7-201871875659") %>% 
+#   filter(SiteVisitID == "JanS7-201871875659", CntrType != "Msmt") %>% 
 #   select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>%
 #   rename("Sample Name" = "SampleName", 
 #          "Project" = "ProjectCode", 
@@ -99,12 +101,12 @@ data2018 %>%
 #       weight = px(1),
 #       style = "solid"),
 #     locations = list(cells_body(), cells_column_labels()))
-# ```
-# 
-# ## DO and Temperature
-# 
-# ```{r}
-# 
+```
+
+## DO and Temperature
+
+```{r}
+
 # data2018$SampleDatetime <- as.POSIXct(data2018$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
 # 
 # data2018$Date <- as.Date(data2018$SampleDatetime)
@@ -194,4 +196,3 @@ data2018 %>%
 #     locations = list(cells_body(), cells_column_labels()))
 
 ```
-:::
