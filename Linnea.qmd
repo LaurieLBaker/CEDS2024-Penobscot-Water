@@ -27,18 +27,16 @@ data2018 <- readRDS("data/PINCommEngData (2).RData")
 data2018$SampleDatetime <- (as.POSIXct(data2018$SampleDatetime, format = "%m/%d/%Y %H:%M:%S"))
 data2018$LabAnalysisDatetime <- (as.POSIXct(data2018$LabAnalysisDatetime, format = "%m/%d/%Y %H:%M:%S"))
     
+#separate_wider_delim(cols = HoldTimeMins, delim = "M", names() = "HoldTimeMinutes", #"HoldTime") %>%
 
+HoldTimeMins <- data2018 %>%
+  mutate(HoldTimeMins = as.double(difftime(LabAnalysisDatetime, SampleDatetime, units = "mins"), na.rm = TRUE))
 
+  
 data2018 %>%
   separate_longer_delim(cols = Constituents, delim = ";") %>%
-  mutate(HoldTimeMins = seconds_to_period(as.double(difftime(lubridate::ymd_hms(LabAnalysisDatetime),
-                       lubridate::ymd_hms(SampleDatetime),
-                       units = "mins"), na.rm = TRUE)
-                       )) %>%
-  separate_wider_delim(cols = HoldTimeMins, delim = "M", names = "HoldTimeMinutes", "HoldTimeSecs") %>%
   filter(SiteVisitID == "JanS5-2018925102747") %>%
   select(SiteCode, SampleDatetime, ResultValue, QCType, Constituents, ResultFlag_ID, IncubationLength, LabAnalysisDatetime) %>%
-
   mutate(HoldTime = seconds_to_period(as.double(difftime(lubridate::ymd_hms(LabAnalysisDatetime),
                        lubridate::ymd_hms(SampleDatetime),
                        units = "secs"), na.rm = TRUE)
