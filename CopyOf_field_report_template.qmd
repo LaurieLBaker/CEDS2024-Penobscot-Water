@@ -98,7 +98,7 @@ data2018 %>%
 ```{r}
 
 data2018 %>% 
-  filter(SiteVisitID == "JanS7-201871875659", CntrType != "Msmt") %>% 
+  filter(SiteVisitID == "JanS7-201871875659") %>% 
   select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>%
   rename("Sample Name" = "SampleName", 
          "Project" = "ProjectCode", 
@@ -145,21 +145,16 @@ data2018 %>%
   select(QCType, ProfileDepth,Const, Result, SiteVisitID) %>% 
   filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>% 
   pivot_wider(names_from = c(Const, QCType),
-              values_from = Result) %>%
-  rename("water_temp_regular" = "water temperature_Regular",
-         "water_temp_duplicate" = "water temperature_Duplicate",
-         "DO_regular" = "Dissolved Oxygen_Regular",
-         "DO_duplicate" = "Dissolved Oxygen_Duplicate") %>%
-  mutate(water_temp_regular = as.character(water_temp_regular),
-     water_temp_regular = replace_na(water_temp_regular, "-"),
-  water_temp_duplicate = as.character(water_temp_duplicate),
-    water_temp_duplicate = replace_na(water_temp_duplicate, "-"),
-     DO_regular = as.character(DO_regular),
-    DO_regular = replace_na(DO_regular, "-"),
-        DO_duplicate = as.character(DO_duplicate),
-    DO_duplicate = replace_na("DO_duplicate", "-")) %>%
-    filter(SiteVisitID == "JanS7-201871875659") %>%
-    select(!SiteVisitID) %>% 
+              values_from = Result,
+              values_fn = list(Result = list)) %>%  # Keep all values
+  rename("Water Temperature Regular" = "water temperature_Regular",
+         "Water Temperature Duplicate" = "water temperature_Duplicate",
+         "DO Regular" = "Dissolved Oxygen_Regular",
+         "DO Duplicate" = "Dissolved Oxygen_Duplicate") %>%
+  mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
+         across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>% 
+  filter(SiteVisitID == "JanS7-201871875659") %>%
+  select(!SiteVisitID) %>% 
   gt() %>% 
       opt_row_striping() %>%
   tab_style(
@@ -171,10 +166,10 @@ data2018 %>%
     locations = list(cells_body(), cells_column_labels()))
 
 
+
   
 
 data2018 %>% 
-    # filter(Collector == "JRP", RunCode == "Passadumkeag", RunDate == "2018-07-18") %>%
   select(Const, Result, QCType, Time, SiteVisitID ) %>% 
   filter(Const %in% c("Secchi","pH")) %>% 
   pivot_wider(names_from = c(Const, QCType),

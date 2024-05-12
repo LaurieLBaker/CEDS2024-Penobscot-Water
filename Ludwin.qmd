@@ -1,122 +1,126 @@
 ---
-Author: 
-Format: html
+title: "Field Report test"
+date: today
+format:
+  html:
+    embed-resources: true
+    number_sections: true
+    toc: true
+format-links: false
 execute:
   echo: false
   warning: false
+params:
+  individual_collector: "DHK"
+  SiteVisitID: current_SiteVisitID
+  RunCode: current_RunCode
+  RunDate: current_RunDate
+  SiteCode: current_SiteCode
 ---
 
-```{r install.packages, include=FALSE}
-library(tidyverse)
-library(quarto)
-library(dplyr)
-library(devtools)
+Collector: **`r params$individual_collector`**
+
+```{r setup, include=FALSE}
 library(readr)
-library(gt) #for tables
+library(here)
+library(dplyr)
+library(ggplot2)
 library(stringr)
-library(htmltools)
-```
+library(purrr)
+library(knitr)
+library(gt)
+library(kableExtra)
+library(tidyr)
 
-```{r load_data}
 data2018 <- readRDS("data/PINCommEngData (2).RData")
-```
 
-## Depth Table
+data2018 <-  data2018 %>%
+  mutate(RunDate = format(as.Date(RunDate), "%m-%d-%Y")) 
 
-```{r, depth_tabble}
-#| label: tbl-temp-DO
-#| tbl-cap: DO & Temperature Table
+data2018_subset <- data2018 %>% filter(str_detect(Collectors, fixed(params$individual_collector)))
 
-data2018$SampleDatetime <- as.POSIXct(data2018$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
+data2018_subset <- data2018_subset %>%
+  arrange(SiteVisitID)
 
-data2018$Date <- as.Date(data2018$SampleDatetime)
-data2018$Time <- format(data2018$SampleDatetime, format = "%H:%M:%S")
+duplicates <- data2018_subset[duplicated(data2018_subset$SiteVisitID), ]
 
+if (nrow(duplicates) > 0) {
+  combined_data <- data2018_subset[!duplicated(data2018_subset$SiteVisitID), ]
+}
 
+combined_data <- combined_data %>%
+  select(SiteVisitID, RunDate, RunCode, SiteCode) %>% 
+  unique()
 
-data2018 %>%
-   filter(SiteVisitID == "JanS7-201871875659") %>%
-  filter(Const %in% c("Dissolved Oxygen", "water temperature"),
-         SiteDepthMethod == "Secchi disk") %>% 
-  select(QCType, ProfileDepth,Const, Result) %>%
-  na.omit() %>%
-  pivot_wider(names_from = "Const", values_from = "Result") %>%
-  gt() %>% 
-    opt_row_striping()
+combined_data <- apply(combined_data, 1, as.list)
 
 ```
 
-## Filter Table
 
 ```{r}
-#| label: tbl-PH-Secchi
-#| tbl-cap: pH and Secchi Table
-  
-  data2018 %>% 
-    # filter(Collector == "JRP", RunCode == "Passadumkeag", RunDate == "2018-07-18") %>%
-  select(Const, Result, QCType, Date, Time, SiteVisitID ) %>% 
-  filter(Const %in% c("Secchi","pH")) %>% 
-  pivot_wider(names_from = c(Const, QCType),
-              values_from = Result) %>%
-  mutate(pH_Duplicate = as.character(pH_Duplicate),
-    pH_Duplicate = replace_na(pH_Duplicate, "-"),
-    Secchi_Duplicate = as.character(Secchi_Duplicate),
-    Secchi_Duplicate = replace_na(Secchi_Duplicate, "-"),
-     Secchi_Regular = as.character(Secchi_Regular),
-    Secchi_Regular = replace_na(Secchi_Regular, "-"),
-        pH_Regular = as.character(pH_Regular),
-    pH_Regular = replace_na(pH_Regular, "-")) %>% 
-    filter(SiteVisitID == "JanS7-201871875659") %>%
-    select(!SiteVisitID) %>% 
-  gt() %>% 
-    cols_move(
-    columns = "pH_Duplicate",
-    after = "pH_Regular"
-  ) %>% 
-      opt_row_striping()
-  
- 
-  
-  
+#| results: hide
+
+unique_collectors <- unique(data2018$Collectors)
+
+split_collectors <- strsplit(unique_collectors, ";")
+
+individual_values <- unlist(split_collectors)
+
+individual_values <- gsub("\\s+", "", individual_values)
+
+individual_collectors <- unique(individual_values) 
+
+SiteVisitID <- data2018_subset %>% 
+  filter(str_detect(Collectors, fixed(params$individual_collector))) |> 
+  distinct(SiteVisitID) %>% 
+  pull()
+
+RunDate <- data2018_subset %>% 
+  filter(str_detect(Collectors, fixed(params$individual_collector))) |> 
+  distinct(RunDate) %>% 
+  pull()
+
+RunCode <- data2018_subset %>%
+  filter(str_detect(Collectors, fixed(params$individual_collector))) |> 
+  distinct(RunCode) %>% 
+  pull()
+
+SiteCode <- data2018_subset %>%
+  filter(str_detect(Collectors, fixed(params$individual_collector))) |> 
+  distinct(SiteCode) %>% 
+  pull()
 
 ```
 
-```{r fitler_table}
-#| label: tbl-filter
-#| tbl-cap: Filter Table
 
-filter_table <- data2018 %>% 
-  filter(SiteVisitID == "JanS7-201871875659") %>% 
-  select(FilterName) %>% 
-  distinct() %>%
-  gt() %>%
-  cols_align(align = "center")
-filter_table
-```
 
-## Method Table
+```{r}
+#| output: asis
 
-```{r sample_table}
-#| label: tbl-sample
-#| tbl-cap: Sample Table
-data2018 %>% 
-  filter(SiteVisitID == "JanS7-201871875659") %>% 
-  select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>% 
-  group_by(LabAbbrev) %>% 
-  distinct() %>% 
-  gt() %>%
-tab_style(
-    style = cell_fill(color = "lightgreen"),
-    locations = cells_body(columns = c(SampleDepth),
-                           rows = CollMethod == "GS" & SampleDepth == 0)) %>%
-  tab_style(
-    style = cell_fill(color = "red"),
-    locations = cells_body(columns = c(SampleDepth),
-                           rows = CollMethod == "CO-E" & SampleDepth == 0)) %>%
-  tab_style(
-    style = cell_fill(color = "red"),
-    locations = cells_body(columns = c(SampleDepth),
-                           rows = CollMethod == "GS" & SampleDepth != 0)) %>%
-  cols_align(align = "center")
+SiteVisitID_Sections <- map_chr(seq_along(combined_data), \(i) {
+  current_data <- combined_data[[i]]
 
+  current_SiteVisitID <- current_data$SiteVisitID
+  current_RunDate <- current_data$RunDate
+  current_RunCode <- current_data$RunCode
+  current_SiteCode <- current_data$SiteCode
+
+  section_title <- paste("RunDate:", current_RunDate, "RunCode:", current_RunCode, "SiteCode:", current_SiteCode)
+
+  params_env <- new.env(parent = emptyenv())
+  params_env$SiteVisitID <- current_SiteVisitID
+  params_env$RunDate <- current_RunDate
+  params_env$RunCode <- current_RunCode
+  params_env$SiteCode <- current_SiteCode
+
+  child_output <- knitr::knit_child(
+    input = "child_doc_lud_2.qmd",
+    envir = params_env,
+    quiet = TRUE
+  )
+
+  paste(section_title, child_output, sep = "\n")
+})
+
+cat(SiteVisitID_Sections, sep = "\n")
 ```

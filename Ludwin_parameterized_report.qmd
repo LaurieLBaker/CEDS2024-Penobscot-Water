@@ -12,7 +12,7 @@ execute:
   echo: false
   warning: false
 params:
-  individual_collector: "JRP"
+  individual_collector: "DHK"
   sitevisitid: current_SiteVisitID
 ---
 
@@ -68,7 +68,6 @@ SiteVisitID <- data2018 %>%
  quiet = TRUE
  )
  })
-
 
 cat(SiteVisitID_Sections, sep = "\n")
 ```

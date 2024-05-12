@@ -1,5 +1,6 @@
 ## Date: x
 
+::: panel-tabset
 ### Site Info
 
 ```{r}
@@ -180,3 +181,6 @@ data2018 %>%
       style = "solid"),
     locations = list(cells_body(), cells_column_labels()))
 ```
+:::
+
+
