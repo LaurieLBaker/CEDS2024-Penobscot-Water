@@ -86,10 +86,6 @@ SiteCode <- data2018_subset %>%
 
 ```{r}
 #| output: asis
-#| warning: false
-#| cache: false
-
-
 
 
 SiteVisitID_Sections <- map_chr(SiteVisitID, \(current_SiteVisitID) {
@@ -100,16 +96,16 @@ current_RunCode <- data2018_subset[data2018_subset$SiteVisitID == current_SiteVi
 distinct()
 current_SiteCode <- data2018_subset[data2018_subset$SiteVisitID == current_SiteVisitID, "SiteCode"] %>% distinct()
 
-local({
+{
 params <- (RunDate = current_RunDate)
 params <- (RunCode = current_RunCode)
 params <- (SiteCode = current_SiteCode)
 knitr::knit_child(
-input = "child_Template_Ludwin.qmd",
+input = "child_doc_lud_2.qmd",
 envir = rlang::env(),
 quiet = TRUE
 )
-})
+}
 })
 
 

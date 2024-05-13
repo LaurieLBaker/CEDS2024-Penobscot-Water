@@ -1,27 +1,20 @@
+# Date: `r RunDate`, RunCode: `r RunCode`, SiteCode: `r SiteCode`
 
+::: panel-tabset
+### Site Info
 
 ```{r}
-#| echo = FALSE
-
-# Filter data for this SiteVisitID
-data_site_subset <- data2018_subset[data2018_subset$SampleVisitID == {{ current_SiteVisitID }}, ]
-
-# No loop needed as you're generating tables for a single SiteVisitID
-# Directly use the filtered data_site_subset for each table
-
-## Site Info
-
-site_info_table <- data_site_subset %>%
-  filter(str_detect(Collectors, fixed(params$individual_collector))) %>%  # Assuming logic to filter collectors
-  select(RunCode, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
+data2018 %>% 
+  filter(SiteVisitID == current_SiteVisitID) %>% 
+   select(RunCode, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
   rename("Water Body" = "WaterBody",
-        "Site" = "SiteCode",
-        "Run Code" = "RunCode",
-        "Time" = "SiteVisitStartTime",
-        "Depth" = "SiteDepth") %>%
-  distinct() %>%
+         "Site" = "SiteCode",
+         "Run Code" = "RunCode",
+         "Time" = "SiteVisitStartTime",
+         "Depth" = "SiteDepth") %>%
+  distinct() %>% 
   gt() %>%
-  cols_align(align = "center") %>%
+  cols_align(align = "center") %>% 
   tab_header(title = "Site information") %>%
   tab_style(
     style = cell_borders(
@@ -30,20 +23,21 @@ site_info_table <- data_site_subset %>%
       weight = px(1),
       style = "solid"),
     locations = list(cells_body(), cells_column_labels()))
+```
 
-## Abiotic Factors (assuming data exists)
-
-abiotic_factors_table <- data_site_subset %>%
-  select(Weather, SamplingAirTemp, RivCond, WaterLevel, FoamRank, FoamSource) %>%
+```{r}
+data2018 %>% 
+  filter(SiteVisitID == current_SiteVisitID) %>% 
+  select(Weather, SamplingAirTemp, RivCond, WaterLevel, FoamRank, FoamSource) %>% 
   rename("Air Temp" = "SamplingAirTemp",
-        "River Cond" = "RivCond",
-        "Water Level" = "WaterLevel",
-        "Foam Rank" = "FoamRank",
-        "Foam Source" = "FoamSource") %>%
-  distinct() %>%
+         "River Cond" = "RivCond", 
+         "Water Level" = "WaterLevel",
+         "Foam Rank" = "FoamRank",
+         "Foam Source" = "FoamSource") %>%
+  distinct() %>% 
   gt() %>%
-  cols_align(align = "center") %>%  # Assuming these columns exist
-  tab_header(title = "Abiotic Factors") %>%  # Assuming this data exists
+  cols_align(align = "center") %>%
+  tab_header(title = "Abiotic Factors") %>%
   tab_style(
     style = cell_borders(
       sides = c("all"),
@@ -51,48 +45,15 @@ abiotic_factors_table <- data_site_subset %>%
       weight = px(1),
       style = "solid"),
     locations = list(cells_body(), cells_column_labels()))
+```
 
-## Site Visit Notes (assuming data exists)
-
-site_visit_notes_table <- data_site_subset %>%
-  select(SiteVisitComment) %>%
+```{r}
+data2018 %>% 
+  filter(SiteVisitID == current_SiteVisitID) %>% 
+  select(SiteVisitComment) %>% 
   rename("Site Visit Notes" = "SiteVisitComment") %>%
-  distinct() %>%
+  distinct() %>% 
   gt() %>%
-  cols_align(align = "center") %>%  # Assuming this column exists
-  tab_style(
-    style = cell_borders(
-      sides = c("all"),
-      color = "black",
-      weight = px(1),
-      style = "solid"),
-    locations = list(cells_body(), cells_column_labels()))  # Assuming this data exists
-
-## Samples
-
-samples_table <- data_site_subset %>%
-  select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>%
-  rename("Sample Name" = "SampleName",
-        "Project" = "ProjectCode",
-        "Container" = "CntrType",
-        "QC" = "QCType",
-        "Method" = "CollMethod",
-        "Depth" = "SampleDepth") %>%
-  group_by(LabAbbrev) %>%
-  distinct() %>%
-  gt() %>%
-  tab_style(
-    style = cell_fill(color = "lightgreen"),
-    locations = cells_body(columns = c(Depth),
-                            rows = Method == "GS" & Depth == 0)) %>%
-  tab_style(
-    style = cell_fill(color = "red"),
-    locations = cells_body(columns = c(Depth),
-                            rows = Method == "CO-E" & Depth == 0)) %>%
-  tab_style(
-    style = cell_fill(color = "red"),
-    locations = cells_body(columns = c(Depth),
-                            rows = Method == "GS" & Depth != 0)) %>%
   cols_align(align = "center") %>%
   tab_style(
     style = cell_borders(
@@ -100,26 +61,72 @@ samples_table <- data_site_subset %>%
       color = "black",
       weight = px(1),
       style = "solid"),
-locations = list(cells_body(), cells_column_labels()))
+    locations = list(cells_body(), cells_column_labels()))
+```
 
-## DO & Temperature
+### Samples
 
-do_temp_table <- data_site_subset %>%
-  select(QCType, ProfileDepth, Const, Result, SiteVisitID) %>%
-  filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>%
+```{r}
+data2018 %>% 
+  filter(SiteVisitID == current_SiteVisitID) %>% 
+  select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>%
+  rename("Sample Name" = "SampleName", 
+         "Project" = "ProjectCode", 
+         "Container" = "CntrType", 
+         "QC" = "QCType",
+         "Method" = "CollMethod",
+         "Depth" = "SampleDepth") %>%
+  group_by(LabAbbrev) %>%
+  distinct() %>% 
+  gt() %>%
+tab_style(
+    style = cell_fill(color = "lightgreen"),
+    locations = cells_body(columns = c(Depth),
+                           rows = Method == "GS" & Depth == 0)) %>%
+  tab_style(
+    style = cell_fill(color = "red"),
+    locations = cells_body(columns = c(Depth),
+                           rows = Method == "CO-E" & Depth == 0)) %>%
+  tab_style(
+    style = cell_fill(color = "red"),
+    locations = cells_body(columns = c(Depth),
+                           rows = Method == "GS" & Depth != 0)) %>%
+  cols_align(align = "center") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+    locations = list(cells_body(), cells_column_labels()))
+```
+
+### DO & Temperature
+
+```{r}
+
+data2018$SampleDatetime <- as.POSIXct(data2018$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
+
+data2018$Date <- as.Date(data2018$SampleDatetime)
+data2018$Time <- format(data2018$SampleDatetime, format = "%H:%M:%S")
+
+
+data2018 %>% 
+  select(QCType, ProfileDepth,Const, Result, SiteVisitID) %>% 
+  filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>% 
   pivot_wider(names_from = c(Const, QCType),
               values_from = Result,
               values_fn = list(Result = list)) %>%  # Keep all values
   rename("Water Temperature Regular" = "water temperature_Regular",
-        "Water Temperature Duplicate" = "water temperature_Duplicate",
-        "DO Regular" = "Dissolved Oxygen_Regular",
-        "DO Duplicate" = "Dissolved Oxygen_Duplicate") %>%
+         "Water Temperature Duplicate" = "water temperature_Duplicate",
+         "DO Regular" = "Dissolved Oxygen_Regular",
+         "DO Duplicate" = "Dissolved Oxygen_Duplicate") %>%
   mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
-         across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>%
-  filter(SiteVisitID == current_SiteVisitID) %>%
-  select(!SiteVisitID) %>%
-  gt() %>%
-  opt_row_striping() %>%
+         across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>% 
+  filter(SiteVisitID == current_SiteVisitID) %>% 
+  select(!SiteVisitID) %>% 
+  gt() %>% 
+      opt_row_striping() %>%
   tab_style(
     style = cell_borders(
       sides = c("all"),
@@ -128,24 +135,26 @@ do_temp_table <- data_site_subset %>%
       style = "solid"),
     locations = list(cells_body(), cells_column_labels()))
 
-## Secchi & pH (assuming data exists)
 
-secchi_ph_table <- data_site_subset %>%
-  select(Const, Result, QCType, Time, SiteVisitID ) %>%
-  filter(Const %in% c("Secchi","pH")) %>%
+```
+
+```{r}
+data2018 %>%
+  select(Const, Result, QCType, Time, SiteVisitID ) %>% 
+  filter(Const %in% c("Secchi","pH")) %>% 
   pivot_wider(names_from = c(Const, QCType),
               values_from = Result,
               values_fn = list(Result = list)) %>%  # Keep all values
-  mutate(across(ends_with("_Duplicate"), ~replace_na(as.character(.), "-")),
-         across(ends_with("_Regular"), ~replace_na(as.character(.), "-"))) %>%
-  filter(SiteVisitID == current_SiteVisitID) %>%
-  select(!SiteVisitID) %>%
+  mutate(across(ends_with("Duplicate"), ~replace_na(as.character(.), "-")),
+         across(ends_with("Regular"), ~replace_na(as.character(.), "-"))) %>% 
+  filter(SiteVisitID == current_SiteVisitID) %>% 
+  select(!SiteVisitID) %>% 
   rename_with(~str_replace_all(., "_", " "), matches("_Regular$|_Duplicate$")) %>%
-  gt() %>%
+  gt() %>% 
   cols_move(
     columns = "pH Duplicate",
     after = "pH Regular"
-  ) %>%
+  ) %>% 
   opt_row_striping() %>%
   tab_style(
     style = cell_borders(
@@ -154,11 +163,11 @@ secchi_ph_table <- data_site_subset %>%
       weight = px(1),
       style = "solid"),
     locations = list(cells_body(), cells_column_labels()))
+```
 
-## Filter Name (assuming data exists)
-
-filter_name_table <- data_site_subset %>%
-  filter(SiteVisitID == current_SiteVisitID) %>%
+```{r}
+data2018 %>% 
+  filter(SiteVisitID == "JanS7-201871875659") %>% 
   select(FilterName) %>%
   rename("Filter Name" = "FilterName") %>%
   distinct() %>%
@@ -171,16 +180,5 @@ filter_name_table <- data_site_subset %>%
       weight = px(1),
       style = "solid"),
     locations = list(cells_body(), cells_column_labels()))
-
-# Return all tables as a list
-return(list(
-  site_info_table = site_info_table,
-  abiotic_factors_table = abiotic_factors_table,  # Assuming this data exists
-  site_visit_notes_table = site_visit_notes_table,  # Assuming this data exists
-  samples_table = samples_table,
-  do_temp_table = do_temp_table,
-  secchi_ph_table = secchi_ph_table,  # Assuming this data exists
-  filter_name_table = filter_name_table  # Assuming this data exists
-))
 ```
-
+:::
