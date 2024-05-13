@@ -1,107 +1,175 @@
 ---
-title: "`r paste(params$Collectors)`"
-author: "Cedar Callahan"
+title: "Field Report test"
+date: today
 format:
   html:
-    toc: true
+    embed-resources: true
+    number_sections: true
+    toc: true 
+format-links: false
+execute:
+  echo: false
+  warning: false
 params:
-  Collectors: "JRP;"
-  RunDate: "data2018$RunDate"
-  RunCode: "data2018$RunCode"
-  SiteCode: "data2018$SiteCode"
+  individual_collector: "DHK"
+  SiteVisitID: current_SiteVisitID
+  RunCode: current_RunCode
+  RunDate: current_RunDate
+  SiteCode: current_SiteCode
 ---
 
-```{r load-packages-and-data, echo = FALSE, message = FALSE, warning = FALSE}
-library(tidyverse)
-library(data.table)
-library(gt)
-library(purrr)
-library(quarto)
+Collector: **`r params$individual_collector`**
+
+```{r setup, include=FALSE}
+library(readr)
 library(here)
+library(dplyr)
+library(ggplot2)
+library(stringr)
+library(purrr)
+library(htmltools)
 library(knitr)
-library(rlang)
+library(gt)
 library(kableExtra)
-library(tibble)
-library(rmarkdown)
+library(tidyr)
 
 data2018 <- readRDS("data/PINCommEngData (2).RData")
 
-data <- filter(data2018, Collectors == params$Collectors)
+data2018 <-  data2018 %>%
+  mutate(RunDate = format(as.Date(RunDate), "%m-%d-%Y")) 
 ```
 
-# Collector: `r params$Collector`
+
+```{r}
+#| results: hide
+
+unique_collectors <- unique(data2018$Collectors)
+
+split_collectors <- strsplit(unique_collectors, ";")
+
+individual_values <- unlist(split_collectors)
+
+individual_values <- gsub("\\s+", "", individual_values)
+
+individual_collectors <- unique(individual_values) 
+
+data2018_subset <- data2018 %>% filter(str_detect(Collectors, fixed(params$individual_collector)))
+
+data2018_subset <- data2018_subset %>%
+  arrange(SiteVisitID)
+
+
+SiteVisitID <- data2018_subset %>% 
+  filter(str_detect(Collectors, fixed(params$individual_collector))) |> 
+  distinct(SiteVisitID) %>% 
+  pull()
+
+RunDate <- data2018_subset %>% 
+  filter(str_detect(Collectors, fixed(params$individual_collector))) |> 
+  distinct(RunDate) %>% 
+  pull()
+
+RunCode <- data2018_subset %>%
+  filter(str_detect(Collectors, fixed(params$individual_collector))) |> 
+  distinct(RunCode) %>% 
+  pull()
+
+SiteCode <- data2018_subset %>%
+  filter(str_detect(Collectors, fixed(params$individual_collector))) |> 
+  distinct(SiteCode) %>% 
+  pull()
+
+
+```
+
+
+
+```{r}
+#| output: asis
+
+
+SiteVisitID_Sections <- map_chr(SiteVisitID, \(current_SiteVisitID) {
+
+current_RunDate <- data2018_subset[data2018_subset$SiteVisitID == current_SiteVisitID, "RunDate"] %>%
+distinct()
+current_RunCode <- data2018_subset[data2018_subset$SiteVisitID == current_SiteVisitID, "RunCode"] %>%
+distinct()
+current_SiteCode <- data2018_subset[data2018_subset$SiteVisitID == current_SiteVisitID, "SiteCode"] %>% distinct()
+
+{
+params <- (RunDate = current_RunDate)
+params <- (RunCode = current_RunCode)
+params <- (SiteCode = current_SiteCode)
+knitr::knit_child(
+input = "test_template.qmd",
+envir = rlang::env(),
+quiet = TRUE
+)
+}
+})
+
+
+cat(SiteVisitID_Sections, sep = "\n")
+
+```
+
+
+```{r load-packages-and-data, echo = FALSE, message = FALSE, warning = FALSE}
+# library(tidyverse)
+# library(data.table)
+# library(gt)
+# library(purrr)
+# library(quarto)
+# library(here)
+# library(knitr)
+# library(rlang)
+# library(kableExtra)
+# library(tibble)
+# library(rmarkdown)
+# 
+# data2018 <- readRDS("data/PINCommEngData (2).RData")
+# 
+# data <- filter(data2018, Collectors == params$Collectors)
+```
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
-collectors <- data %>%
-  filter(Collectors == params$Collectors) %>%
-  distinct(Collectors) %>%
-  pull()
-
-rundate <- data %>%
-  filter(RunDate == RunDate) %>%
-  select(RunDate) %>%
-  mutate(RunDate = as.character(RunDate)) %>%
-  pull()
-
-runcode <- data %>%
-  filter(RunCode == RunCode) %>%
-  select(RunCode) %>%
-  pull()
-
-sitecode <- data %>%
-  filter(SiteCode == SiteCode) %>%
-  select(SiteCode) %>%
-  pull()
+# collectors <- data %>%
+#   filter(Collectors == params$Collectors) %>%
+#   distinct(Collectors) %>%
+#   pull()
+# 
+# rundate <- data %>%
+#   filter(RunDate == RunDate) %>%
+#   select(RunDate) %>%
+#   mutate(RunDate = as.character(RunDate)) %>%
+#   pull()
+# 
+# runcode <- data %>%
+#   filter(RunCode == RunCode) %>%
+#   select(RunCode) %>%
+#   pull()
+# 
+# sitecode <- data %>%
+#   filter(SiteCode == SiteCode) %>%
+#   select(SiteCode) %>%
+#   pull()
 ```
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 #| output: asis
 
-# pmap_list <- list(rundate, runcode, sitecode)
-
-RunDate <- map_chr(data, \(current_RunDate){
-  knit_child(
-    input = "samples_child_doc.qmd",
-    envir = env(),
-    quiet = TRUE
-    )
-})
-
-print(RunDate, sep = "\n")
+# RunDate <- map_chr(data, \(current_RunDate){
+#   knit_child(
+#     input = "samples_child_doc.qmd",
+#     envir = env(),
+#     quiet = TRUE
+#     )
+# })
+# 
+# print(RunDate, sep = "\n")
 ```
 
-```{r}
-# collector <- tibble(collectors)
-# 
-# reports <- tibble(
-#   input = "test_field_child_doc.qmd",
-#   output_file = str_glue("{collectors}.html"),
-#   execute_params = map(collector, ~list(collector = .))
-# )
-# 
-# reports %>% 
-#   map2()
-```
 
-```{r}
-# data_reports <- data2018 %>% 
-#   filter(Collectors == "JRP;") %>% 
-#   mutate(output_format = "html",
-#          output_file = paste(
-#            str_remove(Collectors, ";"),
-#            ".html",
-#            sep = ""),
-#   execute_params = map2(
-#     rundate,
-#     runcode,
-#     \(rundate, runcode) list(rundate = rundate, runcode = runcode)
-#   ))
-# 
-# pwalk(
-#   .l = data_reports,
-#   .f = render,
-#   input = here("test_field_child_doc.qmd")) 
-```
 
 
 
