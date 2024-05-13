@@ -58,7 +58,7 @@ SiteVisitID <- data2018 %>%
   pull()
 ```
 
-```{r}
+```{r echo = FALSE}
 #| output: asis
 
  SiteVisitID_Sections <- map_chr(SiteVisitID, \(current_SiteVisitID) {
