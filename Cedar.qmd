@@ -91,17 +91,17 @@ SiteCode <- data2018_subset %>%
 SiteVisitID_Sections <- map_chr(SiteVisitID, \(current_SiteVisitID) {
 
 current_RunDate <- data2018_subset[data2018_subset$SiteVisitID == current_SiteVisitID, "RunDate"] %>%
-distinct()
+distinct() %>% pull()
 current_RunCode <- data2018_subset[data2018_subset$SiteVisitID == current_SiteVisitID, "RunCode"] %>%
-distinct()
-current_SiteCode <- data2018_subset[data2018_subset$SiteVisitID == current_SiteVisitID, "SiteCode"] %>% distinct()
+distinct %>% pull()
+current_SiteCode <- data2018_subset[data2018_subset$SiteVisitID == current_SiteVisitID, "SiteCode"] %>% distinct %>% pull()
 
 {
 params <- (RunDate = current_RunDate)
 params <- (RunCode = current_RunCode)
 params <- (SiteCode = current_SiteCode)
 knitr::knit_child(
-input = "test_template.qmd",
+input = "child_Template_Ludwin.qmd",
 envir = rlang::env(),
 quiet = TRUE
 )
