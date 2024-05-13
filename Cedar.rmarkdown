@@ -21,7 +21,9 @@ editor:
     wrap: 72
 ---
 
+
 Collector: **`r params$individual_collector`**
+
 
 ```{r setup, include = FALSE}
 library(readr)
@@ -84,7 +86,6 @@ SiteCode <- data2018_subset %>%
 
 ```
 
-
 ```{r include = FALSE}
 data2018 %>% 
   filter(CollMethod == "CO-E",
@@ -98,7 +99,6 @@ data2018 %>%
   select(RunDate, RunCode, SiteCode, CollMethod, SampleDepth) %>% 
   gt()
 ```
-
 
 ```{r}
 #| output: asis
@@ -183,3 +183,4 @@ cat(SiteVisitID_Sections, sep = "\n")
 # 
 # print(RunDate, sep = "\n")
 ```
+
