@@ -1,0 +1,73 @@
+---
+title: "Field Report"
+date: today
+date-modified: last-modified
+format:
+  html:
+    embed-resources: true
+    number_sections: true
+    toc: true
+format-links: false
+execute:
+  echo: false
+  warning: false
+params:
+  individual_collector: "DHK"
+  sitevisitid: current_SiteVisitID
+---
+
+Collector: **`r params$individual_collector`**
+
+```{r}
+#| label: setup
+#| include: false
+
+# Attach packages
+library(readr)
+library(here)
+library(dplyr)
+library(ggplot2)
+library(stringr)
+library(purrr)
+library(knitr)
+library(gt)
+library(kableExtra)
+library(tidyr)
+
+# Load data
+data2018 <- readRDS("data/PINCommEngData (2).RData")
+
+```
+
+```{r}
+#| results: hide
+
+unique_collectors <- unique(data2018$Collectors)
+
+split_collectors <- strsplit(unique_collectors, ";")
+
+individual_values <- unlist(split_collectors)
+
+individual_values <- gsub("\\s+", "", individual_values)
+
+individual_collectors <- unique(individual_values) 
+
+SiteVisitID <- data2018 %>% 
+  filter(str_detect(Collectors, fixed(params$individual_collector))) |> 
+  distinct(SiteVisitID) %>% 
+  pull()
+```
+
+```{r }
+#| output: asis
+
+ SiteVisitID_Sections <- map_chr(SiteVisitID, \(current_SiteVisitID) {
+ knitr::knit_child(
+ input = "child_Template_Ludwin.qmd",
+ envir = rlang::env(),
+ quiet = TRUE
+ )
+ })
+
+cat(SiteVisitID_Sections, sep = "\n")
+```
