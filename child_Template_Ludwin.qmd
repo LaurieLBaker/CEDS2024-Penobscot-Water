@@ -1,4 +1,4 @@
-## Date: x
+# Date: `r RunDate`, RunCode: `r RunCode`, SiteCode: `r SiteCode`
 
 ::: panel-tabset
 ### Site Info

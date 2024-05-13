@@ -5,7 +5,7 @@ format:
   html:
     embed-resources: true
     number_sections: true
-    toc: true
+    toc: true 
 format-links: false
 execute:
   echo: false
@@ -27,6 +27,7 @@ library(dplyr)
 library(ggplot2)
 library(stringr)
 library(purrr)
+library(htmltools)
 library(knitr)
 library(gt)
 library(kableExtra)
@@ -36,24 +37,6 @@ data2018 <- readRDS("data/PINCommEngData (2).RData")
 
 data2018 <-  data2018 %>%
   mutate(RunDate = format(as.Date(RunDate), "%m-%d-%Y")) 
-
-data2018_subset <- data2018 %>% filter(str_detect(Collectors, fixed(params$individual_collector)))
-
-data2018_subset <- data2018_subset %>%
-  arrange(SiteVisitID)
-
-duplicates <- data2018_subset[duplicated(data2018_subset$SiteVisitID), ]
-
-if (nrow(duplicates) > 0) {
-  combined_data <- data2018_subset[!duplicated(data2018_subset$SiteVisitID), ]
-}
-
-combined_data <- combined_data %>%
-  select(SiteVisitID, RunDate, RunCode, SiteCode) %>% 
-  unique()
-
-combined_data <- apply(combined_data, 1, as.list)
-
 ```
 
 
@@ -69,6 +52,12 @@ individual_values <- unlist(split_collectors)
 individual_values <- gsub("\\s+", "", individual_values)
 
 individual_collectors <- unique(individual_values) 
+
+data2018_subset <- data2018 %>% filter(str_detect(Collectors, fixed(params$individual_collector)))
+
+data2018_subset <- data2018_subset %>%
+  arrange(SiteVisitID)
+
 
 SiteVisitID <- data2018_subset %>% 
   filter(str_detect(Collectors, fixed(params$individual_collector))) |> 
@@ -90,37 +79,40 @@ SiteCode <- data2018_subset %>%
   distinct(SiteCode) %>% 
   pull()
 
+
 ```
 
 
 
 ```{r}
 #| output: asis
+#| warning: false
+#| cache: false
 
-SiteVisitID_Sections <- map_chr(seq_along(combined_data), \(i) {
-  current_data <- combined_data[[i]]
 
-  current_SiteVisitID <- current_data$SiteVisitID
-  current_RunDate <- current_data$RunDate
-  current_RunCode <- current_data$RunCode
-  current_SiteCode <- current_data$SiteCode
 
-  section_title <- paste("RunDate:", current_RunDate, "RunCode:", current_RunCode, "SiteCode:", current_SiteCode)
 
-  params_env <- new.env(parent = emptyenv())
-  params_env$SiteVisitID <- current_SiteVisitID
-  params_env$RunDate <- current_RunDate
-  params_env$RunCode <- current_RunCode
-  params_env$SiteCode <- current_SiteCode
+SiteVisitID_Sections <- map_chr(SiteVisitID, \(current_SiteVisitID) {
 
-  child_output <- knitr::knit_child(
-    input = "child_doc_lud_2.qmd",
-    envir = params_env,
-    quiet = TRUE
-  )
+current_RunDate <- data2018_subset[data2018_subset$SiteVisitID == current_SiteVisitID, "RunDate"] %>%
+distinct()
+current_RunCode <- data2018_subset[data2018_subset$SiteVisitID == current_SiteVisitID, "RunCode"] %>%
+distinct()
+current_SiteCode <- data2018_subset[data2018_subset$SiteVisitID == current_SiteVisitID, "SiteCode"] %>% distinct()
 
-  paste(section_title, child_output, sep = "\n")
+local({
+params <- (RunDate = current_RunDate)
+params <- (RunCode = current_RunCode)
+params <- (SiteCode = current_SiteCode)
+knitr::knit_child(
+input = "child_Template_Ludwin.qmd",
+envir = rlang::env(),
+quiet = TRUE
+)
+})
 })
 
+
 cat(SiteVisitID_Sections, sep = "\n")
+
 ```
