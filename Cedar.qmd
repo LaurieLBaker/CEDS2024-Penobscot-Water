@@ -84,19 +84,18 @@ SiteCode <- data2018_subset %>%
 
 ```
 
+# Quality Control Flags
 
-```{r include = FALSE}
+```{r echo = FALSE}
 data2018 %>% 
   filter(CollMethod == "CO-E",
          SampleDepth == 0) %>% 
-  select(RunDate, RunCode, SiteCode, CollMethod, SampleDepth) %>% 
-  gt()
+  select(RunDate, RunCode, SiteCode, CollMethod, SampleDepth)
 
 data2018 %>% 
   filter(CollMethod == "GS", 
          SampleDepth != 0) %>% 
-  select(RunDate, RunCode, SiteCode, CollMethod, SampleDepth) %>% 
-  gt()
+  select(RunDate, RunCode, SiteCode, CollMethod, SampleDepth)
 ```
 
 
