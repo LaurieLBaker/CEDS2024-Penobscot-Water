@@ -11,7 +11,7 @@ execute:
   echo: false
   warning: false
 params:
-  individual_collector: "TJM"
+  individual_collector: "JMP"
   SiteVisitID: current_SiteVisitID
   RunCode: current_RunCode
   RunDate: current_RunDate
@@ -50,12 +50,11 @@ individual_values <- unlist(split_collectors)
 
 individual_values <- gsub("\\s+", "", individual_values)
 
-individual_collectors <- unique(individual_values) 
+individual_collectors <- unique(individual_values)
 
 data2018_subset <- data2018 %>% 
+  filter(str_detect(Collectors, fixed(params$individual_collector))) %>%
   mutate(Collectors = str_sub(params$individual_collector, start = 1, end = 3))
-
-# data2018_subset <- data2018 %>% filter(str_detect(Collectors, fixed(params$individual_collector)))
 
 data2018_subset <- data2018_subset %>%
   arrange(SiteVisitID)
@@ -88,7 +87,7 @@ SiteCode <- data2018_subset %>%
 ## Collection Method = 0
 
 ```{r echo = FALSE}
-data2018_subset %>% 
+data2018 %>% 
   filter(CollMethod == "CO-E",
          SampleDepth == 0) %>% 
   select(Collectors, RunDate, RunCode, SiteCode, CollMethod, SampleDepth) %>% 
