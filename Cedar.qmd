@@ -16,9 +16,6 @@ params:
   RunCode: current_RunCode
   RunDate: current_RunDate
   SiteCode: current_SiteCode
-editor: 
-  markdown: 
-    wrap: 72
 ---
 
 Collector: **`r params$individual_collector`**
@@ -55,11 +52,13 @@ individual_values <- gsub("\\s+", "", individual_values)
 
 individual_collectors <- unique(individual_values) 
 
-data2018_subset <- data2018 %>% filter(str_detect(Collectors, fixed(params$individual_collector)))
+data2018_subset <- data2018 %>% 
+  mutate(Collectors = str_sub(params$individual_collector, start = 1, end = 3))
+
+# data2018_subset <- data2018 %>% filter(str_detect(Collectors, fixed(params$individual_collector)))
 
 data2018_subset <- data2018_subset %>%
   arrange(SiteVisitID)
-
 
 SiteVisitID <- data2018_subset %>% 
   filter(str_detect(Collectors, fixed(params$individual_collector))) |> 
@@ -86,16 +85,24 @@ SiteCode <- data2018_subset %>%
 
 # Quality Control Flags
 
+## Collection Method = 0
+
 ```{r echo = FALSE}
-data2018 %>% 
+data2018_subset %>% 
   filter(CollMethod == "CO-E",
          SampleDepth == 0) %>% 
-  select(RunDate, RunCode, SiteCode, CollMethod, SampleDepth)
+  select(Collectors, RunDate, RunCode, SiteCode, CollMethod, SampleDepth) %>% 
+  gt()
+```
 
-data2018 %>% 
+## Collection Method = GS
+
+```{r}
+data2018_subset %>% 
   filter(CollMethod == "GS", 
          SampleDepth != 0) %>% 
-  select(RunDate, RunCode, SiteCode, CollMethod, SampleDepth)
+  select(RunDate, RunCode, SiteCode, CollMethod, SampleDepth) %>% 
+  gt()
 ```
 
 
