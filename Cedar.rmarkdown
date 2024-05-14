@@ -18,7 +18,9 @@ params:
   SiteCode: current_SiteCode
 ---
 
+
 Collector: **`r params$individual_collector`**
+
 
 ```{r setup, include = FALSE}
 library(readr)
@@ -41,6 +43,16 @@ data2018 <-  data2018 %>%
 
 ```{r}
 #| results: hide
+
+# unique_collectors <- str_sub(data2018$Collectors, start = 1, end = 3)
+# 
+# split_collectors <- strsplit(unique_collectors, ";")
+# 
+# individual_values <- unlist(split_collectors)
+# 
+# individual_values <- gsub("\\s+", "", individual_values)
+# 
+# individual_collectors <- unique(unique_collectors)
 
 data2018_primary <- data2018 %>%
   mutate(Collectors = str_sub(Collectors, start = 1, end = 3))
@@ -73,9 +85,11 @@ SiteCode <- data2018_subset %>%
 
 ```
 
+
 # Quality Control Flags
 
 ## Collection Method = 0
+
 
 ```{r echo = FALSE}
 data2018_subset %>% 
@@ -85,7 +99,9 @@ data2018_subset %>%
   gt()
 ```
 
+
 ## Collection Method = GS
+
 
 ```{r}
 data2018_subset %>% 
@@ -94,7 +110,6 @@ data2018_subset %>%
   select(RunDate, RunCode, SiteCode, CollMethod, SampleDepth) %>% 
   gt()
 ```
-
 
 ```{r}
 #| output: asis
@@ -179,3 +194,4 @@ cat(SiteVisitID_Sections, sep = "\n")
 # 
 # print(RunDate, sep = "\n")
 ```
+
