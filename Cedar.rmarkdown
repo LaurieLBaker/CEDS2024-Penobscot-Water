@@ -16,9 +16,6 @@ params:
   RunCode: current_RunCode
   RunDate: current_RunDate
   SiteCode: current_SiteCode
-editor: 
-  markdown: 
-    wrap: 72
 ---
 
 
@@ -89,17 +86,27 @@ SiteCode <- data2018_subset %>%
 
 # Quality Control Flags
 
+## Collection Method = 0
+
 
 ```{r echo = FALSE}
-data2018 %>% 
+data2018_subset %>% 
   filter(CollMethod == "CO-E",
          SampleDepth == 0) %>% 
-  select(RunDate, RunCode, SiteCode, CollMethod, SampleDepth)
+  select(Collectors, RunDate, RunCode, SiteCode, CollMethod, SampleDepth) %>% 
+  gt()
+```
 
-data2018 %>% 
+
+## Collection Method = GS
+
+
+```{r}
+data2018_subset %>% 
   filter(CollMethod == "GS", 
          SampleDepth != 0) %>% 
-  select(RunDate, RunCode, SiteCode, CollMethod, SampleDepth)
+  select(RunDate, RunCode, SiteCode, CollMethod, SampleDepth) %>% 
+  gt()
 ```
 
 ```{r}
