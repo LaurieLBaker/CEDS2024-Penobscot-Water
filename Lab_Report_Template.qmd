@@ -43,7 +43,20 @@ data2018 %>%
   filter(SiteVisitID == "JanS5-2018925102747") %>%
   mutate(HoldTimeMins = as.numeric(lubridate::ymd_hms(LabAnalysisDatetime) - lubridate::ymd_hms(SampleDatetime))*60*24) %>%
    mutate(HoldTime = seconds_to_period(as.numeric(HoldTimeMins)*60)) %>%
-  select(SiteCode, SampleDatetime, ResultValue, QCType, Constituents, ResultFlag_ID, IncubationLength, LabAnalysisDatetime, HoldTime) %>%
+   mutate(HoldViol = case_when(Constituents == "Cond" ~ HoldTimeMins - 40320,
+                                  Constituents == "Turb" ~ HoldTimeMins - 1440,
+                                  Constituents == "ColA" ~ HoldTimeMins - 2880,
+                                  Constituents == "TSS" ~ HoldTimeMins - 10080,
+                                  Constituents == "EcoliIQT" ~ HoldTimeMins - 360,
+                                  Constituents == "BOD" ~ HoldTimeMins - 360,
+                                  Constituents == "TotP" ~ HoldTimeMins - 40320,
+                                  Constituents == "Alk" ~ HoldTimeMins - 20160,
+                                  Constituents == "ColT" ~ HoldTimeMins - 2880,
+                                  Constituents == "ColiformIQT" ~ HoldTimeMins - 360,
+                                  TRUE ~ NA
+                                  )) %>%
+  
+  select(SiteCode, SampleDatetime, ResultValue, QCType, Constituents, ResultFlag_ID, IncubationLength, LabAnalysisDatetime, HoldTime, HoldViol) %>%
   distinct() %>% 
   gt() %>%
   cols_align(align = "center") %>%
@@ -54,7 +67,6 @@ data2018 %>%
       weight = px(1),
       style = "solid"),
     locations = list(cells_body(), cells_column_labels()))
-
 ```
 
 ```{r}
