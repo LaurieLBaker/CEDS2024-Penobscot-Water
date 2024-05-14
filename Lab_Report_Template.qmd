@@ -43,7 +43,7 @@ data2018 %>%
   filter(SiteVisitID == "JanS5-2018925102747") %>%
   mutate(HoldTimeMins = as.numeric(lubridate::ymd_hms(LabAnalysisDatetime) - lubridate::ymd_hms(SampleDatetime))*60*24) %>%
    mutate(HoldTime = seconds_to_period(as.numeric(HoldTimeMins)*60)) %>%
-   mutate(HoldViol = case_when(Constituents == "Cond" ~ HoldTimeMins - 40320,
+   mutate(HoldTimeViol = case_when(Constituents == "Cond" ~ HoldTimeMins - 40320,
                                   Constituents == "Turb" ~ HoldTimeMins - 1440,
                                   Constituents == "ColA" ~ HoldTimeMins - 2880,
                                   Constituents == "TSS" ~ HoldTimeMins - 10080,
@@ -55,10 +55,25 @@ data2018 %>%
                                   Constituents == "ColiformIQT" ~ HoldTimeMins - 360,
                                   TRUE ~ NA
                                   )) %>%
-  
-  select(SiteCode, SampleDatetime, ResultValue, QCType, Constituents, ResultFlag_ID, IncubationLength, LabAnalysisDatetime, HoldTime, HoldViol) %>%
+  select(SiteCode, SampleDatetime, ResultValue, QCType, Constituents, ResultFlag_ID, IncubationLength, LabAnalysisDatetime, HoldTime, HoldTimeViol) %>%
   distinct() %>% 
+  rename("QC Type" = "QCType",
+         "Qualifier Flag" = "ResultFlag_ID",
+         "Incubation Time" = "IncubationLength",
+         "Analysis Time" = "LabAnalysisDatetime",
+         "Hold Time" = "HoldTime",
+         "Site Code" = "SiteCode",
+         "Sample Date/Time" = "SampleDatetime",
+         "Result" = "ResultValue") %>%
   gt() %>%
+  tab_style(
+    style = cell_fill(color = "lightgreen"),
+    locations = cells_body(columns = c(HoldTimeViol),
+                           rows = grepl("-", HoldTimeViol, fixed=TRUE))) %>%
+  tab_style(
+    style = cell_fill(color = "red"),
+    locations = cells_body(columns = c(HoldTimeViol),
+                           rows = !grepl("-", HoldTimeViol, fixed=TRUE))) %>%
   cols_align(align = "center") %>%
    tab_style(
     style = cell_borders(
