@@ -49,26 +49,27 @@ data2018 %>%
                                   Constituents == "ColiformIQT" ~ HoldTimeMins - 360,
                                   TRUE ~ NA
                                   )) %>%
-  select(SiteCode, SampleDatetime, ResultValue, QCType, Constituents, ResultFlag_ID, IncubationLength, LabAnalysisDatetime, HoldTime, HoldTimeViol) %>%
+  mutate(AnalysisTimeMins = as.numeric(lubridate::ymd_hms(LabAnalysisDatetime) - lubridate::ymd_hms(ProcessDateTime))*60*24) %>%
+  #mutate(IncubationViol = case_when(Constituents == "EcoliTQT" ~))
+  select(SiteCode, SampleDatetime, ResultValue, QCType, Constituents, ResultFlag_ID, IncubationLength, LabAnalysisDatetime, HoldTime, HoldTimeViol, AnalysisTimeMins) %>%
   distinct() %>% 
    rename("QC Type" = "QCType",
          "Qualifier Flag" = "ResultFlag_ID",
          "Incubation Time" = "IncubationLength",
          "Analysis Time" = "LabAnalysisDatetime",
          "Hold Time" = "HoldTime",
-         "Hold Violation" = "HoldTimeViol",
          "Site Code" = "SiteCode",
          "Sample Date/Time" = "SampleDatetime",
          "Result" = "ResultValue") %>%
   gt() %>%
   tab_style(
     style = cell_fill(color = "lightgreen"),
-    locations = cells_body(columns = c('Hold Violation'),
-                           rows = grepl("-", 'Hold Violation', fixed=TRUE))) %>%
+    locations = cells_body(columns = c(HoldTimeViol),
+                           rows = grepl("-", HoldTimeViol, fixed=TRUE))) %>%
   tab_style(
     style = cell_fill(color = "red"),
-    locations = cells_body(columns = c('Hold Violation'),
-                           rows = !grepl("-", 'Hold Violation', fixed=TRUE))) %>%
+    locations = cells_body(columns = c(HoldTimeViol),
+                           rows = !grepl("-", HoldTimeViol, fixed=TRUE))) %>%
   cols_align(align = "center") %>%
    tab_style(
     style = cell_borders(
