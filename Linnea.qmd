@@ -30,7 +30,26 @@ data2018$LabAnalysisDatetime <- (as.POSIXct(data2018$LabAnalysisDatetime, format
 #separate_wider_delim(cols = HoldTimeMins, delim = "M", names() = "HoldTimeMinutes", #"HoldTime") %>%
 
 
-  
+data2018 %>%
+  separate_longer_delim(cols = Constituents, delim = ";") %>%
+  filter(SiteVisitID == "JanS5-2018925102747") %>%
+  mutate(HoldTimeMins = as.numeric(lubridate::ymd_hms(LabAnalysisDatetime) - lubridate::ymd_hms(SampleDatetime))*60*24) %>%
+   mutate(HoldTime = seconds_to_period(as.numeric(HoldTimeMins)*60)) %>%
+   mutate(HoldTimeViol = case_when(Constituents == "Cond" ~ HoldTimeMins - 40320,
+                                  Constituents == "Turb" ~ HoldTimeMins - 1440,
+                                  Constituents == "ColA" ~ HoldTimeMins - 2880,
+                                  Constituents == "TSS" ~ HoldTimeMins - 10080,
+                                  Constituents == "EcoliIQT" ~ HoldTimeMins - 360,
+                                  Constituents == "BOD" ~ HoldTimeMins - 360,
+                                  Constituents == "TotP" ~ HoldTimeMins - 40320,
+                                  Constituents == "Alk" ~ HoldTimeMins - 20160,
+                                  Constituents == "ColT" ~ HoldTimeMins - 2880,
+                                  Constituents == "ColiformIQT" ~ HoldTimeMins - 360,
+                                  TRUE ~ NA
+                                  )) %>%
+ mutate(AnalysisTimeMins = as.numeric(lubridate::ymd_hms(LabAnalysisDatetime) - lubridate::mdy_hms(ProcessDateTime))*60*24) %>%
+  filter(!is.na(ProcessDateTime)) %>%
+  select(ProcessDateTime, AnalysisTimeMins, LabAnalysisDatetime)
 
 data2018 %>%
   separate_longer_delim(cols = Constituents, delim = ";") %>%
@@ -49,7 +68,7 @@ data2018 %>%
                                   Constituents == "ColiformIQT" ~ HoldTimeMins - 360,
                                   TRUE ~ NA
                                   )) %>%
-  mutate(AnalysisTimeMins = as.numeric(lubridate::ymd_hms(LabAnalysisDatetime) - lubridate::ymd_hms(ProcessDateTime))*60*24) %>%
+ mutate(AnalysisTimeMins = as.numeric(lubridate::ymd_hms(LabAnalysisDatetime) - lubridate::mdy_hms(ProcessDateTime))*60*24) %>%
   #mutate(IncubationViol = case_when(Constituents == "EcoliTQT" ~))
   select(SiteCode, SampleDatetime, ResultValue, QCType, Constituents, ResultFlag_ID, IncubationLength, LabAnalysisDatetime, HoldTime, HoldTimeViol, AnalysisTimeMins) %>%
   distinct() %>% 

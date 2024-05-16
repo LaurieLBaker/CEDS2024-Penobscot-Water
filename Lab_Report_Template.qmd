@@ -67,11 +67,11 @@ data2018 %>%
          "Result" = "ResultValue") %>%
   gt() %>%
   tab_style(
-    style = cell_fill(color = "lightgreen"),
+    style = cell_fill(color = "#B3E0A6"),
     locations = cells_body(columns = c(HoldTimeViol),
                            rows = grepl("-", HoldTimeViol, fixed=TRUE))) %>%
   tab_style(
-    style = cell_fill(color = "red"),
+    style = cell_fill(color = "#F5725E"),
     locations = cells_body(columns = c(HoldTimeViol),
                            rows = !grepl("-", HoldTimeViol, fixed=TRUE))) %>%
   cols_align(align = "center") %>%
