@@ -43,7 +43,7 @@ data2018 %>%
   filter(SiteVisitID == "JanS5-2018925102747") %>%
   mutate(HoldTimeMins = as.numeric(lubridate::ymd_hms(LabAnalysisDatetime) - lubridate::ymd_hms(SampleDatetime))*60*24) %>%
    mutate(HoldTime = seconds_to_period(as.numeric(HoldTimeMins)*60)) %>%
-   mutate(HoldTimeViol = case_when(Constituents == "Cond" ~ HoldTimeMins - 40320,
+   mutate(HoldTimeViol = seconds_to_period(case_when(Constituents == "Cond" ~ HoldTimeMins - 40320,
                                   Constituents == "Turb" ~ HoldTimeMins - 1440,
                                   Constituents == "ColA" ~ HoldTimeMins - 2880,
                                   Constituents == "TSS" ~ HoldTimeMins - 10080,
@@ -54,7 +54,7 @@ data2018 %>%
                                   Constituents == "ColT" ~ HoldTimeMins - 2880,
                                   Constituents == "ColiformIQT" ~ HoldTimeMins - 360,
                                   TRUE ~ NA
-                                  )) %>%
+                                  ))) %>%
   select(SiteCode, SampleDatetime, ResultValue, QCType, Constituents, ResultFlag_ID, IncubationLength, LabAnalysisDatetime, HoldTime, HoldTimeViol) %>%
   distinct() %>% 
   rename("QC Type" = "QCType",
