@@ -110,15 +110,15 @@ data2018 %>%
   distinct() %>% 
   gt() %>%
 tab_style(
-    style = cell_fill(color = "lightgreen"),
+    style = cell_fill(color = "#B3E0A6"),
     locations = cells_body(columns = c(Depth),
                            rows = Method == "GS" & Depth == 0)) %>%
   tab_style(
-    style = cell_fill(color = "red"),
+    style = cell_fill(color = "#F5725E"),
     locations = cells_body(columns = c(Depth),
                            rows = Method == "CO-E" & Depth == 0)) %>%
   tab_style(
-    style = cell_fill(color = "red"),
+    style = cell_fill(color = "#F5725E"),
     locations = cells_body(columns = c(Depth),
                            rows = Method == "GS" & Depth != 0)) %>%
   cols_align(align = "center") %>%
