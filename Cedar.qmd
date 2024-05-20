@@ -6,12 +6,14 @@ format:
     embed-resources: true
     number_sections: true
     toc: true 
+    toc-location: left 
+    page-layout: full
 format-links: false
 execute:
   echo: false
   warning: false
 params:
-  individual_collector: "JMP"
+  individual_collector: "DHK"
   SiteVisitID: current_SiteVisitID
   RunCode: current_RunCode
   RunDate: current_RunDate
@@ -35,8 +37,6 @@ library(tidyr)
 
 data2018 <- readRDS("data/PINCommEngData (2).RData")
 
-data2018 <-  data2018 %>%
-  mutate(RunDate = format(as.Date(RunDate), "%m-%d-%Y")) 
 ```
 
 ```{r}
@@ -114,8 +114,7 @@ data2018_subset %>%
 
 SiteVisitID_Sections <- map_chr(SiteVisitID, \(current_SiteVisitID) {
 
-current_RunDate <- data2018_subset[data2018_subset$SiteVisitID == current_SiteVisitID, "RunDate"] %>%
-distinct() %>% pull()
+current_RunDate <- data2018_subset[data2018_subset$SiteVisitID == current_SiteVisitID, "RunDate"] %>% distinct() %>% pull()
 current_RunCode <- data2018_subset[data2018_subset$SiteVisitID == current_SiteVisitID, "RunCode"] %>%
 distinct %>% pull()
 current_SiteCode <- data2018_subset[data2018_subset$SiteVisitID == current_SiteVisitID, "SiteCode"] %>% distinct %>% pull()
