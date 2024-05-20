@@ -106,6 +106,7 @@ data2018 %>%
          "QC" = "QCType",
          "Method" = "CollMethod",
          "Depth" = "SampleDepth") %>%
+  subset(Container != "Msmt") %>%
   group_by(LabAbbrev) %>%
   distinct() %>% 
   gt() %>%
