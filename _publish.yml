@@ -1,0 +1,4 @@
+- source: Cedar.qmd
+  quarto-pub:
+    - id: 4a2f9ebc-68d7-46f6-9f35-1320b823b3fc
+      url: 'https://cedarrae.quarto.pub/field-report'

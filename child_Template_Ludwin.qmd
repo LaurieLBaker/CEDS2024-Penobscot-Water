@@ -184,5 +184,3 @@ data2018 %>%
     locations = list(cells_body(), cells_column_labels()))
 ```
 :::
-
-
