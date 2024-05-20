@@ -187,7 +187,8 @@ data2018 %>%
     filter(SiteVisitID == "JanS7-201871875659") %>%
     select(!SiteVisitID) %>% 
   gt() %>% 
-      opt_row_striping()
+      opt_row_striping() %>%
+  opt_interactive()
 ```
 ```{r}
 HoldTime2 <- as.double(difftime(lubridate::ymd_hms(data2018$SampleDatetime),

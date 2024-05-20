@@ -82,6 +82,8 @@ data2018 %>%
       weight = px(1),
       style = "solid"),
     locations = list(cells_body(), cells_column_labels()))
+  
+ 
 ```
 
 ```{r}
