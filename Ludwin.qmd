@@ -2,7 +2,7 @@
 title: "Field Report test"
 date: today
 format:
-  html:
+  pdf:
     embed-resources: true
     number_sections: true
     toc: true 
