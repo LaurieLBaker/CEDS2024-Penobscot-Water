@@ -7,6 +7,8 @@ format:
     number_sections: true
     toc: true 
     toc-location: left
+    page-layout: full
+  pdf: default
 format-links: false
 execute:
   echo: false
