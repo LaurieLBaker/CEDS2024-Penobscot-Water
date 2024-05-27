@@ -1,4 +1,4 @@
----
+quarto publish quarto-pub---
 title: "Lab Report test"
 date: today
 format:
@@ -7,6 +7,8 @@ format:
     number_sections: true
     toc: true 
     toc-location: left
+    page-layout: full
+  pdf: default
 format-links: false
 execute:
   echo: false

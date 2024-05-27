@@ -66,22 +66,23 @@ data2018 %>%
          "Sample Date/Time" = "SampleDatetime",
          "Result" = "ResultValue") %>%
   gt() %>%
+   opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 5, page_size_values = c(5, 10, 25, 50, 100)) %>%
   tab_style(
     style = cell_fill(color = "#B3E0A6"),
     locations = cells_body(columns = c(HoldTimeViol),
-                           rows = grepl("-", HoldTimeViol, fixed=TRUE))) %>%
+                           rows = grepl("-", HoldTimeViol, fixed=TRUE)))  %>%
   tab_style(
     style = cell_fill(color = "#F5725E"),
     locations = cells_body(columns = c(HoldTimeViol),
-                           rows = !grepl("-", HoldTimeViol, fixed=TRUE))) %>%
-  cols_align(align = "center") %>%
+                           rows = !grepl("-", HoldTimeViol, fixed=TRUE)))  %>%
+   cols_align(align = "center")  %>%
    tab_style(
     style = cell_borders(
       sides = c("all"),
       color = "black",
       weight = px(1),
       style = "solid"),
-    locations = list(cells_body(), cells_column_labels()))
+     locations = list(cells_body()))
 ```
 
 ```{r}

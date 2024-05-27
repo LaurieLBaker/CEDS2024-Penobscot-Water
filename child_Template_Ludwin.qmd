@@ -82,25 +82,26 @@ data2018 %>%
   distinct() %>% 
   gt() %>%
 tab_style(
-    style = cell_fill(color = "lightgreen"),
+    style = cell_fill(color = "#B3E0A6"),
     locations = cells_body(columns = c(Depth),
                            rows = Method == "GS" & Depth == 0)) %>%
   tab_style(
-    style = cell_fill(color = "red"),
+    style = cell_fill(color = "#F5725E"),
     locations = cells_body(columns = c(Depth),
                            rows = Method == "CO-E" & Depth == 0)) %>%
   tab_style(
-    style = cell_fill(color = "red"),
+    style = cell_fill(color = "#F5725E"),
     locations = cells_body(columns = c(Depth),
                            rows = Method == "GS" & Depth != 0)) %>%
   cols_align(align = "center") %>%
-  tab_style(
+  opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 5, page_size_values = c(5, 10, 25, 50, 100)) %>%
+   tab_style(
     style = cell_borders(
       sides = c("all"),
       color = "black",
       weight = px(1),
       style = "solid"),
-    locations = list(cells_body(), cells_column_labels()))
+     locations = list(cells_body()))
 ```
 
 ### DO & Temperature
@@ -126,50 +127,60 @@ data2018 %>%
   mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
          across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>% 
   filter(SiteVisitID == current_SiteVisitID) %>% 
-  select(!SiteVisitID) %>% 
+  select(ProfileDepth ,"Water Temperature Regular", "Water Temperature Duplicate", "DO Regular", "DO Duplicate") %>% 
   gt() %>% 
       opt_row_striping() %>%
-  tab_style(
+  opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%
+   tab_style(
     style = cell_borders(
       sides = c("all"),
       color = "black",
       weight = px(1),
       style = "solid"),
-    locations = list(cells_body(), cells_column_labels()))
+     locations = list(cells_body()))
 
 
-```
-
-```{r}
-data2018 %>%
-  select(Const, Result, QCType, Time, SiteVisitID ) %>% 
-  filter(Const %in% c("Secchi","pH")) %>% 
-  pivot_wider(names_from = c(Const, QCType),
-              values_from = Result,
-              values_fn = list(Result = list)) %>%  # Keep all values
-  mutate(across(ends_with("_Duplicate"), ~replace_na(as.character(.), "-")),
-         across(ends_with("_Regular"), ~replace_na(as.character(.), "-"))) %>% 
-  filter(SiteVisitID == current_SiteVisitID) %>% 
-  select(!SiteVisitID) %>% 
-  rename_with(~str_replace_all(., "_", " "), matches("_Regular$|_Duplicate$")) %>%
-  gt() %>% 
-  cols_move(
-    columns = "pH Duplicate",
-    after = "pH Regular"
-  ) %>% 
-  opt_row_striping() %>%
-  tab_style(
-    style = cell_borders(
-      sides = c("all"),
-      color = "black",
-      weight = px(1),
-      style = "solid"),
-    locations = list(cells_body(), cells_column_labels()))
 ```
 
 ```{r}
 data2018 %>% 
-  filter(SiteVisitID == "JanS7-201871875659") %>% 
+  select(Const, Result, QCType, Time, SiteVisitID ) %>% 
+  filter(Const %in% c("Secchi","pH")) %>% 
+  pivot_wider(names_from = c(Const, QCType),
+              values_from = Result) %>%
+  mutate(pH_Duplicate = as.character(pH_Duplicate),
+    pH_Duplicate = replace_na(pH_Duplicate, "-"),
+    Secchi_Duplicate = as.character(Secchi_Duplicate),
+    Secchi_Duplicate = replace_na(Secchi_Duplicate, "-"),
+     Secchi_Regular = as.character(Secchi_Regular),
+    Secchi_Regular = replace_na(Secchi_Regular, "-"),
+        pH_Regular = as.character(pH_Regular),
+    pH_Regular = replace_na(pH_Regular, "-")) %>% 
+    filter(SiteVisitID == current_SiteVisitID) %>%
+    select(!SiteVisitID) %>% 
+   rename("pH Regular" = "pH_Regular",
+          "pH Duplicate" = "pH_Duplicate",
+          "Secchi Regular" = "Secchi_Regular",
+          "Secchi Duplicate" = "Secchi_Duplicate") %>%
+  gt() %>% 
+    cols_move(
+    columns = "pH Duplicate",
+    after = "pH Regular"
+  ) %>% 
+      opt_row_striping() %>%
+  opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%
+   tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+     locations = list(cells_body()))
+```
+
+```{r}
+data2018 %>% 
+  filter(SiteVisitID == current_SiteVisitID) %>% 
   select(FilterName) %>%
   rename("Filter Name" = "FilterName") %>%
   distinct() %>%
