@@ -1,0 +1,106 @@
+---
+title: "Lab Report"
+date: today
+format:
+  html:
+    embed-resources: true
+    number_sections: true
+    toc: true
+    toc-location: left
+    page-layout: full
+format-links: false
+execute:
+  echo: false
+  warning: false
+params:
+  individual_collector: "DHK"
+  SiteVisitID: null
+  RunCode: null
+  RunDate: null
+  SiteCode: null
+---
+
+Collector: **`r params$individual_collector`**
+
+```{r setup, include = FALSE}
+library(readr)
+library(here)
+library(dplyr)
+library(ggplot2)
+library(stringr)
+library(purrr)
+library(htmltools)
+library(knitr)
+library(gt)
+library(kableExtra)
+library(tidyr)
+library(lubridate)
+
+data2018 <- readRDS("data/PINCommEngData (2).RData")
+```
+
+```{r}
+#| results: hide
+
+data2018_primary <- data2018 %>%
+  mutate(Collectors = str_sub(Collectors, start = 1, end = 3))
+
+data2018_subset <- data2018_primary %>%
+  filter(str_detect(Collectors, fixed(params$individual_collector))) %>%
+  arrange(SiteVisitID)
+
+data2018_subset$SampleDatetime <- as.POSIXct(data2018_subset$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
+data2018_subset$LabAnalysisDatetime <- as.POSIXct(data2018_subset$LabAnalysisDatetime, format = "%m/%d/%Y %H:%M:%S")
+
+data2018_subset <- data2018_subset %>%
+  separate_longer_delim(cols = Constituents, delim = ";")
+
+```
+
+
+```{r}
+#| results: hide
+
+Cond <- data2018_subset %>% filter(Constituents == "Cond")
+Turb <- data2018_subset %>% filter(Constituents == "Turb")
+ColiformIQT <- data2018_subset %>% filter(Constituents == "ColiformIQT")
+EcoliIQT <- data2018_subset %>% filter(Constituents == "EcoliIQT")
+ColA <- data2018_subset %>% filter(Constituents == "ColA")
+TotP <- data2018_subset %>% filter(Constituents == "TotP")
+Chla <- data2018_subset %>% filter(Constituents == "Chla")
+Alk <- data2018_subset %>% filter(Constituents == "Alk")
+BOD <- data2018_subset %>% filter(Constituents == "BOD")
+TSS <- data2018_subset %>% filter(Constituents == "TSS")
+
+all_data <- list(Cond = Cond, Turb = Turb, ColiformIQT = ColiformIQT, EcoliIQT = EcoliIQT, ColA = ColA, TotP = TotP, Chla = Chla, Alk = Alk, BOD = BOD, TSS = TSS)
+
+```
+
+
+```{r}
+#| output: asis
+render_child <- function(data, name) {
+  site_visit_id <- unique(data$SiteVisitID)
+
+  for (visit_id in site_visit_id) {
+    current_data <- data %>% filter(SiteVisitID == visit_id)
+    current_RunDate <- current_data %>% pull(RunDate) %>% unique()
+    current_RunCode <- current_data %>% pull(RunCode) %>% unique()
+    current_SiteCode <- current_data %>% pull(SiteCode) %>% unique()
+
+    child_params <- list(RunDate = current_RunDate, RunCode = current_RunCode, SiteCode = current_SiteCode, SiteVisitID = visit_id)
+
+    res <- knitr::knit_child(
+      text = xfun::read_utf8("Lab_Report_Template_2.qmd"),
+      envir = rlang::env(data = current_data, name = name, params = child_params),
+      quiet = TRUE
+    )
+    cat(res, sep = '\n')
+    cat("\n")
+  }
+}
+
+purrr::iwalk(all_data, render_child)
+```
+
+
