@@ -106,20 +106,19 @@ data2018 %>%
          "QC" = "QCType",
          "Method" = "CollMethod",
          "Depth" = "SampleDepth") %>%
-  subset(Container != "Msmt") %>%
   group_by(LabAbbrev) %>%
   distinct() %>% 
   gt() %>%
 tab_style(
-    style = cell_fill(color = "#B3E0A6"),
+    style = cell_fill(color = "lightgreen"),
     locations = cells_body(columns = c(Depth),
                            rows = Method == "GS" & Depth == 0)) %>%
   tab_style(
-    style = cell_fill(color = "#F5725E"),
+    style = cell_fill(color = "red"),
     locations = cells_body(columns = c(Depth),
                            rows = Method == "CO-E" & Depth == 0)) %>%
   tab_style(
-    style = cell_fill(color = "#F5725E"),
+    style = cell_fill(color = "red"),
     locations = cells_body(columns = c(Depth),
                            rows = Method == "GS" & Depth != 0)) %>%
   cols_align(align = "center") %>%
@@ -143,7 +142,7 @@ data2018$Time <- format(data2018$SampleDatetime, format = "%H:%M:%S")
 
 
 data2018 %>% 
-  select(QCType, ProfileDepth, Const, Result, SiteVisitID) %>% 
+  select(QCType, ProfileDepth,Const, Result, SiteVisitID) %>% 
   filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>% 
   pivot_wider(names_from = c(Const, QCType),
               values_from = Result,
@@ -155,7 +154,6 @@ data2018 %>%
   mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
          across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>% 
   filter(SiteVisitID == "JanS7-201871875659") %>%
-  select(ProfileDepth, SiteVisitID, "Water Temperature Regular", "Water Temperature Duplicate", "DO Regular", "DO Duplicate") %>%
   select(!SiteVisitID) %>% 
   gt() %>% 
       opt_row_striping() %>%
