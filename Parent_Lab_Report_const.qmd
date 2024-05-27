@@ -100,7 +100,6 @@ render_child <- function(data, name) {
   }
 }
 
-# Render the child documents for each dataset
 purrr::iwalk(all_data, render_child)
 ```
 

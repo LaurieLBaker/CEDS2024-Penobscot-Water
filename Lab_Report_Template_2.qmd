@@ -6,7 +6,7 @@
 ```{r}
 data %>%
   mutate(HoldTimeMins = as.numeric(difftime(LabAnalysisDatetime, SampleDatetime, units = "mins"))) %>%
-  mutate(HoldTimeMins = round(HoldTimeMins)) %>% # Round HoldTimeMins to the nearest integer
+  mutate(HoldTimeMins = round(HoldTimeMins)) %>% 
   mutate(HoldTime = minutes(HoldTimeMins)) %>%
   mutate(HoldTimeViol = case_when(
     Constituents == "Cond" ~ HoldTimeMins - 40320,
