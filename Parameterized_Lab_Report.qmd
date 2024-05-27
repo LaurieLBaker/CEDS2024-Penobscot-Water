@@ -1,4 +1,4 @@
----
+quarto publish quarto-pub---
 title: "Lab Report test"
 date: today
 format:
