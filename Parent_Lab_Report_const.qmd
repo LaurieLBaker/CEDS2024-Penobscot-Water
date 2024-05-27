@@ -1,5 +1,5 @@
 ---
-title: "Lab Report Draft"
+title: "Lab Report"
 date: today
 format:
   html:
