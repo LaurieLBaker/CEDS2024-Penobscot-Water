@@ -35,6 +35,8 @@ url_video: ""
 
 ## Team
 
+During the Spring of 2024, Cedar Callaghan ’25, Linnea Goh ’25, and Ludwin Moran Sosa ’24 worked on creating the Field and Lab reports.
+
 ## Data
 
 Access the project on [github](https://github.com/LaurieLBaker/CEDS2024-Penobscot-Water) and find out more about the data in the [codebook](https://github.com/LaurieLBaker/CEDS2024-Penobscot-Water/tree/main/data).
