@@ -24,6 +24,12 @@ url_video: ""
 
 
 ## Project Background
+This project is a collaboration between the Community Engaged Data Science class at College of the Atlantic and the Penobscot Nation's Water Resources Department's Water Quality Monitoring Program. For this project, we used R to create a new reporting structure that was easier to navigate. Our team did two reports, a field report (containing information about field samples) and a lab report (containing information about lab analysis). For this project, we were able to build on previous work done by Delphine Demaisy, another COA student. Her work, combined with a workshop by Jadey Ryan on parameterized reporting, provided us with the skills and knowledge to create these reports. Prior work on this project included an extensive codebook put together by Delphine Demaisy, as well as many documents explaining data and templates for us to base our code off of. Additionally, we had access to the report templates that have been used up until this point, providing us with a comparison point. 
+
+“The Water Resources Program staff protect the health of Penobscot citizens and how they use their waters.” The purpose of this monitoring is to collect and assess water quality data to make sure standards are being met, rivers and tributaries are properly classified, provide accurate data to the Environmental Protection Agency, and catch potential water quality problems. The water quality standards used by the Penobscot Nation are approved by the Chief and Council, though jurisdictional issues from the Maine Indian Claims Settlement Act of 1980 prevents approval from the Environmental Protection Agency (EPA). Instead, the Penobscot Nation uses the Maine Department of Environmental Protection's water quality standards as a comparison point. The Penobscot Nation Water Resources Program collects data for extensive water quality monitoring at 66 river sites, 47 tributary sites (tributaries are defined as a small stream that flows into a larger river or lake), and 21 sites on 11 lakes. The data collected is used for general outreach, fish consumption advisories, dam removal analysis, modeling stream temperature, creating water quality reports, and writing rules and legislation.
+
+The goals of this project were to create parameterized field  and lab reports that would generate a separate document for each collector, grouped data by date, and included quality control flags. The field report is coded so that a unique document can be generated for each collector (the person collecting the field samples) and so there is a unique section for each date, run, and site. There are also quality control flags at the top indicating which runs had samples that violated the quality control standards. The lab report is coded similarly, but instead it is broken down by constituent (what is being measured in the water) and then date within that. It shows the results of the lab analysis, and is coded to show when the quality control flags have been violated. 
+
 
 ## Project Outputs
 
@@ -51,7 +57,7 @@ Like the field report, this lab report also includes filtering and sorting capab
 
 ## Team
 
-During the Spring of 2024, Cedar Callaghan ’25, Linnea Goh ’25, and Ludwin Moran Sosa ’24 worked on creating the Field and Lab reports.
+During the Spring of 2024, Cedar Callahan (Class of 2025), Linnea Goh (Class of 2025), and Ludwin Moran Sosa (Class of 2024) worked on creating the Field and Lab reports.
 
 ## Data
 
