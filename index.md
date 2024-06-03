@@ -45,6 +45,8 @@ Initial iterations of these reports were created using data from 2018. Access th
 
 [Penobscot Nation Water Monitoring Project](https://www.penobscotnation.org/departments/department-of-natural-resources/water-n%c9%99pi-resources/)
 [Jadey Ryan's Website](https://jadeyryan.com/)
+Video: [Report writing in Quarto](https://youtu.be/Sf__ERCSgIA?si=9MUir2rQ41zEwha9)
+Article: [Generating dynamic contents in R Markdown and Quarto ]
 
 ## Acknowledgements
 
