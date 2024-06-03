@@ -43,6 +43,9 @@ Initial iterations of these reports were created using data from 2018. Access th
 
 ## Resources
 
+[Penobscot Nation Water Monitoring Project](https://www.penobscotnation.org/departments/department-of-natural-resources/water-n%c9%99pi-resources/)
+[Jadey Ryan's Website](https://jadeyryan.com/)
+
 ## Acknowledgements
 
 Special thanks to Angie Reed, Jan Paul, and Maddie from the Penobscot Nation Water Resources team for guiding us through this process and taking the CEDS class out on the river to learn about the water quality sampling process. 
