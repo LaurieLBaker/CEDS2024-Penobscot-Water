@@ -182,6 +182,7 @@ data2018 %>%
 data2018 %>% 
   filter(SiteVisitID == current_SiteVisitID) %>% 
   select(FilterName) %>%
+  filter(FilterName != "NA") %>% 
   rename("Filter Name" = "FilterName") %>%
   distinct() %>%
   gt() %>%

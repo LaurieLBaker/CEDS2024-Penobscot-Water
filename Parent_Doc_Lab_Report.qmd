@@ -91,7 +91,7 @@ render_child <- function(data, name) {
     child_params <- list(RunDate = current_RunDate, RunCode = current_RunCode, SiteCode = current_SiteCode, SiteVisitID = visit_id)
 
     res <- knitr::knit_child(
-      text = xfun::read_utf8("Lab_Report_Template_2.qmd"),
+      text = xfun::read_utf8("child_doc_lab_report.qmd"),
       envir = rlang::env(data = current_data, name = name, params = child_params),
       quiet = TRUE
     )

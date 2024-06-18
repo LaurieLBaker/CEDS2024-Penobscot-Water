@@ -1,0 +1,4 @@
+- source: parent_doc_field_report.qmd
+  quarto-pub:
+    - id: 275fce75-1535-4fda-b0d9-03dfa34c5c31
+      url: 'https://cedarrae.quarto.pub/field-report-test'
