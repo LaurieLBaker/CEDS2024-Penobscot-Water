@@ -124,7 +124,7 @@ params <- (RunDate = current_RunDate)
 params <- (RunCode = current_RunCode)
 params <- (SiteCode = current_SiteCode)
 knitr::knit_child(
-input = "child_Template_Ludwin.qmd",
+input = "child_doc_field_report.qmd",
 envir = rlang::env(),
 quiet = TRUE
 )
@@ -136,57 +136,3 @@ cat(SiteVisitID_Sections, sep = "\n")
 
 ```
 
-```{r load-packages-and-data, echo = FALSE, message = FALSE, warning = FALSE}
-# library(tidyverse)
-# library(data.table)
-# library(gt)
-# library(purrr)
-# library(quarto)
-# library(here)
-# library(knitr)
-# library(rlang)
-# library(kableExtra)
-# library(tibble)
-# library(rmarkdown)
-# 
-# data2018 <- readRDS("data/PINCommEngData (2).RData")
-# 
-# data <- filter(data2018, Collectors == params$Collectors)
-```
-
-```{r echo = FALSE, message = FALSE, warning = FALSE}
-# collectors <- data %>%
-#   filter(Collectors == params$Collectors) %>%
-#   distinct(Collectors) %>%
-#   pull()
-# 
-# rundate <- data %>%
-#   filter(RunDate == RunDate) %>%
-#   select(RunDate) %>%
-#   mutate(RunDate = as.character(RunDate)) %>%
-#   pull()
-# 
-# runcode <- data %>%
-#   filter(RunCode == RunCode) %>%
-#   select(RunCode) %>%
-#   pull()
-# 
-# sitecode <- data %>%
-#   filter(SiteCode == SiteCode) %>%
-#   select(SiteCode) %>%
-#   pull()
-```
-
-```{r echo = FALSE, message = FALSE, warning = FALSE}
-#| output: asis
-
-# RunDate <- map_chr(data, \(current_RunDate){
-#   knit_child(
-#     input = "samples_child_doc.qmd",
-#     envir = env(),
-#     quiet = TRUE
-#     )
-# })
-# 
-# print(RunDate, sep = "\n")
-```
