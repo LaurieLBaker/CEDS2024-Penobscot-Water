@@ -168,12 +168,19 @@ data2018$ProcessDateTime <- (as.POSIXct(data2018$ProcessDateTime, format = "%m/%
 
 data2018 %>% 
   separate_longer_delim(cols = Constituents, delim = ";") %>%
-  mutate(BacIncMins = as.numeric(ymd_hms(ProcessDateTime) - ymd_hms(LabAnalysisDatetime)) * 60 * 24) %>% 
-  mutate(BacInc = seconds_to_period(as.numeric(BacIncMins) * 60))
-  
-  
-  mutate(BacIncMins = as.numeric(lubridate::ymd_hms(ProcessDateTime) - lubridate::ymd_hms(LabAnalysisDatetime)) * 60 * 24) %>%
-  mutate(BacInc = seconds_to_period(as.numeric(BacIncMins) * 60))
+  mutate(BacIncMins = as.numeric(ymd_hms(LabAnalysisDatetime) - ymd_hms(ProcessDateTime)) * 60 * 24) %>% 
+  mutate(BacInc = seconds_to_period(as.numeric(BacIncMins) * 60)) %>% 
+  mutate(IncubationViol = case_when(IncubationLength == "18" ~ BacIncMins < "1080" | BacIncMins > "1320"))
+
+data2018 %>% 
+  separate_longer_delim(cols = Constituents, delim = ";") %>%
+  mutate(BacIncMins = as.numeric(ymd_hms(LabAnalysisDatetime) - ymd_hms(ProcessDateTime)) * 60 * 24) %>% 
+  mutate(BacInc = seconds_to_period(as.numeric(BacIncMins) * 60)) %>% 
+  mutate(violation = case_when(BacIncMins <= "1080" | BacIncMins >= "1320" ~ "TRUE",
+                               BacIncMins <= "1440" | BacIncMins >= "1680" ~ "TRUE",
+                               BacIncMins >= "1080" | BacIncMins <= "1320" ~ "FALSE",
+                               BacIncMins >= "1440" | BacIncMins <= "1680" ~ "TRUE"))
+
 ```
 
 
