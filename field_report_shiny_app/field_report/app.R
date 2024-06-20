@@ -43,15 +43,11 @@ ui <- page_sidebar(
 )
 
 server <- function(input, output, server) {
-  site <- reactive({
-    filter(input$collector) %>% 
-      filter(input$rundate) %>% 
-      filter(input$runcode) %>% 
-      filter(input$sitecode)
-  })
-  
   output$table <- renderDataTable({
-    datatable(data = site, options = list(pageLength = 10))
+    collector <- data2018_primary %>% 
+      filter(Collectors == input$collector) %>% 
+      filter(RunDate %in% input$rundate)
+    datatable(data = collector, options = list(pageLength = 10))
   })
 }
 
