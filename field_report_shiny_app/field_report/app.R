@@ -11,46 +11,49 @@ library(knitr)
 library(gt)
 library(kableExtra)
 library(tidyr)
+library(tidyverse)
+library(haven)
+library(sf)
+library(dbscan)
+library(magrittr)
+library(htmlwidgets)
+library(janitor)
+library(RColorBrewer)
+library(kableExtra)
+library(ggthemes)
+library(sass)
+library(DT)
 
-data2018 <- readRDS("data/PINCommEngData (2).RData")
+data2018_primary <- data2018 %>%
+  mutate(Collectors = str_sub(Collectors, start = 1, end = 3))
 
-# Define UI for application that draws a histogram
-ui <- fluidPage(
+collectors <- unique(data2018_primary$Collectors)
+dates <- unique(data2018_primary$RunDate)
+runcodes <- unique(data2018_primary$RunCode)
+sitecodes <- unique(data2018_primary$SiteCode)
 
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot")
-        )
-    )
+ui <- page_sidebar(
+  sidebar = sidebar(
+    selectInput("collector", label = "Select a Collector", choices = collectors),
+    selectInput("rundate", label = "Select a Date", choices = dates),
+    selectInput("runcode", label = "Select a Run Code", choices = runcodes),
+    selectInput("sitecode", label = "Select a Site Code", choices = sitecodes)
+  ),
+  dataTableOutput("table")
 )
 
-# Define server logic required to draw a histogram
-server <- function(input, output) {
-
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white',
-             xlab = 'Waiting time to next eruption (in mins)',
-             main = 'Histogram of waiting times')
-    })
+server <- function(input, output, server) {
+  site <- reactive({
+    filter(input$collector) %>% 
+      filter(input$rundate) %>% 
+      filter(input$runcode) %>% 
+      filter(input$sitecode)
+  })
+  
+  output$table <- renderDataTable({
+    datatable(data = site, options = list(pageLength = 10))
+  })
 }
 
-# Run the application 
+
 shinyApp(ui = ui, server = server)
