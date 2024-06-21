@@ -40,9 +40,9 @@ ui <- page_sidebar(
     selectInput("sitecode", label = "Select a Site", NULL)
   ),
   navset_tab(
-    nav_panel(title = "Site Info", gt_output("si_table")),
-    nav_panel(title = "Samples", gt_output("sample_table")),
-    nav_panel(title = "Measurements", gt_output("msmt_table"))
+    nav_panel(title = "Site Info", gt_output("si_table"), gt_output("af_table"), gt_output("note_table")),
+    nav_panel(title = "Samples", gt_output("sample_table"), gt_output("filter_table")),
+    nav_panel(title = "Measurements", gt_output("msmt_table"), gt_output("ph_table"))
   )
 )
 
@@ -94,6 +94,43 @@ server <- function(input, output, session) {
         locations = list(cells_body(), cells_column_labels()))
   })
   
+  output$af_table <- render_gt({
+    sitecode() %>% 
+      select(Weather, SamplingAirTemp, RivCond, WaterLevel, FoamRank, FoamSource) %>% 
+      rename("Air Temp" = "SamplingAirTemp",
+             "River Cond" = "RivCond", 
+             "Water Level" = "WaterLevel",
+             "Foam Rank" = "FoamRank",
+             "Foam Source" = "FoamSource") %>%
+      distinct() %>% 
+      gt() %>%
+      cols_align(align = "center") %>%
+      tab_header(title = "Abiotic Factors") %>%
+      tab_style(
+        style = cell_borders(
+          sides = c("all"),
+          color = "black",
+          weight = px(1),
+          style = "solid"),
+        locations = list(cells_body(), cells_column_labels()))
+  })
+  
+  output$note_table <- render_gt({
+    sitecode() %>% 
+      select(SiteVisitComment) %>% 
+      rename("Site Visit Notes" = "SiteVisitComment") %>%
+      distinct() %>% 
+      gt() %>%
+      cols_align(align = "center") %>%
+      tab_style(
+        style = cell_borders(
+          sides = c("all"),
+          color = "black",
+          weight = px(1),
+          style = "solid"),
+        locations = list(cells_body(), cells_column_labels()))
+  })
+  
   output$sample_table <- render_gt({
     sitecode() %>% 
       select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>%
@@ -129,6 +166,23 @@ server <- function(input, output, session) {
         locations = list(cells_body()))
   })
   
+  output$filter_table <- render_gt({
+    sitecode() %>% 
+      select(FilterName) %>%
+      filter(FilterName != "NA") %>% 
+      rename("Filter Name" = "FilterName") %>%
+      distinct() %>%
+      gt() %>%
+      cols_align(align = "center") %>%
+      tab_style(
+        style = cell_borders(
+          sides = c("all"),
+          color = "black",
+          weight = px(1),
+          style = "solid"),
+        locations = list(cells_body(), cells_column_labels()))
+  })
+  
   output$msmt_table <- render_gt({
     sitecode() %>% 
       select(QCType, ProfileDepth,Const, Result, SiteVisitID) %>% 
@@ -154,6 +208,42 @@ server <- function(input, output, session) {
           style = "solid"),
         locations = list(cells_body()))
   })
+  
+  output$ph_table <- render_gt({
+    sitecode() %>% 
+      select(Const, Result, QCType, Time, SiteVisitID ) %>% 
+      filter(Const %in% c("Secchi","pH")) %>% 
+      pivot_wider(names_from = c(Const, QCType),
+                  values_from = Result) %>%
+      mutate(pH_Duplicate = as.character(pH_Duplicate),
+             pH_Duplicate = replace_na(pH_Duplicate, "-"),
+             Secchi_Duplicate = as.character(Secchi_Duplicate),
+             Secchi_Duplicate = replace_na(Secchi_Duplicate, "-"),
+             Secchi_Regular = as.character(Secchi_Regular),
+             Secchi_Regular = replace_na(Secchi_Regular, "-"),
+             pH_Regular = as.character(pH_Regular),
+             pH_Regular = replace_na(pH_Regular, "-")) %>% 
+      select(!SiteVisitID) %>% 
+      rename("pH Regular" = "pH_Regular",
+             "pH Duplicate" = "pH_Duplicate",
+             "Secchi Regular" = "Secchi_Regular",
+             "Secchi Duplicate" = "Secchi_Duplicate") %>%
+      gt() %>% 
+      cols_move(
+        columns = "pH Duplicate",
+        after = "pH Regular"
+      ) %>% 
+      opt_row_striping() %>%
+      opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%
+      tab_style(
+        style = cell_borders(
+          sides = c("all"),
+          color = "black",
+          weight = px(1),
+          style = "solid"),
+        locations = list(cells_body()))
+  })
+
 }
 
 
