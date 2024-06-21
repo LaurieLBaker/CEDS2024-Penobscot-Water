@@ -56,9 +56,16 @@ server <- function(input, output, session) {
     runcode_choice <- unique(rundate()$RunCode)
     updateSelectInput(session = session, "runcode", choices = runcode_choice)
   })
+  runcode <- reactive({
+    filter(rundate(), RunCode == input$runcode)
+  })
+  observeEvent(runcode(), {
+    sitecode_choice <- unique(runcode()$SiteCode)
+    updateSelectInput(session = session, "sitecode", choices = sitecode_choice)
+  })
   
   output$table <- renderDataTable({
-    datatable(data = rundate, options = list(pageLength = 10))
+    datatable(data = runcode(), options = list(pageLength = 10))
   })
 }
 
