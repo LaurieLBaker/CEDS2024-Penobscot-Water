@@ -42,12 +42,25 @@ ui <- page_sidebar(
   dataTableOutput("table")
 )
 
-server <- function(input, output, server) {
+server <- function(input, output, session) {
+  collector <- reactive({
+    data2018_primary %>%
+      filter(Collectors == input$collector)
+  })
+  bindEvent(collectors(), {
+    rundate_choice <- unique(collectors()$RunDate)
+    updateSelectInput(session = session, "Run Date", choices = choices)
+  })
+  rundate <- reactive({
+    filter(collector(), RunDate == input$rundate)
+  })
+  bindEvent(rundate(), {
+    runcode_choice <- unique(rundate()$RunCode)
+    updateSelectInput(session = session, "Run ", choices = choices)
+  })
+  
   output$table <- renderDataTable({
-    collector <- data2018_primary %>% 
-      filter(Collectors == input$collector) %>% 
-      filter(RunDate %in% input$rundate)
-    datatable(data = collector, options = list(pageLength = 10))
+    datatable(data = rundate, options = list(pageLength = 10))
   })
 }
 
