@@ -37,7 +37,7 @@ ui <- page_sidebar(
     # selectInput("runcode", label = "Select a Run Code", choices = data2018_primary$RunCode),
     # selectInput("sitecode", label = "Select a Site Code", choices = data2018_primary$SiteCode)
   ),
-  dataTableOutput("table")
+  gt_output("table")
 )
 
 server <- function(input, output, session) {
@@ -64,8 +64,8 @@ server <- function(input, output, session) {
     updateSelectInput(session = session, "sitecode", choices = sitecode_choice)
   })
   
-  output$table <- renderDataTable({
-    datatable(data = runcode(), options = list(pageLength = 10))
+  output$table <- render_gt({
+    gt(data = runcode())
   })
 }
 
