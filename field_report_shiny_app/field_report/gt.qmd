@@ -1,6 +1,18 @@
 
+```{r}
+data2018 <- readRDS("data/PINCommEngData (2).RData")
+
+data2018_primary <- data2018 %>%
+  mutate(Collectors = str_sub(Collectors, start = 1, end = 3))
+
+data2018_primary$SampleDatetime <- as.POSIXct(data2018_primary$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
+
+data2018_primary$Date <- as.Date(data2018_primary$SampleDatetime)
+data2018_primary$Time <- format(data2018_primary$SampleDatetime, format = "%H:%M:%S")
+```
+
 ```{r 1}
-data2018 %>% 
+data2018_primary %>% 
    select(RunCode, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
   rename("Water Body" = "WaterBody",
          "Site" = "SiteCode",
@@ -21,7 +33,7 @@ data2018 %>%
 ```
 
 ```{r 2}
-data2018 %>% 
+data2018_primary %>% 
   select(Weather, SamplingAirTemp, RivCond, WaterLevel, FoamRank, FoamSource) %>% 
   rename("Air Temp" = "SamplingAirTemp",
          "River Cond" = "RivCond", 
@@ -42,7 +54,7 @@ data2018 %>%
 ```
 
 ```{r 3}
-data2018 %>% 
+data2018_primary %>% 
   select(SiteVisitComment) %>% 
   rename("Site Visit Notes" = "SiteVisitComment") %>%
   distinct() %>% 
@@ -58,7 +70,7 @@ data2018 %>%
 ```
 
 ```{r 4}
-data2018 %>% 
+data2018_primary %>% 
   select(SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>%
   rename("Sample Name" = "SampleName", 
          "Project" = "ProjectCode", 
@@ -93,7 +105,7 @@ tab_style(
 ```
 
 ```{r 6}
-data2018 %>% 
+data2018_primary %>% 
   select(FilterName) %>%
   filter(FilterName != "NA") %>% 
   rename("Filter Name" = "FilterName") %>%
@@ -110,19 +122,19 @@ data2018 %>%
 ```
 
 ```{r}
-data2018 %>% 
+data2018_primary %>% 
   select(QCType, ProfileDepth,Const, Result, SiteVisitID) %>% 
   filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>% 
   pivot_wider(names_from = c(Const, QCType),
               values_from = Result,
-              values_fn = list(Result = list)) %>%  # Keep all values
+              values_fn = list(Result = list)) %>%
   rename("Water Temperature Regular" = "water temperature_Regular",
          "Water Temperature Duplicate" = "water temperature_Duplicate",
          "DO Regular" = "Dissolved Oxygen_Regular",
          "DO Duplicate" = "Dissolved Oxygen_Duplicate") %>%
   mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
          across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>% 
-  select(ProfileDepth ,"Water Temperature Regular", "Water Temperature Duplicate", "DO Regular", "DO Duplicate") %>% 
+  select(ProfileDepth, "Water Temperature Regular", "Water Temperature Duplicate", "DO Regular", "DO Duplicate") %>% 
   gt() %>% 
       opt_row_striping() %>%
   opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%
@@ -136,7 +148,7 @@ data2018 %>%
 ```
 
 ```{r}
-data2018 %>% 
+data2018_primary %>% 
   select(Const, Result, QCType, Time, SiteVisitID ) %>% 
   filter(Const %in% c("Secchi","pH")) %>% 
   pivot_wider(names_from = c(Const, QCType),

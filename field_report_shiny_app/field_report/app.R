@@ -24,14 +24,6 @@ library(ggthemes)
 library(sass)
 library(DT)
 
-data2018_primary <- data2018 %>%
-  mutate(Collectors = str_sub(Collectors, start = 1, end = 3))
-
-data2018_primary$SampleDatetime <- as.POSIXct(data2018_primary$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
-
-data2018_primary$Date <- as.Date(data2018_primary$SampleDatetime)
-data2018_primary$Time <- format(data2018_primary$SampleDatetime, format = "%H:%M:%S")
-
 ui <- page_sidebar(
   sidebar = sidebar(
     selectInput("collector", label = "Select a Collector", choices = data2018_primary$Collectors),
@@ -185,18 +177,19 @@ server <- function(input, output, session) {
   
   output$msmt <- render_gt({
     sitecode() %>% 
-      select(QCType, ProfileDepth, Const, Result, SiteVisitID) %>% 
-      filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>% 
+      select(QCType, ProfileDepth,Const, Result, SiteVisitID) %>%
+      filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>%
       pivot_wider(names_from = c(Const, QCType),
                   values_from = Result,
-                  values_fn = list(Result = list)) %>%  
+                  values_fn = list(Result = list)) %>%
+      select(ProfileDepth, SiteVisitID, "water temperature_Regular", "water temperature_Duplicate", "Dissolved Oxygen_Regular", "Dissolved Oxygen_Duplicate") %>% 
       rename("Water Temperature Regular" = "water temperature_Regular",
              "Water Temperature Duplicate" = "water temperature_Duplicate",
              "DO Regular" = "Dissolved Oxygen_Regular",
              "DO Duplicate" = "Dissolved Oxygen_Duplicate") %>%
       mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
-             across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>% 
-      select("ProfileDepth", "Water Temperature Regular", "Water Temperature Duplicate", "DO Regular", "DO Duplicate") %>% 
+             across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>%
+      select(ProfileDepth, "Water Temperature Regular", "Water Temperature Duplicate", "DO Regular", "DO Duplicate") %>%
       gt() %>% 
       opt_row_striping() %>%
       opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%
@@ -215,6 +208,7 @@ server <- function(input, output, session) {
       filter(Const %in% c("Secchi","pH")) %>% 
       pivot_wider(names_from = c(Const, QCType),
                   values_from = Result) %>%
+      select(Time, SiteVisitID, pH_Regular, Secchi_Regular, pH_Duplicate, Secchi_Duplicate) %>% 
       mutate(pH_Duplicate = as.character(pH_Duplicate),
              pH_Duplicate = replace_na(pH_Duplicate, "-"),
              Secchi_Duplicate = as.character(Secchi_Duplicate),
@@ -222,7 +216,8 @@ server <- function(input, output, session) {
              Secchi_Regular = as.character(Secchi_Regular),
              Secchi_Regular = replace_na(Secchi_Regular, "-"),
              pH_Regular = as.character(pH_Regular),
-             pH_Regular = replace_na(pH_Regular, "-")) %>% 
+             pH_Regular = replace_na(pH_Regular, "-")) %>%
+      select(Time, SiteVisitID, pH_Regular, Secchi_Regular, pH_Duplicate, Secchi_Duplicate) %>% 
       select(!SiteVisitID) %>% 
       rename("pH Regular" = "pH_Regular",
              "pH Duplicate" = "pH_Duplicate",
@@ -232,7 +227,7 @@ server <- function(input, output, session) {
       cols_move(
         columns = "pH Duplicate",
         after = "pH Regular"
-      ) %>% 
+      ) %>%
       opt_row_striping() %>%
       opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%
       tab_style(
