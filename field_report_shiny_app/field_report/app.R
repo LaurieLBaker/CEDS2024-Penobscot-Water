@@ -42,7 +42,7 @@ ui <- page_sidebar(
   navset_tab(
     nav_panel(title = "Site Info", gt_output("si_table"), gt_output("af_table"), gt_output("note_table")),
     nav_panel(title = "Samples", gt_output("sample_table"), gt_output("filter_table")),
-    nav_panel(title = "Measurements", gt_output("msmt_table"), gt_output("ph_table"))
+    nav_panel(title = "Measurements", gt_output("msmt"), gt_output("ph"))
   )
 )
 
@@ -183,20 +183,20 @@ server <- function(input, output, session) {
         locations = list(cells_body(), cells_column_labels()))
   })
   
-  output$msmt_table <- render_gt({
+  output$msmt <- render_gt({
     sitecode() %>% 
-      select(QCType, ProfileDepth,Const, Result, SiteVisitID) %>% 
+      select(QCType, ProfileDepth, Const, Result, SiteVisitID) %>% 
       filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>% 
       pivot_wider(names_from = c(Const, QCType),
                   values_from = Result,
-                  values_fn = list(Result = list)) %>%  # Keep all values
+                  values_fn = list(Result = list)) %>%  
       rename("Water Temperature Regular" = "water temperature_Regular",
              "Water Temperature Duplicate" = "water temperature_Duplicate",
              "DO Regular" = "Dissolved Oxygen_Regular",
              "DO Duplicate" = "Dissolved Oxygen_Duplicate") %>%
       mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
              across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>% 
-      select(ProfileDepth ,"Water Temperature Regular", "Water Temperature Duplicate", "DO Regular", "DO Duplicate") %>% 
+      select("ProfileDepth", "Water Temperature Regular", "Water Temperature Duplicate", "DO Regular", "DO Duplicate") %>% 
       gt() %>% 
       opt_row_striping() %>%
       opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%
@@ -209,8 +209,8 @@ server <- function(input, output, session) {
         locations = list(cells_body()))
   })
   
-  output$ph_table <- render_gt({
-    sitecode() %>% 
+  output$ph <- render_gt({
+    sitecode() %>%
       select(Const, Result, QCType, Time, SiteVisitID ) %>% 
       filter(Const %in% c("Secchi","pH")) %>% 
       pivot_wider(names_from = c(Const, QCType),
