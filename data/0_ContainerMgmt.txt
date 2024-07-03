@@ -1,0 +1,17 @@
+"CntrType","CntrColor","CntrVol","SampleFilterMethod","ContainerCode","ContainerAbbrev","ContainerDescription","ContainerComment","COCSortOrder","ContainerTempStd"
+"BOD Bottle","Clear",300,"01 None","CBODB300","BOD(.3)",,,2,4
+"Glass Bottle","Amber",120,"01 None","BGB120","BG(.12)",,,7,4
+"Plastic Bottle","Clear",1000,"01 None","CPB1000","CP(1)",,,3,4
+"Plastic Syringe","Clear",60,"01 None","CPS60","Syrg(.06)",,,6,4
+"Plastic Bottle","Clear",500,"01 None","CPB500","CP(.5)",,,1,4
+"Plastic Bottle","Clear",120,"01 None","CPB120","Coli(.12)",,,4,10
+"Plastic Bottle","Clear",2000,"01 None","CPB2000","CP(2)",,,,4
+"Plastic Bottle","Clear",300,"01 None","CPB300","Coli(.3)",,,4,10
+"Plastic Bottle","Amber",2000,"01 None","BPB2000","BP(2)",,,,4
+"Glass Bottle","Amber",120,"02 In-line cartridge filter","BGB120F","BGF(.12)",,,8,4
+"Plastic Bag","Clear",250,"01 None","CPBag250","Whirl(.25)",,,5,4
+"Plastic Bag","Clear",650,"01 None","CPBag650","Whirl(.65)",,,,4
+"Plastic Bottle","Amber",1000,"01 None","BPB1000","BP(1)",,,9,4
+"Plastic Bottle","Clear",250,"01 None","CPB250","CP(.25)",,,,4
+"Plastic Bottle","Amber",1000,"03 Vacuum pump","BPB1000F","BP(1)",,,10,4
+"Plastic Bottle","Clear",125,"01 None","CPB125","CP(.12)",,,7,4

@@ -23,6 +23,7 @@ library(kableExtra)
 library(ggthemes)
 library(sass)
 library(DT)
+library(data.table)
 
 ui <- page_sidebar(
   sidebar = sidebar(
@@ -177,29 +178,31 @@ server <- function(input, output, session) {
   
   output$msmt <- render_gt({
     sitecode() %>% 
-      select(QCType, ProfileDepth,Const, Result, SiteVisitID) %>%
+      select(QCType, ProfileDepth, Const, Result, SiteVisitID) %>%
       filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>%
       pivot_wider(names_from = c(Const, QCType),
-                  values_from = Result,
-                  values_fn = list(Result = list)) %>%
-      select(ProfileDepth, SiteVisitID, "water temperature_Regular", "water temperature_Duplicate", "Dissolved Oxygen_Regular", "Dissolved Oxygen_Duplicate") %>% 
-      rename("Water Temperature Regular" = "water temperature_Regular",
-             "Water Temperature Duplicate" = "water temperature_Duplicate",
-             "DO Regular" = "Dissolved Oxygen_Regular",
-             "DO Duplicate" = "Dissolved Oxygen_Duplicate") %>%
+                  values_from = Result) %>%
       mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
-             across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>%
-      select(ProfileDepth, "Water Temperature Regular", "Water Temperature Duplicate", "DO Regular", "DO Duplicate") %>%
-      gt() %>% 
-      opt_row_striping() %>%
-      opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%
-      tab_style(
-        style = cell_borders(
-          sides = c("all"),
-          color = "black",
-          weight = px(1),
-          style = "solid"),
-        locations = list(cells_body()))
+             across(ends_with("_duplicate"), ~replace_na(as.character(.), "-")))
+    #   %>% 
+    #   select(ProfileDepth, SiteVisitID, "water temperature_Regular", "water temperature_Duplicate", "Dissolved Oxygen_Regular", "Dissolved Oxygen_Duplicate") %>%
+    #   rename("Water Temperature Regular" == "water temperature_Regular",
+    #          "Water Temperature Duplicate" == "water temperature_Duplicate",
+    #          "DO Regular" == "Dissolved Oxygen_Regular",
+    #          "DO Duplicate" == "Dissolved Oxygen_Duplicate") %>%
+    #   mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
+    #          across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>%
+    #   select(ProfileDepth, "Water Temperature Regular", "Water Temperature Duplicate", "DO Regular", "DO Duplicate") %>%
+    #   gt() %>%
+    #   opt_row_striping() %>%
+    #   opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%
+    #   tab_style(
+    #     style = cell_borders(
+    #       sides = c("all"),
+    #       color = "black",
+    #       weight = px(1),
+    #       style = "solid"),
+    #     locations = list(cells_body()))
   })
   
   output$ph <- render_gt({

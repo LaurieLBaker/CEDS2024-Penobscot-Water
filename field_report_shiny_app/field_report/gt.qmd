@@ -123,17 +123,16 @@ data2018_primary %>%
 
 ```{r}
 data2018_primary %>% 
-  select(QCType, ProfileDepth,Const, Result, SiteVisitID) %>% 
+  select(QCType, ProfileDepth, Const, Result, SiteVisitID) %>% 
   filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>% 
   pivot_wider(names_from = c(Const, QCType),
-              values_from = Result,
-              values_fn = list(Result = list)) %>%
+              values_from = Result) %>%
+  mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
+         across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>% 
   rename("Water Temperature Regular" = "water temperature_Regular",
          "Water Temperature Duplicate" = "water temperature_Duplicate",
          "DO Regular" = "Dissolved Oxygen_Regular",
          "DO Duplicate" = "Dissolved Oxygen_Duplicate") %>%
-  mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
-         across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>% 
   select(ProfileDepth, "Water Temperature Regular", "Water Temperature Duplicate", "DO Regular", "DO Duplicate") %>% 
   gt() %>% 
       opt_row_striping() %>%
