@@ -1,7 +1,4 @@
 ---
-title: "Penobscot Water Quality 2018 Data Exploration"
-author: "Delphine Demaisy"
-date: "11/21/2023"
 output: html_document
 ---
 ```{r setup, include=FALSE}
@@ -22,18 +19,22 @@ library(readr)
 ```{r read_data}
 data2018 <- readRDS("~/Repos/Penobscot-Water/data/PINCommEngData (2).RData")
 
-transport_temp <- 
+transport_temp <- read.table("~/Desktop/GitHub/Penobscot_Water/data/c_FieldTransportTemps.txt",
+                             header = TRUE,
+                             sep = ",")
 
-containers <- 
+containers <- read.table("~/Desktop/GitHub/Penobscot_Water/data/0_ContainerMgmt.txt",
+                         header = TRUE,
+                         sep = ",")
 ```
 
 ### Data Overview 
 ```{r glimpse_data}
-glimpse(data2018)
+# glimpse(data2018)
 ```
 
 ### Measured Runs
 ```{r count_runs_sampled}
- data2018 %>% 
-  count(RunCode)
+ # data2018 %>% 
+ #  count(RunCode)
 ```
