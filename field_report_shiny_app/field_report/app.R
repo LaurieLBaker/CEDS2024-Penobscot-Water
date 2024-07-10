@@ -204,26 +204,18 @@ server <- function(input, output, session) {
   
   output$ph <- render_gt({
     sitecode() %>%
-      select(Const, Result, QCType, Time, SiteVisitID ) %>%
-      filter(Const %in% c("Secchi","pH")) %>%
+      select(Const, Result, QCType, Time, SiteVisitID ) %>% 
+      filter(Const %in% c("Secchi","pH")) %>% 
       pivot_wider(names_from = c(Const, QCType),
-                  values_from = Result) %>%
-      select(Time, SiteVisitID, pH_Regular, Secchi_Regular, pH_Duplicate, Secchi_Duplicate) %>%
-      mutate(pH_Duplicate = as.character(pH_Duplicate),
-             pH_Duplicate = replace_na(pH_Duplicate, "-"),
-             Secchi_Duplicate = as.character(Secchi_Duplicate),
-             Secchi_Duplicate = replace_na(Secchi_Duplicate, "-"),
-             Secchi_Regular = as.character(Secchi_Regular),
-             Secchi_Regular = replace_na(Secchi_Regular, "-"),
-             pH_Regular = as.character(pH_Regular),
-             pH_Regular = replace_na(pH_Regular, "-")) %>%
-      select(Time, SiteVisitID, pH_Regular, Secchi_Regular, pH_Duplicate, Secchi_Duplicate) %>%
-      select(!SiteVisitID) %>%
-      rename("pH Regular" = "pH_Regular",
-             "pH Duplicate" = "pH_Duplicate",
-             "Secchi Regular" = "Secchi_Regular",
-             "Secchi Duplicate" = "Secchi_Duplicate") %>%
-      gt() %>%
+                  values_from = Result,
+                  values_fn = list(Result = list)) %>% 
+      mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
+             across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>% 
+      select(Time, SiteVisitID, contains("_")) %>%
+      rename_with(~ str_replace_all(., "_", " "), contains("_")) %>% 
+      rename_with(~ str_to_title(., locale = "en"), contains(" ")) %>% 
+      rename_with(~ str_replace_all(., "Ph", "pH"), contains("Ph")) %>% 
+      gt() %>% 
       opt_row_striping() %>%
       opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%
       tab_style(
