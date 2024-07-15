@@ -1,3 +1,10 @@
+---
+title: "Field Report Data"
+format: html
+server: shiny
+---
+
+```{r load-packages-data}
 library(shiny)
 library(bslib)
 library(readr)
@@ -27,6 +34,19 @@ library(data.table)
 library(rmarkdown)
 library(quarto)
 
+data2018 <- readRDS("data/PINCommEngData (2).RData")
+
+data2018_primary <- data2018 %>%
+  mutate(Collectors = str_sub(Collectors, start = 1, end = 3))
+
+data2018_primary$SampleDatetime <- as.POSIXct(data2018_primary$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
+
+data2018_primary$Date <- as.Date(data2018_primary$SampleDatetime)
+data2018_primary$Time <- format(data2018_primary$SampleDatetime, format = "%H:%M:%S")
+```
+
+
+```{r ui}
 ui <- page_sidebar(
   sidebar = sidebar(
     selectInput("collector", label = "Select a Collector", choices = data2018_primary$Collectors),
@@ -40,6 +60,10 @@ ui <- page_sidebar(
     nav_panel(title = "Measurements", gt_output("msmt"), gt_output("ph"))
   )
 )
+```
+
+```{r server}
+#| context: server
 
 server <- function(input, output, session) {
   collectors <- reactive({
@@ -230,6 +254,9 @@ server <- function(input, output, session) {
   })
 
 }
+```
 
-
+```{r run-app}
 shinyApp(ui = ui, server = server)
+```
+
