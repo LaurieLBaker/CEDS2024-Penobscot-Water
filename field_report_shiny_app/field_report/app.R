@@ -9,6 +9,7 @@ library(purrr)
 library(htmltools)
 library(knitr)
 library(gt)
+library(gtExtras)
 library(kableExtra)
 library(tidyr)
 library(tidyverse)
@@ -26,13 +27,14 @@ library(DT)
 library(data.table)
 library(rmarkdown)
 library(quarto)
+library(shinydashboard)
 
 ui <- page_sidebar(
   sidebar = sidebar(
     selectInput("collector", label = "Select a Collector", choices = data2018_primary$Collectors),
     selectInput("rundate", label = "Select a Date", NULL),
     selectInput("runcode", label = "Select a Run", NULL),
-    selectInput("sitecode", label = "Select a Site", NULL)
+    checkboxGroupInput("sitecode", label = "Select a Site", NULL)
   ),
   navset_tab(
     nav_panel(title = "Site Info", gt_output("si_table"), gt_output("af_table"), gt_output("note_table")),
@@ -62,31 +64,54 @@ server <- function(input, output, session) {
   })
   observeEvent(runcode(), {
     sitecode_choice <- unique(runcode()$SiteCode)
-    updateSelectInput(session = session, "sitecode", choices = sitecode_choice)
+    updateCheckboxGroupInput(session = session, "sitecode", choices = sitecode_choice)
   })
   sitecode <- reactive({
     filter(runcode(), SiteCode %in% input$sitecode)
   })
   
   output$si_table <- render_gt({
-    sitecode() %>% 
-      select(RunCode, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
-      rename("Water Body" = "WaterBody",
-             "Site" = "SiteCode",
-             "Run Code" = "RunCode",
-             "Time" = "SiteVisitStartTime",
-             "Depth" = "SiteDepth") %>%
-      distinct() %>% 
-      gt() %>%
-      cols_align(align = "center") %>% 
-      tab_header(title = "Site information") %>%
-      tab_style(
-        style = cell_borders(
-          sides = c("all"),
-          color = "black",
-          weight = px(1),
-          style = "solid"),
-        locations = list(cells_body(), cells_column_labels()))
+    for(i in sitecode()$SiteCode){
+      sitecode() %>%
+        select(SiteCode, RunCode, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
+        rename("Site" == "SiteCode",
+               "Water Body" = "WaterBody",
+               "Site" = "SiteCode",
+               "Run Code" = "RunCode",
+               "Time" = "SiteVisitStartTime",
+               "Depth" = "SiteDepth") %>%
+        distinct() %>%
+        as.data.frame() %>%
+        gt() %>%
+        cols_align(align = "center") %>%
+        tab_header(title = "Site information") %>%
+        tab_style(
+          style = cell_borders(
+            sides = c("all"),
+            color = "black",
+            weight = px(1),
+            style = "solid"),
+          locations = list(cells_body(), cells_column_labels())) %>% 
+        print()
+    }
+    # sitecode() %>% 
+    #   select(RunCode, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
+    #   rename("Water Body" = "WaterBody",
+    #          "Site" = "SiteCode",
+    #          "Run Code" = "RunCode",
+    #          "Time" = "SiteVisitStartTime",
+    #          "Depth" = "SiteDepth") %>%
+    #   distinct() %>% 
+    #   gt() %>%
+    #   cols_align(align = "center") %>% 
+    #   tab_header(title = "Site information") %>%
+    #   tab_style(
+    #     style = cell_borders(
+    #       sides = c("all"),
+    #       color = "black",
+    #       weight = px(1),
+    #       style = "solid"),
+    #     locations = list(cells_body(), cells_column_labels()))
   })
   
   output$af_table <- render_gt({
@@ -181,17 +206,45 @@ server <- function(input, output, session) {
   
   
   output$msmt <- render_gt({
-    sitecode() %>% 
+    # site <- unique(sitecode()$SiteCode)
+    # map(.x = site, .f = function(x) {
+    #   sitecode() %>%
+    #     filter(SiteCode == x) %>% 
+    #     select(QCType, ProfileDepth, Const, Result, SiteVisitID) %>%
+    #     filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>%
+    #     pivot_wider(names_from = c(Const, QCType),
+    #                 values_from = Result,
+    #                 values_fn = list(Result = list)) %>%
+    #     mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
+    #            across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>%
+    #     select(ProfileDepth, SiteVisitID, contains("_")) %>%
+    #     rename_with(~ str_replace_all(., "_", " "), contains("_")) %>%
+    #     rename_with(~ str_to_title(., locale = "en"), contains(" ")) %>%
+    #     as.data.frame() %>% 
+    #     gt() %>%
+    #     opt_row_striping() %>%
+    #     opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%
+    #     tab_style(
+    #       style = cell_borders(
+    #         sides = c("all"),
+    #         color = "black",
+    #         weight = px(1),
+    #         style = "solid"),
+    #       locations = list(cells_body()))
+    # })
+    split <- split(sitecode(), sitecode()$SiteCode)
+    
+    sitecode() %>%
       select(QCType, ProfileDepth, Const, Result, SiteVisitID) %>%
       filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>%
       pivot_wider(names_from = c(Const, QCType),
                   values_from = Result,
                   values_fn = list(Result = list)) %>%
       mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
-             across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>% 
+             across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>%
       select(ProfileDepth, SiteVisitID, contains("_")) %>%
-      rename_with(~ str_replace_all(., "_", " "), contains("_")) %>% 
-      rename_with(~ str_to_title(., locale = "en"), contains(" ")) %>% 
+      rename_with(~ str_replace_all(., "_", " "), contains("_")) %>%
+      rename_with(~ str_to_title(., locale = "en"), contains(" ")) %>%
       gt() %>%
       opt_row_striping() %>%
       opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%

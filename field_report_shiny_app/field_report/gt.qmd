@@ -9,19 +9,23 @@ data2018_primary$SampleDatetime <- as.POSIXct(data2018_primary$SampleDatetime, f
 
 data2018_primary$Date <- as.Date(data2018_primary$SampleDatetime)
 data2018_primary$Time <- format(data2018_primary$SampleDatetime, format = "%H:%M:%S")
+
+sites <- unique(data2018_primary$SiteCode)
 ```
 
 ```{r 1}
-data2018_primary %>% 
+data2018_primary %>%
+   filter(SiteCode == x) %>%
    select(RunCode, WaterBody, SiteCode, SiteVisitStartTime, SiteDepth) %>%
   rename("Water Body" = "WaterBody",
          "Site" = "SiteCode",
          "Run Code" = "RunCode",
          "Time" = "SiteVisitStartTime",
          "Depth" = "SiteDepth") %>%
-  distinct() %>% 
+  distinct() %>%
+  as.data.frame() %>%
   gt() %>%
-  cols_align(align = "center") %>% 
+  cols_align(align = "center") %>%
   tab_header(title = "Site information") %>%
   tab_style(
     style = cell_borders(
@@ -30,6 +34,7 @@ data2018_primary %>%
       weight = px(1),
       style = "solid"),
     locations = list(cells_body(), cells_column_labels()))
+
 ```
 
 ```{r 2}
@@ -144,7 +149,9 @@ data2018_primary %>%
       weight = px(1),
       style = "solid"),
      locations = list(cells_body()))
+```
 
+```{r}
 data2018_primary %>%
   select(QCType, ProfileDepth, Const, Result, SiteVisitID) %>%
   filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>%
@@ -166,7 +173,34 @@ data2018_primary %>%
       weight = px(1),
       style = "solid"),
      locations = list(cells_body()))
+
+map(.x = sites, .f = function(x) {
+  data2018_primary %>%
+  filter(SiteCode == x) %>%
+  select(QCType, ProfileDepth, Const, Result, SiteVisitID) %>%
+  filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>%
+  pivot_wider(names_from = c(Const, QCType),
+              values_from = Result,
+              values_fn = list(Result = list)) %>%
+  mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
+         across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>%
+  select(ProfileDepth, SiteVisitID, contains("_")) %>%
+  rename_with(~ str_replace_all(., "_", " "), contains("_")) %>%
+  rename_with(~ str_to_title(., locale = "en"), contains(" ")) %>%
+  gt() %>%
+  opt_row_striping() %>%
+  opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%
+   tab_style(
+    style = cell_borders(
+      sides = c("all"),
+      color = "black",
+      weight = px(1),
+      style = "solid"),
+     locations = list(cells_body()))
+})
+
 ```
+
 
 ```{r}
 data2018_primary %>% 
@@ -203,18 +237,20 @@ data2018_primary %>%
      locations = list(cells_body()))
 
 data2018_primary %>% 
-  select(Const, Result, QCType, Time, SiteVisitID ) %>% 
+  select(Const, Result, QCType, Time, SiteVisitID, SiteCode) %>% 
   filter(Const %in% c("Secchi","pH")) %>% 
   pivot_wider(names_from = c(Const, QCType),
               values_from = Result,
               values_fn = list(Result = list)) %>% 
   mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
          across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>% 
-  select(Time, SiteVisitID, contains("_")) %>%
+  select(SiteCode, Time, SiteVisitID, contains("_")) %>%
   rename_with(~ str_replace_all(., "_", " "), contains("_")) %>% 
   rename_with(~ str_to_title(., locale = "en"), contains(" ")) %>% 
   rename_with(~ str_replace_all(., "Ph", "pH"), contains("Ph")) %>% 
+  select(!SiteVisitID) %>%
   gt() %>% 
+  tab_row_group(label = md(unique(SiteCode)), rows = unique(SiteCode)) %>% 
   opt_row_striping() %>%
   opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%
    tab_style(

@@ -1,10 +1,14 @@
 ---
 title: "Field Report Data"
-format: html
+format:
+  html:
+    page-layout: custom
 server: shiny
 ---
 
 ```{r load-packages-data}
+#| context: setup
+
 library(shiny)
 library(bslib)
 library(readr)
@@ -34,7 +38,7 @@ library(data.table)
 library(rmarkdown)
 library(quarto)
 
-data2018 <- readRDS("data/PINCommEngData (2).RData")
+data2018 <- readRDS("~/Desktop/GitHub/Penobscot_Water/data/PINCommEngData (2).RData")
 
 data2018_primary <- data2018 %>%
   mutate(Collectors = str_sub(Collectors, start = 1, end = 3))
@@ -47,19 +51,20 @@ data2018_primary$Time <- format(data2018_primary$SampleDatetime, format = "%H:%M
 
 
 ```{r ui}
-ui <- page_sidebar(
+#| panel: sidebar
+
   sidebar = sidebar(
     selectInput("collector", label = "Select a Collector", choices = data2018_primary$Collectors),
     selectInput("rundate", label = "Select a Date", NULL),
     selectInput("runcode", label = "Select a Run", NULL),
     selectInput("sitecode", label = "Select a Site", NULL)
-  ),
+  )
   navset_tab(
     nav_panel(title = "Site Info", gt_output("si_table"), gt_output("af_table"), gt_output("note_table")),
     nav_panel(title = "Samples", gt_output("sample_table"), gt_output("filter_table")),
     nav_panel(title = "Measurements", gt_output("msmt"), gt_output("ph"))
   )
-)
+
 ```
 
 ```{r server}
@@ -254,9 +259,8 @@ server <- function(input, output, session) {
   })
 
 }
+
 ```
 
-```{r run-app}
-shinyApp(ui = ui, server = server)
-```
+
 
