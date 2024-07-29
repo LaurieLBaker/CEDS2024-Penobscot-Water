@@ -1,51 +1,283 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    https://shiny.posit.co/
-#
-
 library(shiny)
+library(bslib)
+library(readr)
+library(here)
+library(dplyr)
+library(ggplot2)
+library(stringr)
+library(purrr)
+library(htmltools)
+library(knitr)
+library(gt)
+library(gtExtras)
+library(tidyr)
+library(tidyverse)
+library(haven)
+library(sf)
+library(dbscan)
+library(magrittr)
+library(htmlwidgets)
+library(janitor)
+library(RColorBrewer)
+library(ggthemes)
+library(sass)
+library(rmarkdown)
+library(quarto)
+library(shinydashboard)
+library(glue)
 
-# Define UI for application that draws a histogram
-ui <- fluidPage(
-
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot")
-        )
-    )
+ui <- page_sidebar(
+  sidebar = sidebar(
+    selectInput("collector", label = "Select a Collector", choices = data2018_primary$Collectors),
+    checkboxGroupInput("rundate", label = "Select a Date", NULL),
+    checkboxGroupInput("runcode", label = "Select a Run", NULL),
+    checkboxGroupInput("sitecode", label = "Select a Site", NULL)
+  ),
+  navset_tab(
+    nav_panel(title = "Site Info", uiOutput("site_tables")),
+    nav_panel(title = "Samples", uiOutput("sample_tables")),
+    nav_panel(title = "Measurements", uiOutput("msmt_tables"))
+  )
 )
 
-# Define server logic required to draw a histogram
-server <- function(input, output) {
-
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white',
-             xlab = 'Waiting time to next eruption (in mins)',
-             main = 'Histogram of waiting times')
+server <- function(input, output, session) {
+  collectors <- reactive({
+    data2018_primary %>%
+      filter(Collectors == input$collector)
+  })
+  observeEvent(collectors(), {
+    rundate_choice <- unique(collectors()$RunDate)
+    updateCheckboxGroupInput(session = session, "rundate", choices = sort(rundate_choice))
+  })
+  rundate <- reactive({
+    filter(collectors(), RunDate %in% input$rundate)
+  })
+  observeEvent(rundate(), {
+    runcode_choice <- unique(rundate()$RunCode)
+    updateCheckboxGroupInput(session = session, "runcode", choices = runcode_choice)
+  })
+  runcode <- reactive({
+    filter(rundate(), RunCode %in% input$runcode)
+  })
+  observeEvent(runcode(), {
+    sitecode_choice <- unique(runcode()$SiteCode)
+    updateCheckboxGroupInput(session = session, "sitecode", choices = sitecode_choice)
+  })
+  sitecode <- reactive({
+    filter(runcode(), SiteCode %in% input$sitecode)
+  })
+  
+  output$site_tables <- renderUI({
+    site_data <- sitecode()
+    
+    tables <- lapply(split(site_data, site_data$SiteCode), function(df) {
+      site_code <- unique(df$SiteCode)
+      
+      # Site Info Table
+      si_table <- df %>%
+        select(RunCode, SiteCode, WaterBody, SiteVisitStartTime, SiteDepth) %>%
+        rename(
+          "Water Body" = "WaterBody",
+          "Site" = "SiteCode",
+          "Run Code" = "RunCode",
+          "Time" = "SiteVisitStartTime",
+          "Depth" = "SiteDepth"
+        ) %>%
+        distinct() %>%
+        gt() %>%
+        cols_align(align = "center") %>%
+        tab_header(title = glue("Site Information: {site_code}")) %>%
+        tab_style(
+          style = cell_borders(
+            sides = c("all"),
+            color = "black",
+            weight = px(1),
+            style = "solid"
+          ),
+          locations = list(cells_body(), cells_column_labels())
+        )
+      
+      # Abiotic Factors Table
+      af_table <- df %>%
+        select(SiteCode, Weather, SamplingAirTemp, RivCond, WaterLevel, FoamRank, FoamSource) %>%
+        rename(
+          "Air Temp" = "SamplingAirTemp",
+          "River Cond" = "RivCond",
+          "Water Level" = "WaterLevel",
+          "Foam Rank" = "FoamRank",
+          "Foam Source" = "FoamSource",
+          "Site" = "SiteCode"
+        ) %>%
+        distinct() %>%
+        gt() %>%
+        cols_align(align = "center") %>%
+        tab_header(title = glue("Abiotic Factors: {site_code}")) %>%
+        tab_style(
+          style = cell_borders(
+            sides = c("all"),
+            color = "black",
+            weight = px(1),
+            style = "solid"),
+          locations = list(cells_body(), cells_column_labels())
+        )
+      
+      #Notes Table
+      notes_table <- df %>% 
+        select(SiteCode, SiteVisitComment) %>%
+        rename("Site Visit Notes" = "SiteVisitComment",
+               "Site" = "SiteCode") %>%
+        distinct() %>%
+        gt() %>%
+        cols_align(align = "center") %>%
+        tab_header(title = glue("Site Visit Notes: {site_code}")) %>%
+        tab_style(
+          style = cell_borders(
+            sides = c("all"),
+            color = "black",
+            weight = px(1),
+            style = "solid"),
+          locations = list(cells_body(), cells_column_labels()))
+      
+      tagList(si_table, af_table, notes_table)
+      
     })
-}
+    
+    tagList(tables)
+    
+  })
+  
+  output$sample_tables <- renderUI({
+    site_data <- sitecode()
+    
+    tables <- lapply(split(site_data, site_data$SiteCode), function(df) {
+      site_code <- unique(df$SiteCode)
+      
+      #Sample Table
+      samples <- df %>% 
+        select(SiteCode, SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>%
+        rename("Sample Name" = "SampleName",
+               "Project" = "ProjectCode",
+               "Container" = "CntrType",
+               "QC" = "QCType",
+               "Method" = "CollMethod",
+               "Depth" = "SampleDepth",
+               "Site" = "SiteCode") %>%
+        group_by(LabAbbrev) %>%
+        distinct() %>%
+        gt() %>%
+        tab_header(title = glue("Samples: {site_code}")) %>%
+        tab_style(
+          style = cell_fill(color = "#B3E0A6"),
+          locations = cells_body(columns = c(Depth),
+                                 rows = Method == "GS" & Depth == 0)) %>%
+        tab_style(
+          style = cell_fill(color = "#F5725E"),
+          locations = cells_body(columns = c(Depth),
+                                 rows = Method == "CO-E" & Depth == 0)) %>%
+        tab_style(
+          style = cell_fill(color = "#F5725E"),
+          locations = cells_body(columns = c(Depth),
+                                 rows = Method == "GS" & Depth != 0)) %>%
+        cols_align(align = "center") %>%
+        opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 5, page_size_values = c(5, 10, 25, 50, 100)) %>%
+        tab_style(
+          style = cell_borders(
+            sides = c("all"),
+            color = "black",
+            weight = px(1),
+            style = "solid"),
+          locations = list(cells_body()))
+      
+      #Filter Table
+      filters <- df %>% 
+        select(SiteCode, FilterName) %>%
+        filter(FilterName != "NA") %>%
+        rename("Filter Name" = "FilterName",
+               "Site" = "SiteCode") %>%
+        distinct() %>%
+        gt() %>%
+        tab_header(title = glue("Filters: {site_code}")) %>%
+        cols_align(align = "center") %>%
+        tab_style(
+          style = cell_borders(
+            sides = c("all"),
+            color = "black",
+            weight = px(1),
+            style = "solid"),
+          locations = list(cells_body(), cells_column_labels()))
+      
+      tagList(samples, filters)
+      
+    })
+    
+    tagList(tables)
+    
+  })
 
-# Run the application 
+  output$msmt_tables <- renderUI({
+    site_data <- sitecode()
+    
+    tables <- lapply(split(site_data, site_data$SiteCode), function(df) {
+      site_code <- unique(df$SiteCode)
+      
+    #msmt table
+      msmt <- df %>% 
+        select(SiteCode, QCType, ProfileDepth, Const, Result, SiteVisitID) %>%
+        filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>%
+        pivot_wider(names_from = c(Const, QCType),
+                    values_from = Result,
+                    values_fn = list(Result = list)) %>%
+        mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
+               across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>%
+        select(SiteCode, ProfileDepth, SiteVisitID, contains("_")) %>%
+        rename_with(~ str_replace_all(., "_", " "), contains("_")) %>%
+        rename_with(~ str_to_title(., locale = "en"), contains(" ")) %>%
+        gt() %>%
+        tab_header(title = glue("Measurements: {site_code}")) %>%
+        opt_row_striping() %>%
+        opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%
+        tab_style(
+          style = cell_borders(
+            sides = c("all"),
+            color = "black",
+            weight = px(1),
+            style = "solid"),
+          locations = list(cells_body()))
+      
+    #pH/secchi table
+       pH <- df %>% 
+        select(SiteCode, Const, Result, QCType, Time, SiteVisitID ) %>%
+        filter(Const %in% c("Secchi","pH")) %>%
+        pivot_wider(names_from = c(Const, QCType),
+                    values_from = Result,
+                    values_fn = list(Result = list)) %>%
+        mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
+               across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>%
+        select(SiteCode, Time, SiteVisitID, contains("_")) %>%
+        rename_with(~ str_replace_all(., "_", " "), contains("_")) %>%
+        rename_with(~ str_to_title(., locale = "en"), contains(" ")) %>%
+        rename_with(~ str_replace_all(., "Ph", "pH"), contains("Ph")) %>%
+        gt() %>%
+        tab_header(title = glue("pH and Secchi:: {site_code}")) %>%
+        opt_row_striping() %>%
+        opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%
+        tab_style(
+          style = cell_borders(
+            sides = c("all"),
+            color = "black",
+            weight = px(1),
+            style = "solid"),
+          locations = list(cells_body())) 
+       
+       tagList(msmt, pH)
+      
+      })
+    
+    tagList(tables)
+    
+  })
+  
+}
+  
 shinyApp(ui = ui, server = server)
+
