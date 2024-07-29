@@ -70,81 +70,159 @@ server <- function(input, output, session) {
   output$site_tables <- renderUI({
     site_data <- sitecode()
     
-    tables <- lapply(split(site_data, site_data$SiteCode), function(df) {
-      site_code <- unique(df$SiteCode)
-      
-      # Site Info Table
-      si_table <- df %>%
-        select(RunCode, SiteCode, WaterBody, SiteVisitStartTime, SiteDepth) %>%
-        rename(
-          "Water Body" = "WaterBody",
-          "Site" = "SiteCode",
-          "Run Code" = "RunCode",
-          "Time" = "SiteVisitStartTime",
-          "Depth" = "SiteDepth"
-        ) %>%
-        distinct() %>%
-        gt() %>%
-        cols_align(align = "center") %>%
-        tab_header(title = glue("Site Information: {site_code}")) %>%
-        tab_style(
-          style = cell_borders(
-            sides = c("all"),
-            color = "black",
-            weight = px(1),
-            style = "solid"
-          ),
-          locations = list(cells_body(), cells_column_labels())
+    tables_by_date <- lapply(split(site_data, site_data$RunDate), function(date_df) {
+      date <- unique(date_df$RunDate)
+      date_tables <- lapply(split(date_df, date_df$RunCode), function(run_df) {
+        run_code <- unique(run_df$RunCode)
+        run_tables <- lapply(split(run_df, run_df$SiteCode), function(site_df) {
+          site_code <- unique(site_df$SiteCode)
+          
+          # Site Info Table
+          si_table <- site_df %>%
+            dplyr::select(RunCode, SiteCode, WaterBody, SiteVisitStartTime, SiteDepth) %>%
+            rename(
+              "Water Body" = "WaterBody",
+              "Site" = "SiteCode",
+              "Run Code" = "RunCode",
+              "Time" = "SiteVisitStartTime",
+              "Depth" = "SiteDepth"
+            ) %>%
+            distinct() %>%
+            gt() %>%
+            cols_align(align = "center") %>%
+            tab_header(title = glue("Site Information: {site_code}")) %>%
+            tab_style(
+              style = cell_borders(
+                sides = c("all"),
+                color = "black",
+                weight = px(1),
+                style = "solid"
+              ),
+              locations = list(cells_body(), cells_column_labels())
+            )
+          
+          # Abiotic Factors Table
+          af_table <- site_df %>%
+            dplyr::select(SiteCode, Weather, SamplingAirTemp, RivCond, WaterLevel, FoamRank, FoamSource) %>%
+            rename(
+              "Air Temp" = "SamplingAirTemp",
+              "River Cond" = "RivCond",
+              "Water Level" = "WaterLevel",
+              "Foam Rank" = "FoamRank",
+              "Foam Source" = "FoamSource",
+              "Site" = "SiteCode"
+            ) %>%
+            distinct() %>%
+            gt() %>%
+            cols_align(align = "center") %>%
+            tab_header(title = glue("Abiotic Factors: {site_code}")) %>%
+            tab_style(
+              style = cell_borders(
+                sides = c("all"),
+                color = "black",
+                weight = px(1),
+                style = "solid"),
+              locations = list(cells_body(), cells_column_labels())
+            )
+          
+          tagList(
+            div(style = "margin-bottom: 20px;", si_table, af_table)
+          )
+        })
+        
+        tagList(
+          h3(glue("Run Code: {run_code}")),
+          run_tables
         )
+      })
       
-      # Abiotic Factors Table
-      af_table <- df %>%
-        select(SiteCode, Weather, SamplingAirTemp, RivCond, WaterLevel, FoamRank, FoamSource) %>%
-        rename(
-          "Air Temp" = "SamplingAirTemp",
-          "River Cond" = "RivCond",
-          "Water Level" = "WaterLevel",
-          "Foam Rank" = "FoamRank",
-          "Foam Source" = "FoamSource",
-          "Site" = "SiteCode"
-        ) %>%
-        distinct() %>%
-        gt() %>%
-        cols_align(align = "center") %>%
-        tab_header(title = glue("Abiotic Factors: {site_code}")) %>%
-        tab_style(
-          style = cell_borders(
-            sides = c("all"),
-            color = "black",
-            weight = px(1),
-            style = "solid"),
-          locations = list(cells_body(), cells_column_labels())
-        )
-      
-      #Notes Table
-      notes_table <- df %>% 
-        select(SiteCode, SiteVisitComment) %>%
-        rename("Site Visit Notes" = "SiteVisitComment",
-               "Site" = "SiteCode") %>%
-        distinct() %>%
-        gt() %>%
-        cols_align(align = "center") %>%
-        tab_header(title = glue("Site Visit Notes: {site_code}")) %>%
-        tab_style(
-          style = cell_borders(
-            sides = c("all"),
-            color = "black",
-            weight = px(1),
-            style = "solid"),
-          locations = list(cells_body(), cells_column_labels()))
-      
-      tagList(si_table, af_table, notes_table)
-      
+      tagList(
+        h2(glue("Date: {date}")),
+        date_tables
+      )
     })
     
-    tagList(tables)
-    
+    tagList(tables_by_date)
   })
+  
+  # output$site_tables <- renderUI({
+  #   site_data <- sitecode()
+  #   
+  #   tables_by_date <- lapply(split(site_data, site_data$RunDate), function(date_df) {
+  #     site_code <- unique(df$SiteCode)
+  #     
+  #     # Site Info Table
+  #     si_table <- df %>%
+  #       select(RunCode, SiteCode, WaterBody, SiteVisitStartTime, SiteDepth) %>%
+  #       rename(
+  #         "Water Body" = "WaterBody",
+  #         "Site" = "SiteCode",
+  #         "Run Code" = "RunCode",
+  #         "Time" = "SiteVisitStartTime",
+  #         "Depth" = "SiteDepth"
+  #       ) %>%
+  #       distinct() %>%
+  #       gt() %>%
+  #       cols_align(align = "center") %>%
+  #       tab_header(title = glue("Site Information: {site_code}")) %>%
+  #       tab_style(
+  #         style = cell_borders(
+  #           sides = c("all"),
+  #           color = "black",
+  #           weight = px(1),
+  #           style = "solid"
+  #         ),
+  #         locations = list(cells_body(), cells_column_labels())
+  #       )
+  #     
+  #     # Abiotic Factors Table
+  #     af_table <- df %>%
+  #       select(SiteCode, Weather, SamplingAirTemp, RivCond, WaterLevel, FoamRank, FoamSource) %>%
+  #       rename(
+  #         "Air Temp" = "SamplingAirTemp",
+  #         "River Cond" = "RivCond",
+  #         "Water Level" = "WaterLevel",
+  #         "Foam Rank" = "FoamRank",
+  #         "Foam Source" = "FoamSource",
+  #         "Site" = "SiteCode"
+  #       ) %>%
+  #       distinct() %>%
+  #       gt() %>%
+  #       cols_align(align = "center") %>%
+  #       tab_header(title = glue("Abiotic Factors: {site_code}")) %>%
+  #       tab_style(
+  #         style = cell_borders(
+  #           sides = c("all"),
+  #           color = "black",
+  #           weight = px(1),
+  #           style = "solid"),
+  #         locations = list(cells_body(), cells_column_labels())
+  #       )
+  #     
+  #     #Notes Table
+  #     notes_table <- df %>% 
+  #       select(SiteCode, SiteVisitComment) %>%
+  #       rename("Site Visit Notes" = "SiteVisitComment",
+  #              "Site" = "SiteCode") %>%
+  #       distinct() %>%
+  #       gt() %>%
+  #       cols_align(align = "center") %>%
+  #       tab_header(title = glue("Site Visit Notes: {site_code}")) %>%
+  #       tab_style(
+  #         style = cell_borders(
+  #           sides = c("all"),
+  #           color = "black",
+  #           weight = px(1),
+  #           style = "solid"),
+  #         locations = list(cells_body(), cells_column_labels()))
+  #     
+  #     tagList(si_table, af_table, notes_table)
+  #     
+  #   })
+  #   
+  #   tagList(tables)
+  #   
+  # })
   
   output$sample_tables <- renderUI({
     site_data <- sitecode()
