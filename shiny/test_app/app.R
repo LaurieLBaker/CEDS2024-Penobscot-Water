@@ -367,17 +367,6 @@ server <- function(input, output, session) {
     tagList(tables_by_date)
   })
   
-  output$report <- downloadHandler(
-    filename = "report.html",
-    content = function(file) {
-      
-      quarto::quarto_render("report.qmd", 
-                            execute_params = list(input$collector, input$rundate, input$runcode, input$sitecode))
-      
-      file.copy("qmd_output.html", file)
-      
-    }
-  )
 }
 
 # Runs the shiny app
