@@ -14,26 +14,18 @@ library(quarto)
 library(glue)
 library(styler)
 library(lintr)
-
-# Load Data
-data2018 <- readRDS("data/PINCommEngData (2).RData")
-
-data2018_primary <- data2018 %>%
-  mutate(Collectors = str_sub(Collectors, start = 1, end = 3))
-
-data2018_primary$SampleDatetime <- as.POSIXct(data2018_primary$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
-
-data2018_primary$Date <- as.Date(data2018_primary$SampleDatetime)
-data2018_primary$Time <- format(data2018_primary$SampleDatetime, format = "%H:%M:%S")
+library(rmarkdown)
 
 # User Interface for app
 ui <- page_sidebar(
+  theme = bs_theme(preset = "litera"),
   sidebar = sidebar(
     # Creates the selection buttons on the side
     selectInput("collector", label = "Select a Collector", choices = unique(data2018_primary$Collectors)),
     checkboxGroupInput("rundate", label = "Select a Date", choices = NULL),
     checkboxGroupInput("runcode", label = "Select a Run", choices = NULL),
-    checkboxGroupInput("sitecode", label = "Select a Site", choices = NULL)
+    checkboxGroupInput("sitecode", label = "Select a Site", choices = NULL),
+    downloadButton("report", label = "Download Report")
   ),
   navset_tab(
     # Creates the tabs and UI output for the tables
@@ -374,6 +366,22 @@ server <- function(input, output, session) {
 
     tagList(tables_by_date)
   })
+  
+  output$report <- downloadHandler(
+    filename = "report.html",
+    content = function(file){
+      params <- list(n = c(input$collector, input$rundate, input$runcode, input$sitecode))
+      
+      id <- showNotification("Rendering report...", duration = NULL, closeButton = FALSE)
+      on.exit(removeNotification(id), add = TRUE)
+      
+      rmarkdown::render(input = "shiny/field_report_shiny_app/report.Rmd",
+        output_file = file,
+        params = params,
+        envir = new.env(parent = globalenv())
+      )
+    }
+  )
 }
 
 # Runs the shiny app

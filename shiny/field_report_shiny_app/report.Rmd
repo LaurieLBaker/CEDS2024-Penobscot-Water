@@ -1,0 +1,12 @@
+---
+title: "Report"
+output: html_document
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+params:
+  n: NA
+---
+
+```{r eval = FALSE, echo = FALSE}
+params$n
+```
+

@@ -16,6 +16,7 @@ About the tidyverse: https://www.tidyverse.org/
 Mastering Shiny book: https://mastering-shiny.org/
 Shiny Resources list: https://github.com/grabear/awesome-rshiny#resources
 Shiny extensions: https://github.com/nanxstats/awesome-shiny-extensions
+Information about using bslib for themes: https://www.appsilon.com/post/r-shiny-bslib
 
 I have found stack overflow and statology to be useful resources when running into error messages or needing to know how to apply code. When nothing else works, I'll often paste my error messages into ChatGPT, which is usually helpful. 
 
