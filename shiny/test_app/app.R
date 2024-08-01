@@ -375,7 +375,7 @@ server <- function(input, output, session) {
       id <- showNotification("Rendering report...", duration = NULL, closeButton = FALSE)
       on.exit(removeNotification(id), add = TRUE)
       
-      rmarkdown::render(input = "shiny/field_report_shiny_app/report.Rmd",
+      rmarkdown::render("~/Desktop/GitHub/Penobscot_Water/shiny/field_report_shiny_app/field_report/report.Rmd",
         output_file = file,
         params = params,
         envir = new.env(parent = globalenv())
