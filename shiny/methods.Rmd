@@ -5,6 +5,7 @@ When using dplyr select, the package has to be specified (dplyr::select), otherw
 
 The reactivity loop in the server makes it so that when the user selects a collector, the app only shows dates that collector was in the field. When a date is selected, it only shows the runs visited on that day, and when the run is selected, it only shows sites in that run.
 
+If making changes to the code, remember to commit and push often. 
 
 ## Resources and Packages
 
@@ -14,6 +15,7 @@ About the tidyverse: https://www.tidyverse.org/
   - also includes the magrittr pipe
 Mastering Shiny book: https://mastering-shiny.org/
 Shiny Resources list: https://github.com/grabear/awesome-rshiny#resources
+Shiny extensions: https://github.com/nanxstats/awesome-shiny-extensions
 
 I have found stack overflow and statology to be useful resources when running into error messages or needing to know how to apply code. When nothing else works, I'll often paste my error messages into ChatGPT, which is usually helpful. 
 
