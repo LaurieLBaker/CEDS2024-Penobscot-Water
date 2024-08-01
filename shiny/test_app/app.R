@@ -14,9 +14,9 @@ library(quarto)
 library(glue)
 library(styler)
 library(lintr)
-library(rmarkdown)
+library(quarto)
 
-# User Interface for app
+# User Iquarto# User Interface for app
 ui <- page_sidebar(
   theme = bs_theme(preset = "litera"),
   sidebar = sidebar(
@@ -369,17 +369,13 @@ server <- function(input, output, session) {
   
   output$report <- downloadHandler(
     filename = "report.html",
-    content = function(file){
-      params <- list(n = c(input$collector, input$rundate, input$runcode, input$sitecode))
+    content = function(file) {
       
-      id <- showNotification("Rendering report...", duration = NULL, closeButton = FALSE)
-      on.exit(removeNotification(id), add = TRUE)
+      quarto::quarto_render("report.qmd", 
+                            execute_params = list(input$collector, input$rundate, input$runcode, input$sitecode))
       
-      rmarkdown::render("~/Desktop/GitHub/Penobscot_Water/shiny/field_report_shiny_app/field_report/report.Rmd",
-        output_file = file,
-        params = params,
-        envir = new.env(parent = globalenv())
-      )
+      file.copy("qmd_output.html", file)
+      
     }
   )
 }
