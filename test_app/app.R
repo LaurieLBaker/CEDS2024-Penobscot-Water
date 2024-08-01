@@ -25,6 +25,7 @@ library(rmarkdown)
 library(quarto)
 library(shinydashboard)
 library(glue)
+library(styler)
 library(lintr)
 
 ui <- page_sidebar(
@@ -46,44 +47,44 @@ server <- function(input, output, session) {
     data2018_primary %>%
       filter(Collectors == input$collector)
   })
-  
+
   observeEvent(collectors(), {
     rundate_choice <- unique(collectors()$RunDate)
     updateCheckboxGroupInput(session = session, "rundate", choices = sort(rundate_choice))
   })
-  
+
   rundate <- reactive({
     filter(collectors(), RunDate %in% input$rundate)
   })
-  
+
   observeEvent(rundate(), {
     runcode_choice <- unique(rundate()$RunCode)
     updateCheckboxGroupInput(session = session, "runcode", choices = runcode_choice)
   })
-  
+
   runcode <- reactive({
     filter(rundate(), RunCode %in% input$runcode)
   })
-  
+
   observeEvent(runcode(), {
     sitecode_choice <- unique(runcode()$SiteCode)
     updateCheckboxGroupInput(session = session, "sitecode", choices = sitecode_choice)
   })
-  
+
   sitecode <- reactive({
     filter(runcode(), SiteCode %in% input$sitecode)
   })
-  
+
   output$site_tables <- renderUI({
     site_data <- sitecode()
-    
+
     tables_by_date <- lapply(split(site_data, site_data$RunDate), function(date_df) {
       date <- unique(date_df$RunDate)
       date_tables <- lapply(split(date_df, date_df$RunCode), function(run_df) {
         run_code <- unique(run_df$RunCode)
         run_tables <- lapply(split(run_df, run_df$SiteCode), function(site_df) {
           site_code <- unique(site_df$SiteCode)
-          
+
           # Site Info Table
           si_table <- site_df %>%
             dplyr::select(RunCode, SiteCode, WaterBody, SiteVisitStartTime, SiteDepth) %>%
@@ -107,7 +108,7 @@ server <- function(input, output, session) {
               ),
               locations = list(cells_body(), cells_column_labels())
             )
-          
+
           # Abiotic Factors Table
           af_table <- site_df %>%
             dplyr::select(SiteCode, Weather, SamplingAirTemp, RivCond, WaterLevel, FoamRank, FoamSource) %>%
@@ -128,12 +129,13 @@ server <- function(input, output, session) {
                 sides = c("all"),
                 color = "black",
                 weight = px(1),
-                style = "solid"),
+                style = "solid"
+              ),
               locations = list(cells_body(), cells_column_labels())
             )
-          
+
           # Notes Table
-          notes_table <- site_df %>% 
+          notes_table <- site_df %>%
             dplyr::select(SiteCode, SiteVisitComment) %>%
             rename(
               "Site Visit Notes" = "SiteVisitComment",
@@ -148,42 +150,43 @@ server <- function(input, output, session) {
                 sides = c("all"),
                 color = "black",
                 weight = px(1),
-                style = "solid"),
+                style = "solid"
+              ),
               locations = list(cells_body(), cells_column_labels())
             )
-          
+
           tagList(
             div(style = "margin-bottom: 20px;", si_table, af_table, notes_table)
           )
         })
-        
+
         tagList(
           h3(glue("Run Code: {run_code}")),
           run_tables
         )
       })
-      
+
       tagList(
         h2(glue("Date: {date}")),
         date_tables
       )
     })
-    
+
     tagList(tables_by_date)
   })
-  
+
   output$sample_tables <- renderUI({
     site_data <- sitecode()
-    
+
     tables_by_date <- lapply(split(site_data, site_data$RunDate), function(date_df) {
       date <- unique(date_df$RunDate)
       date_tables <- lapply(split(date_df, date_df$RunCode), function(run_df) {
         run_code <- unique(run_df$RunCode)
         run_tables <- lapply(split(run_df, run_df$SiteCode), function(site_df) {
           site_code <- unique(site_df$SiteCode)
-          
+
           # Sample Table
-          samples <- site_df %>% 
+          samples <- site_df %>%
             dplyr::select(SiteCode, SampleName, ProjectCode, CntrType, QCType, CollMethod, SampleDepth, LabAbbrev) %>%
             rename(
               "Sample Name" = "SampleName",
@@ -200,16 +203,25 @@ server <- function(input, output, session) {
             tab_header(title = glue("Samples: {site_code}")) %>%
             tab_style(
               style = cell_fill(color = "#B3E0A6"),
-              locations = cells_body(columns = c(Depth),
-                                     rows = Method == "GS" & Depth == 0)) %>%
+              locations = cells_body(
+                columns = c(Depth),
+                rows = Method == "GS" & Depth == 0
+              )
+            ) %>%
             tab_style(
               style = cell_fill(color = "#F5725E"),
-              locations = cells_body(columns = c(Depth),
-                                     rows = Method == "CO-E" & Depth == 0)) %>%
+              locations = cells_body(
+                columns = c(Depth),
+                rows = Method == "CO-E" & Depth == 0
+              )
+            ) %>%
             tab_style(
               style = cell_fill(color = "#F5725E"),
-              locations = cells_body(columns = c(Depth),
-                                     rows = Method == "GS" & Depth != 0)) %>%
+              locations = cells_body(
+                columns = c(Depth),
+                rows = Method == "GS" & Depth != 0
+              )
+            ) %>%
             cols_align(align = "center") %>%
             opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 5, page_size_values = c(5, 10, 25, 50, 100)) %>%
             tab_style(
@@ -217,12 +229,13 @@ server <- function(input, output, session) {
                 sides = c("all"),
                 color = "black",
                 weight = px(1),
-                style = "solid"),
+                style = "solid"
+              ),
               locations = list(cells_body())
             )
-          
+
           # Filter Table
-          filters <- site_df %>% 
+          filters <- site_df %>%
             dplyr::select(SiteCode, FilterName) %>%
             filter(FilterName != "NA") %>%
             rename(
@@ -238,49 +251,54 @@ server <- function(input, output, session) {
                 sides = c("all"),
                 color = "black",
                 weight = px(1),
-                style = "solid"),
+                style = "solid"
+              ),
               locations = list(cells_body(), cells_column_labels())
             )
-          
+
           tagList(
             div(style = "margin-bottom: 20px;", samples, filters)
           )
         })
-        
+
         tagList(
           h3(glue("Run Code: {run_code}")),
           run_tables
         )
       })
-      
+
       tagList(
         h2(glue("Date: {date}")),
         date_tables
       )
     })
-    
+
     tagList(tables_by_date)
   })
-  
+
   output$msmt_tables <- renderUI({
     site_data <- sitecode()
-    
+
     tables_by_date <- lapply(split(site_data, site_data$RunDate), function(date_df) {
       date <- unique(date_df$RunDate)
       date_tables <- lapply(split(date_df, date_df$RunCode), function(run_df) {
         run_code <- unique(run_df$RunCode)
         run_tables <- lapply(split(run_df, run_df$SiteCode), function(site_df) {
           site_code <- unique(site_df$SiteCode)
-          
+
           # Measurements Table
-          msmt <- site_df %>% 
+          msmt <- site_df %>%
             dplyr::select(SiteCode, QCType, ProfileDepth, Const, Result, SiteVisitID) %>%
             filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>%
-            pivot_wider(names_from = c(Const, QCType),
-                        values_from = Result,
-                        values_fn = list(Result = list)) %>%
-            mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
-                   across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>%
+            pivot_wider(
+              names_from = c(Const, QCType),
+              values_from = Result,
+              values_fn = list(Result = list)
+            ) %>%
+            mutate(
+              across(ends_with("_regular"), ~ replace_na(as.character(.), "-")),
+              across(ends_with("_duplicate"), ~ replace_na(as.character(.), "-"))
+            ) %>%
             dplyr::select(SiteCode, ProfileDepth, SiteVisitID, contains("_")) %>%
             rename_with(~ str_replace_all(., "_", " "), contains("_")) %>%
             rename_with(~ str_to_title(., locale = "en"), contains(" ")) %>%
@@ -293,19 +311,24 @@ server <- function(input, output, session) {
                 sides = c("all"),
                 color = "black",
                 weight = px(1),
-                style = "solid"),
+                style = "solid"
+              ),
               locations = list(cells_body())
             )
-          
+
           # pH/Secchi Table
-          pH <- site_df %>% 
+          pH <- site_df %>%
             dplyr::select(SiteCode, Const, Result, QCType, Time, SiteVisitID) %>%
             filter(Const %in% c("Secchi", "pH")) %>%
-            pivot_wider(names_from = c(Const, QCType),
-                        values_from = Result,
-                        values_fn = list(Result = list)) %>%
-            mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
-                   across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>%
+            pivot_wider(
+              names_from = c(Const, QCType),
+              values_from = Result,
+              values_fn = list(Result = list)
+            ) %>%
+            mutate(
+              across(ends_with("_regular"), ~ replace_na(as.character(.), "-")),
+              across(ends_with("_duplicate"), ~ replace_na(as.character(.), "-"))
+            ) %>%
             dplyr::select(SiteCode, Time, SiteVisitID, contains("_")) %>%
             rename_with(~ str_replace_all(., "_", " "), contains("_")) %>%
             rename_with(~ str_to_title(., locale = "en"), contains(" ")) %>%
@@ -319,27 +342,28 @@ server <- function(input, output, session) {
                 sides = c("all"),
                 color = "black",
                 weight = px(1),
-                style = "solid"),
+                style = "solid"
+              ),
               locations = list(cells_body())
             )
-          
+
           tagList(
             div(style = "margin-bottom: 20px;", msmt, pH)
           )
         })
-        
+
         tagList(
           h3(glue("Run Code: {run_code}")),
           run_tables
         )
       })
-      
+
       tagList(
         h2(glue("Date: {date}")),
         date_tables
       )
     })
-    
+
     tagList(tables_by_date)
   })
 }
