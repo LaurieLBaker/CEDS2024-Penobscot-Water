@@ -1,41 +1,42 @@
-library(shiny)
+# Read in all packages first
+library(shiny) 
 library(bslib)
-library(readr)
+library(tidyverse)
 library(here)
-library(dplyr)
-library(ggplot2)
-library(stringr)
-library(purrr)
 library(htmltools)
 library(knitr)
 library(gt)
 library(gtExtras)
-library(tidyr)
-library(tidyverse)
-library(haven)
-library(sf)
-library(dbscan)
-library(magrittr)
 library(htmlwidgets)
 library(janitor)
-library(RColorBrewer)
-library(ggthemes)
-library(sass)
 library(rmarkdown)
 library(quarto)
-library(shinydashboard)
 library(glue)
 library(styler)
 library(lintr)
 
+# Load Data
+data2018 <- readRDS("data/PINCommEngData (2).RData")
+
+data2018_primary <- data2018 %>%
+  mutate(Collectors = str_sub(Collectors, start = 1, end = 3))
+
+data2018_primary$SampleDatetime <- as.POSIXct(data2018_primary$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
+
+data2018_primary$Date <- as.Date(data2018_primary$SampleDatetime)
+data2018_primary$Time <- format(data2018_primary$SampleDatetime, format = "%H:%M:%S")
+
+# User Interface for app
 ui <- page_sidebar(
   sidebar = sidebar(
+    # Creates the selection buttons on the side
     selectInput("collector", label = "Select a Collector", choices = unique(data2018_primary$Collectors)),
     checkboxGroupInput("rundate", label = "Select a Date", choices = NULL),
     checkboxGroupInput("runcode", label = "Select a Run", choices = NULL),
     checkboxGroupInput("sitecode", label = "Select a Site", choices = NULL)
   ),
   navset_tab(
+    # Creates the tabs and UI output for the tables
     nav_panel(title = "Site Info", uiOutput("site_tables")),
     nav_panel(title = "Samples", uiOutput("sample_tables")),
     nav_panel(title = "Measurements", uiOutput("msmt_tables"))
@@ -43,6 +44,7 @@ ui <- page_sidebar(
 )
 
 server <- function(input, output, session) {
+  # Reactive loop allows run date, run code, and site code to be narrowed down
   collectors <- reactive({
     data2018_primary %>%
       filter(Collectors == input$collector)
@@ -76,8 +78,10 @@ server <- function(input, output, session) {
   })
 
   output$site_tables <- renderUI({
+    # UI for first tab, includes information tables
     site_data <- sitecode()
 
+    # Reactivity to split the tables by run date, run code, and site code
     tables_by_date <- lapply(split(site_data, site_data$RunDate), function(date_df) {
       date <- unique(date_df$RunDate)
       date_tables <- lapply(split(date_df, date_df$RunCode), function(run_df) {
@@ -87,7 +91,7 @@ server <- function(input, output, session) {
 
           # Site Info Table
           si_table <- site_df %>%
-            dplyr::select(RunCode, SiteCode, WaterBody, SiteVisitStartTime, SiteDepth) %>%
+            dplyr::select(RunCode, SiteCode, WaterBody, SiteVisitStartTime, SiteDepth) %>% # It's really important to specify that select is from the dplyr package, otherwise it won't work
             rename(
               "Water Body" = "WaterBody",
               "Site" = "SiteCode",
@@ -159,13 +163,13 @@ server <- function(input, output, session) {
             div(style = "margin-bottom: 20px;", si_table, af_table, notes_table)
           )
         })
-
+        # Creates run code heading
         tagList(
           h3(glue("Run Code: {run_code}")),
           run_tables
         )
       })
-
+      # Creates date heading
       tagList(
         h2(glue("Date: {date}")),
         date_tables
@@ -176,8 +180,10 @@ server <- function(input, output, session) {
   })
 
   output$sample_tables <- renderUI({
+    # UI for second tab
     site_data <- sitecode()
 
+    # Splits tables
     tables_by_date <- lapply(split(site_data, site_data$RunDate), function(date_df) {
       date <- unique(date_df$RunDate)
       date_tables <- lapply(split(date_df, date_df$RunCode), function(run_df) {
@@ -260,13 +266,13 @@ server <- function(input, output, session) {
             div(style = "margin-bottom: 20px;", samples, filters)
           )
         })
-
+        # Run code header
         tagList(
           h3(glue("Run Code: {run_code}")),
           run_tables
         )
       })
-
+      # Run date header
       tagList(
         h2(glue("Date: {date}")),
         date_tables
@@ -277,8 +283,10 @@ server <- function(input, output, session) {
   })
 
   output$msmt_tables <- renderUI({
+    # UI for third tab
     site_data <- sitecode()
 
+    # Splits tables
     tables_by_date <- lapply(split(site_data, site_data$RunDate), function(date_df) {
       date <- unique(date_df$RunDate)
       date_tables <- lapply(split(date_df, date_df$RunCode), function(run_df) {
@@ -351,13 +359,13 @@ server <- function(input, output, session) {
             div(style = "margin-bottom: 20px;", msmt, pH)
           )
         })
-
+        # Run Code header
         tagList(
           h3(glue("Run Code: {run_code}")),
           run_tables
         )
       })
-
+      # Run Date Header
       tagList(
         h2(glue("Date: {date}")),
         date_tables
@@ -368,4 +376,5 @@ server <- function(input, output, session) {
   })
 }
 
+# Runs the shiny app
 shinyApp(ui = ui, server = server)

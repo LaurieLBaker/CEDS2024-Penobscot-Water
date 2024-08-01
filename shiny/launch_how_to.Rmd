@@ -1,0 +1,6 @@
+## How to launch the shiny app
+1. Select the `field_report_shiny_app` folder in the `shiny` folder of the `Penobscot_Water` project
+2. Load the packages by pressing control + return
+3. Load the data by pressing control + return
+4. Click `Run App` in the upper right corner of the panel
+5. Run the app! 

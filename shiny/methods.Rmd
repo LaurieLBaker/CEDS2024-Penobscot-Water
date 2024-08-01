@@ -1,0 +1,35 @@
+## Code Notes
+Packages are listed at the top of the app script, not all packages are used but don't delete any because I'm not sure what code is from which packages. If adding a new package, add it to the bottom of the list. 
+
+When using dplyr select, the package has to be specified (dplyr::select), otherwise the code doesn't work
+
+The reactivity loop in the server makes it so that when the user selects a collector, the app only shows dates that collector was in the field. When a date is selected, it only shows the runs visited on that day, and when the run is selected, it only shows sites in that run.
+
+
+## Resources and Packages
+
+To learn how shiny works: https://shiny.posit.co/r/getstarted/shiny-basics/lesson1/index.html
+About the tidyverse: https://www.tidyverse.org/
+  - tidyverse includes ggplot2, dplyr, tidyr, readr, purrr, tibble, stringr, and forcats
+  - also includes the magrittr pipe
+Mastering Shiny book: https://mastering-shiny.org/
+Shiny Resources list: https://github.com/grabear/awesome-rshiny#resources
+
+I have found stack overflow and statology to be useful resources when running into error messages or needing to know how to apply code. When nothing else works, I'll often paste my error messages into ChatGPT, which is usually helpful. 
+
+### Package Documentation and reference
+Shiny: https://shiny.posit.co/r/reference/shiny/latest/
+bslib: https://rstudio.github.io/bslib/articles/dashboards/index.html
+dplyr: https://dplyr.tidyverse.org/
+stringr: https://stringr.tidyverse.org/
+purrr: https://purrr.tidyverse.org/
+htmltools: https://rstudio.github.io/htmltools/index.html
+gt: https://gt.rstudio.com/
+gtExtras: https://jthomasmock.github.io/gtExtras/reference/index.html
+htmlwidgets: https://www.htmlwidgets.org/
+janitor: https://sfirke.github.io/janitor/reference/janitor-package.html
+rmarkdown: https://rmarkdown.rstudio.com/
+quarto: https://quarto.org/docs/computations/r.html
+glue: https://glue.tidyverse.org/
+styler: https://styler.r-lib.org/
+lintr: https://lintr.r-lib.org/
