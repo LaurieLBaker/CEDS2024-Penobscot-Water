@@ -14,27 +14,27 @@ library(quarto)
 library(glue)
 library(styler)
 library(lintr)
+library(quarto)
 
-# Load Data
-# data2018 <- readRDS("data/PINCommEngData (2).RData")
-# 
-# data2018_primary <- data2018 %>%
-#   mutate(Collectors = str_sub(Collectors, start = 1, end = 3))
-# 
-# data2018_primary$SampleDatetime <- as.POSIXct(data2018_primary$SampleDatetime, format = "%m/%d/%Y %H:%M:%S")
-# 
-# data2018_primary$Date <- as.Date(data2018_primary$SampleDatetime)
-# data2018_primary$Time <- format(data2018_primary$SampleDatetime, format = "%H:%M:%S")
+# Run data in the run_data.R file, then come back and click "Run App"
 
 # User Interface for app
 ui <- page_sidebar(
   sidebar = sidebar(
     # Creates the selection buttons on the side
+    imageOutput("hex", width = "auto", height = "auto"),
     selectInput("collector", label = "Select a Collector", choices = unique(data2018_primary$Collectors)),
     checkboxGroupInput("rundate", label = "Select a Date", choices = NULL),
     checkboxGroupInput("runcode", label = "Select a Run", choices = NULL),
     checkboxGroupInput("sitecode", label = "Select a Site", choices = NULL)
   ),
+  card(layout_columns(
+    markdown("# PNWRD Field Data Review"),
+    # Logos for Penobscot Indian Nation, Penobscot Nation Water Resources Department, and College of the Atlantic
+    imageOutput("pin", width = "150", height = "150"),
+    imageOutput("pnwrd", width = "150", height = "150"),
+    imageOutput("coa", width = "150", height = "150")),
+    max_height = "225px"),
   navset_tab(
     # Creates the tabs and UI output for the tables
     nav_panel(title = "Site Info", uiOutput("site_tables")),
@@ -44,6 +44,35 @@ ui <- page_sidebar(
 )
 
 server <- function(input, output, session) {
+  
+  output$hex <- renderImage({
+    list(src = "~/Desktop/GitHub/Penobscot_Water/shiny/logos/hex.png",
+         width = 200, 
+         height = 225)
+  },
+  deleteFile = FALSE)
+  
+  output$pin <- renderImage({
+    list(src = "~/Desktop/GitHub/Penobscot_Water/shiny/logos/pin_logo.png",
+         width = 200, 
+         height = 200)
+  },
+  deleteFile = FALSE)
+  
+  output$pnwrd <- renderImage({
+    list(src = "~/Desktop/GitHub/Penobscot_Water/shiny/logos/pnwrd_logo.png",
+         width = 200, 
+         height = 200)
+  },
+  deleteFile = FALSE)
+  
+  output$coa <- renderImage({
+    list(src = "~/Desktop/GitHub/Penobscot_Water/shiny/logos/coa_logo.png",
+         width = 200, 
+         height = 200)
+  },
+  deleteFil = FALSE)
+  
   # Reactive loop allows run date, run code, and site code to be narrowed down
   collectors <- reactive({
     data2018_primary %>%
@@ -294,7 +323,7 @@ server <- function(input, output, session) {
         run_tables <- lapply(split(run_df, run_df$SiteCode), function(site_df) {
           site_code <- unique(site_df$SiteCode)
           
-          # Measurements Table
+          # Profile Measurements Table
           msmt <- site_df %>%
             dplyr::select(SiteCode, QCType, ProfileDepth, Const, Result) %>%
             filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>%
@@ -324,10 +353,11 @@ server <- function(input, output, session) {
               locations = list(cells_body())
             )
           
-          # pH/Secchi Table
+          # Non-Profile Measurements Table
           pH <- site_df %>%
-            dplyr::select(SiteCode, Const, Result, QCType, Time) %>%
-            filter(Const %in% c("Secchi", "pH")) %>%
+            dplyr::select(SiteCode, Constituents, Const, Result, QCType, Time) %>%
+            filter(Const %in% c("Secchi", "pH", "Cond")) %>%
+            mutate(Conductivity = str_extract(Constituents, "Cond")) %>%
             pivot_wider(
               names_from = c(Const, QCType),
               values_from = Result,
@@ -337,7 +367,7 @@ server <- function(input, output, session) {
               across(ends_with("_regular"), ~ replace_na(as.character(.), "-")),
               across(ends_with("_duplicate"), ~ replace_na(as.character(.), "-"))
             ) %>%
-            dplyr::select(SiteCode, Time, contains("_")) %>%
+            dplyr::select(SiteCode, Conductivity, Time, contains("_")) %>%
             rename_with(~ str_replace_all(., "_", " "), contains("_")) %>%
             rename_with(~ str_to_title(., locale = "en"), contains(" ")) %>%
             rename_with(~ str_replace_all(., "Ph", "pH"), contains("Ph")) %>%
@@ -374,6 +404,7 @@ server <- function(input, output, session) {
     
     tagList(tables_by_date)
   })
+  
 }
 
 # Runs the shiny app
