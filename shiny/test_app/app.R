@@ -18,15 +18,21 @@ library(quarto)
 
 # User Interface for app
 ui <- page_sidebar(
-  theme = bs_theme(preset = "litera"),
   sidebar = sidebar(
     # Creates the selection buttons on the side
+    imageOutput("hex", width = "auto", height = "auto"),
     selectInput("collector", label = "Select a Collector", choices = unique(data2018_primary$Collectors)),
     checkboxGroupInput("rundate", label = "Select a Date", choices = NULL),
     checkboxGroupInput("runcode", label = "Select a Run", choices = NULL),
-    checkboxGroupInput("sitecode", label = "Select a Site", choices = NULL),
-    downloadButton("report", label = "Download Report")
+    checkboxGroupInput("sitecode", label = "Select a Site", choices = NULL)
   ),
+  card(layout_columns(
+    markdown("# PNWRD Field Data Review"),
+    # Logos for Penobscot Indian Nation, Penobscot Nation Water Resources Department, and College of the Atlantic
+    imageOutput("pin", width = "150", height = "150"),
+    imageOutput("pnwrd", width = "150", height = "150"),
+    imageOutput("coa", width = "150", height = "150")),
+    max_height = "225px"),
   navset_tab(
     # Creates the tabs and UI output for the tables
     nav_panel(title = "Site Info", uiOutput("site_tables")),
@@ -36,6 +42,35 @@ ui <- page_sidebar(
 )
 
 server <- function(input, output, session) {
+  
+  output$hex <- renderImage({
+    list(src = "~/Desktop/GitHub/Penobscot_Water/shiny/logos/hex.png",
+         width = 200, 
+         height = 225)
+  },
+  deleteFile = FALSE)
+  
+  output$pin <- renderImage({
+    list(src = "~/Desktop/GitHub/Penobscot_Water/shiny/logos/pin_logo.png",
+         width = 200, 
+         height = 200)
+    },
+    deleteFile = FALSE)
+  
+  output$pnwrd <- renderImage({
+    list(src = "~/Desktop/GitHub/Penobscot_Water/shiny/logos/pnwrd_logo.png",
+         width = 200, 
+         height = 200)
+  },
+  deleteFile = FALSE)
+  
+  output$coa <- renderImage({
+    list(src = "~/Desktop/GitHub/Penobscot_Water/shiny/logos/coa_logo.png",
+         width = 200, 
+         height = 200)
+  },
+  deleteFil = FALSE)
+  
   # Reactive loop allows run date, run code, and site code to be narrowed down
   collectors <- reactive({
     data2018_primary %>%
