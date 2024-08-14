@@ -237,20 +237,20 @@ data2018_primary %>%
      locations = list(cells_body()))
 
 data2018_primary %>% 
-  select(Const, Result, QCType, Time, SiteVisitID, SiteCode) %>% 
-  filter(Const %in% c("Secchi","pH")) %>% 
+  select(Const, Constituents, Result, QCType, Time, SiteCode) %>%
+  filter(Const %in% c("Secchi", "pH")) %>%
+  mutate(Conductivity = str_extract(Constituents, "Cond")) %>%
   pivot_wider(names_from = c(Const, QCType),
               values_from = Result,
-              values_fn = list(Result = list)) %>% 
+              values_fn = list(Result = list)) %>%
   mutate(across(ends_with("_regular"), ~replace_na(as.character(.), "-")),
-         across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>% 
-  select(SiteCode, Time, SiteVisitID, contains("_")) %>%
-  rename_with(~ str_replace_all(., "_", " "), contains("_")) %>% 
-  rename_with(~ str_to_title(., locale = "en"), contains(" ")) %>% 
-  rename_with(~ str_replace_all(., "Ph", "pH"), contains("Ph")) %>% 
-  select(!SiteVisitID) %>%
-  gt() %>% 
-  tab_row_group(label = md(unique(SiteCode)), rows = unique(SiteCode)) %>% 
+         across(ends_with("_duplicate"), ~replace_na(as.character(.), "-"))) %>%
+  select(SiteCode, Constituents, Time, contains("_")) %>%
+  rename_with(~ str_replace_all(., "_", " "), contains("_")) %>%
+  rename_with(~ str_to_title(., locale = "en"), contains(" ")) %>%
+  rename_with(~ str_replace_all(., "Ph", "pH"), contains("Ph")) %>%
+  gt() %>%
+  # tab_row_group(label = md(unique(SiteCode)), rows = unique(SiteCode)) %>%
   opt_row_striping() %>%
   opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%
    tab_style(

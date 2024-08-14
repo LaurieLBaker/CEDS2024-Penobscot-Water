@@ -16,7 +16,7 @@ library(styler)
 library(lintr)
 library(quarto)
 
-# User Iquarto# User Interface for app
+# User Interface for app
 ui <- page_sidebar(
   theme = bs_theme(preset = "litera"),
   sidebar = sidebar(
@@ -286,7 +286,7 @@ server <- function(input, output, session) {
         run_tables <- lapply(split(run_df, run_df$SiteCode), function(site_df) {
           site_code <- unique(site_df$SiteCode)
 
-          # Measurements Table
+          # Profile Measurements Table
           msmt <- site_df %>%
             dplyr::select(SiteCode, QCType, ProfileDepth, Const, Result) %>%
             filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>%
@@ -316,10 +316,11 @@ server <- function(input, output, session) {
               locations = list(cells_body())
             )
 
-          # pH/Secchi Table
+          # Non-Profile Measurements Table
           pH <- site_df %>%
-            dplyr::select(SiteCode, Const, Result, QCType, Time) %>%
-            filter(Const %in% c("Secchi", "pH")) %>%
+            dplyr::select(SiteCode, Constituents, Const, Result, QCType, Time) %>%
+            filter(Const %in% c("Secchi", "pH", "Cond")) %>%
+            mutate(Conductivity = str_extract(Constituents, "Cond")) %>%
             pivot_wider(
               names_from = c(Const, QCType),
               values_from = Result,
@@ -329,7 +330,7 @@ server <- function(input, output, session) {
               across(ends_with("_regular"), ~ replace_na(as.character(.), "-")),
               across(ends_with("_duplicate"), ~ replace_na(as.character(.), "-"))
             ) %>%
-            dplyr::select(SiteCode, Time, contains("_")) %>%
+            dplyr::select(SiteCode, Conductivity, Time, contains("_")) %>%
             rename_with(~ str_replace_all(., "_", " "), contains("_")) %>%
             rename_with(~ str_to_title(., locale = "en"), contains(" ")) %>%
             rename_with(~ str_replace_all(., "Ph", "pH"), contains("Ph")) %>%
