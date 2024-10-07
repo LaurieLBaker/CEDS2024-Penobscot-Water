@@ -15,8 +15,8 @@ library(glue)
 library(styler)
 library(lintr)
 library(quarto)
-
-# Run data in the run_data.R file, then come back and click "Run App"
+library(shinyalert)
+library(shinyBS)
 
 # User Interface for app
 ui <- page_sidebar(
@@ -28,13 +28,14 @@ ui <- page_sidebar(
     checkboxGroupInput("runcode", label = "Select a Run", choices = NULL),
     checkboxGroupInput("sitecode", label = "Select a Site", choices = NULL)
   ),
-  card(layout_columns(
+  card(min_height = "220px", layout_columns(
     markdown("# PNWRD Field Data Review"),
     # Logos for Penobscot Indian Nation, Penobscot Nation Water Resources Department, and College of the Atlantic
     imageOutput("pin", width = "150", height = "150"),
     imageOutput("pnwrd", width = "150", height = "150"),
     imageOutput("coa", width = "150", height = "150")),
     max_height = "225px"),
+  card(min_height = "115px", max_height = "116px", bsAlert("qc")),
   navset_tab(
     # Creates the tabs and UI output for the tables
     nav_panel(title = "Site Info", uiOutput("site_tables")),
@@ -105,6 +106,38 @@ server <- function(input, output, session) {
   sitecode <- reactive({
     filter(runcode(), SiteCode %in% input$sitecode)
   })
+  
+  observe({
+    qc1 <- sitecode() %>% filter(CollMethod == "CO-E", SampleDepth == 0 | 0.0)
+    qc2 <- sitecode() %>% filter(CollMethod == "GS", SampleDepth != 0 | 0.0)
+    
+    qc1_error <- if(nrow(qc1) > 0) {
+      qc1 %>% select(RunDate, RunCode, SiteCode) %>% mutate_all(as.character) %>% paste(collapse = ", ")
+    } else {
+      NULL
+    }
+    
+    qc2_error <- if(nrow(qc2) > 0) {
+      qc2 %>% select(RunDate, RunCode, SiteCode) %>% mutate_all(as.character) %>% paste(collapse = ", ")
+    } else {
+      NULL
+    }
+    
+    if(is.null(qc1_error) & is.null(qc2_error)) {
+      createAlert(session, "qc", "qcAlert", title = "Congratulations!", 
+                  content = "You do not have any quality control alerts at this time.", style = "success", dismiss = FALSE, append = FALSE)
+    } else if(!is.null(qc1_error) & is.null(qc2_error)) {
+      createAlert(session, "qc", "qcAlert", title = "Attention!", 
+                  content = paste("You have QC errors at the following sites: ", qc1_error), style = "danger", dismiss = FALSE, append = FALSE)
+    } else if(is.null(qc1_error) & !is.null(qc2_error)) {
+      createAlert(session, "qc", "qcAlert", title = "Attention!", 
+                  content = paste("You have QC errors at the following sites: ", qc2_error), style = "danger", dismiss = FALSE, append = FALSE)
+    } else {
+      createAlert(session, "qc", "qcAlert", title = "Attention!", 
+                  content = paste("You have QC errors at the following sites: ", qc1_error, qc2_error), style = "danger", dismiss = FALSE, append = FALSE)
+    }
+  })
+  
   
   output$site_tables <- renderUI({
     # UI for first tab, includes information tables
