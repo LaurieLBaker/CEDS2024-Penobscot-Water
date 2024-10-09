@@ -17,6 +17,7 @@ library(lintr)
 library(quarto)
 library(shinyalert)
 library(shinyBS)
+library(DescTools)
 
 # User Interface for app
 ui <- page_sidebar(
