@@ -44,6 +44,7 @@ ui <- page_sidebar(
   )
 )
 
+# Server for App
 server <- function(input, output, session) {
   
   output$hex <- renderImage({
