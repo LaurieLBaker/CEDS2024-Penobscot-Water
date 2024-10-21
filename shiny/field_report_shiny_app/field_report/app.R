@@ -17,7 +17,6 @@ library(lintr)
 library(quarto)
 library(shinyalert)
 library(shinyBS)
-library(DescTools)
 
 # User Interface for app
 ui <- page_sidebar(
@@ -360,20 +359,19 @@ server <- function(input, output, session) {
           # Profile Measurements Table
           msmt <- site_df %>%
             dplyr::select(SiteCode, QCType, ProfileDepth, Const, Result) %>%
-            filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>%
-            pivot_wider(
-              names_from = c(Const, QCType),
-              values_from = Result,
-              values_fn = list(Result = list)
-            ) %>%
-            mutate(
-              across(ends_with("_regular"), ~ replace_na(as.character(.), "-")),
-              across(ends_with("_duplicate"), ~ replace_na(as.character(.), "-"))
-            ) %>%
+            filter(Const %in% c("Dissolved Oxygen", "water temperature")) %>% 
+            group_by(SiteCode, QCType, ProfileDepth, Const) %>% 
+            summarise(Result) %>%
+            ungroup() %>% 
+            distinct(Result, .keep_all = TRUE) %>% 
+            pivot_wider(names_from = c(Const, QCType),
+                        values_from = Result,
+                        values_fn = ~ mean(.x, na.rm = TRUE)) %>%
             dplyr::select(SiteCode, ProfileDepth, contains("_")) %>%
             rename_with(~ str_replace_all(., "_", " "), contains("_")) %>%
-            rename_with(~ str_to_title(., locale = "en"), contains(" ")) %>%
-            gt() %>%
+            rename_with(~ str_to_title(., locale = "en"), contains(" ")) %>% 
+            gt() %>% 
+            cols_align("right") %>% 
             tab_header(title = glue("Profile Measurements: {site_code}")) %>%
             opt_row_striping() %>%
             opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%
@@ -391,12 +389,15 @@ server <- function(input, output, session) {
           pH <- site_df %>%
             dplyr::select(SiteCode, Constituents, Const, Result, QCType, Time) %>%
             filter(Const %in% c("Secchi", "pH", "Cond")) %>%
+            group_by(SiteCode, Constituents, Const, QCType, Time) %>%
+            summarise(Result) %>%
+            ungroup() %>%
+            distinct(Result, .keep_all = TRUE) %>%
             mutate(Conductivity = str_extract(Constituents, "Cond")) %>%
             pivot_wider(
               names_from = c(Const, QCType),
               values_from = Result,
-              values_fn = list(Result = list)
-            ) %>%
+              values_fn = ~ mean(.x, na.rm = TRUE)) %>%
             mutate(
               across(ends_with("_regular"), ~ replace_na(as.character(.), "-")),
               across(ends_with("_duplicate"), ~ replace_na(as.character(.), "-"))
