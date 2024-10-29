@@ -1,5 +1,6 @@
 # Read in all packages first
 library(shiny) 
+library(lubridate)
 library(bslib)
 library(tidyverse)
 library(here)
@@ -23,8 +24,8 @@ ui <- page_sidebar(
   sidebar = sidebar(
     # Creates the selection buttons on the side
     imageOutput("hex", width = "auto", height = "auto"),
-    selectInput("collector", label = "Select a Collector", choices = unique(data2018_primary$Collectors)),
-    checkboxGroupInput("rundate", label = "Select a Date", choices = NULL),
+    selectInput("constituent", label = "Select a Constituent", choices = unique(data2018_primary$Constituents)),
+    checkboxGroupInput("runyear", label = "Select a Year", choices = NULL),
     checkboxGroupInput("runcode", label = "Select a Run", choices = NULL),
     checkboxGroupInput("sitecode", label = "Select a Site", choices = NULL)
   ),

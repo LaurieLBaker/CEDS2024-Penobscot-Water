@@ -1,6 +1,7 @@
 ## How to launch the shiny app
-1. Select the `field_report_shiny_app` folder in the `shiny` folder of the `Penobscot_Water` project
-2. Load the packages by pressing control + return
-3. Load the data by pressing control + return
-4. Click `Run App` in the upper right corner of the panel
-5. Run the app! 
+1. From the `Penobscot_Water` project, select the `shiny` folder, then the `field_report_shiny_app` folder, and finally the `field_report` folder
+2. Open the `app.R` (the actual Shiny app) file and the `run_data.R` (an R script to read in the data) file
+3. In the `app.R` file, load the packages by selecting lines 2-19 and pressing control + return
+4. In the `run_data.R` file, load the data by selecting all and pressing control + return
+5. Return to the `app.R` file and click `Run App` in the upper right corner of the panel
+6. Run the app! 

@@ -1,6 +1,6 @@
 
 ```{r data}
-data2018 <- readRDS("data/PINCommEngData (2).RData")
+# data2018 <- readRDS("data/PINCommEngData (2).RData")
 
 data2018_primary <- data2018 %>%
   mutate(Collectors = str_sub(Collectors, start = 1, end = 3))
@@ -10,12 +10,29 @@ data2018_primary$SampleDatetime <- as.POSIXct(data2018_primary$SampleDatetime, f
 data2018_primary$Date <- as.Date(data2018_primary$SampleDatetime)
 data2018_primary$Time <- format(data2018_primary$SampleDatetime, format = "%H:%M:%S")
 
+transport_temp <- read.table("~/Desktop/GitHub/Penobscot_Water/data/c_FieldTransportTemps.txt",
+                             header = TRUE,
+                             sep = ",")
+
+containers <- read.table("~/Desktop/GitHub/Penobscot_Water/data/0_ContainerMgmt.txt",
+                         header = TRUE,
+                         sep = ",")
+
 ```
 
 ```{r transp-data}
 transport_temp <- read.table("~/Desktop/GitHub/Penobscot_Water/data/c_FieldTransportTemps.txt",
                              header = TRUE,
-                             sep = ",")
+                             sep = ",") %>% 
+select(!OID)
+
+transport_temp <- transport_temp %>% 
+  mutate(rundate = str_extract(RunDate, "\\d{0,2}[\\/]\\d{0,2}[\\/]\\d{2,4}"))
+
+transport_temp %>% 
+  mutate(rundate = mdy(rundate)) %>% 
+  mutate(rundate = as_date(rundate, format = "%m/%d/%Y"))
+
 ```
 
 ```{r container-data}
@@ -25,10 +42,13 @@ transport_temp <- read.table("~/Desktop/GitHub/Penobscot_Water/data/c_FieldTrans
 ```
 
 ```{r transport-mut-1}
-# trans_temp_2018 <- transport_temp %>%
-#   mutate(Rundate = as.character(RunDate)) %>%
-#   mutate(RunYear = str_sub(RunDate, start = 6, end = 9)) %>%
-#   filter(RunYear == "2018")
+transport_temp %>%
+  mutate(RunDate = as.Date.default(RunDate)) %>%
+  mutate(RunYear = str_sub(RunDate, start = 6, end = 9)) %>% 
+  mutate(RunYear = as.numeric(RunYear))
+
+transport_temp %>% 
+  mutate(RunDate = as_date(RunDate))
 # 
 # data_transp <- data2018_primary %>%
 #   mutate(RunDate = as.character(RunDate)) %>%
@@ -45,8 +65,6 @@ transport_temp <- read.table("~/Desktop/GitHub/Penobscot_Water/data/c_FieldTrans
 ```
 
 ```{r}
-transport_temp %>% 
-  select(!c(OID, TransportTemp_ID, Sort1, Sort2, Sort3))
-  
+
 ```
 
