@@ -16,20 +16,20 @@ containers <- read.table("~/Desktop/GitHub/Penobscot_Water/data/0_ContainerMgmt.
                          header = TRUE,
                          sep = ",")
 
-trans_temp_2018 <- transport_temp %>%
-  mutate(Rundate = as.character(RunDate)) %>%
-  mutate(RunYear = str_sub(RunDate, start = 6, end = 9)) %>%
-  filter(RunYear == "2018")
-
-data_transp <- data2018_primary %>%
-  mutate(RunDate = as.character(RunDate)) %>%
-  left_join(transport_temp, by = join_by(RunCode == RunCode, RunDate == RunDate, SiteCode == SiteCode), keep = TRUE, relationship = "many-to-many") %>%
-  select(!RunDate.y, !RunCode.y, !SiteCode.y) %>%
-  rename(RunCode = RunCode.x,
-         RunDate = RunDate.x,
-         SiteCode = SiteCode.x)
-
-data_2018_all <- data_transp %>%
-  left_join(containers, by = join_by(CntrType == CntrType, CntrColor == CntrColor, CntrVol == CntrVol, SampleFilterMethod == SampleFilterMethod, ContainerCode == ContainerCode, ContainerAbbrev == ContainerAbbrev)) %>%
-  select(!RunDate.y, !RunCode.y, !SiteCode.y)
+# trans_temp_2018 <- transport_temp %>%
+#   mutate(Rundate = as.character(RunDate)) %>%
+#   mutate(RunYear = str_sub(RunDate, start = 6, end = 9)) %>%
+#   filter(RunYear == "2018")
+# 
+# data_transp <- data2018_primary %>%
+#   mutate(RunDate = as.character(RunDate)) %>%
+#   left_join(transport_temp, by = join_by(RunCode == RunCode, RunDate == RunDate, SiteCode == SiteCode), keep = TRUE, relationship = "many-to-many") %>%
+#   select(!RunDate.y, !RunCode.y, !SiteCode.y) %>%
+#   rename(RunCode = RunCode.x,
+#          RunDate = RunDate.x,
+#          SiteCode = SiteCode.x)
+# 
+# data_2018_all <- data_transp %>%
+#   left_join(containers, by = join_by(CntrType == CntrType, CntrColor == CntrColor, CntrVol == CntrVol, SampleFilterMethod == SampleFilterMethod, ContainerCode == ContainerCode, ContainerAbbrev == ContainerAbbrev)) %>%
+#   select(!RunDate.y, !RunCode.y, !SiteCode.y)
 

@@ -24,47 +24,24 @@ containers <- read.table("~/Desktop/GitHub/Penobscot_Water/data/0_ContainerMgmt.
 transport_temp <- read.table("~/Desktop/GitHub/Penobscot_Water/data/c_FieldTransportTemps.txt",
                              header = TRUE,
                              sep = ",") %>% 
-select(!OID)
+  select(!c(OID, SiteCode, Sort1, Sort2, Sort3, TransportTemp_ID))
 
 transport_temp <- transport_temp %>% 
-  mutate(rundate = str_extract(RunDate, "\\d{0,2}[\\/]\\d{0,2}[\\/]\\d{2,4}"))
+  mutate(rundate = str_extract(RunDate, "\\d{0,2}[\\/]\\d{0,2}[\\/]\\d{2,4}")) %>% 
+  mutate(RunDate = as_datetime(RunDate, format = "%m/%d/%Y %H:%M:%OS"))
 
-transport_temp %>% 
-  mutate(rundate = mdy(rundate)) %>% 
-  mutate(rundate = as_date(rundate, format = "%m/%d/%Y"))
+transp_all <- data2018_primary %>% 
+  full_join(transport_temp, join_by(RunDate == RunDate, RunCode == RunCode, Collectors == Staff, SampleName == SampleNames))
 
-```
+transp_all <- transp_all %>% 
+  mutate(RunYear = str_sub(RunDate, start = 1, end = 4))
 
-```{r container-data}
-# containers <- read.table("~/Desktop/GitHub/Penobscot_Water/data/0_ContainerMgmt.txt",
-#                          header = TRUE,
-#                          sep = ",")
-```
-
-```{r transport-mut-1}
-transport_temp %>%
-  mutate(RunDate = as.Date.default(RunDate)) %>%
-  mutate(RunYear = str_sub(RunDate, start = 6, end = 9)) %>% 
-  mutate(RunYear = as.numeric(RunYear))
-
-transport_temp %>% 
-  mutate(RunDate = as_date(RunDate))
-# 
-# data_transp <- data2018_primary %>%
-#   mutate(RunDate = as.character(RunDate)) %>%
-#   left_join(transport_temp, by = join_by(RunCode == RunCode, RunDate == RunDate, SiteCode == SiteCode), keep = TRUE, relationship = "many-to-many") %>%
-#   select(!RunDate.y, !RunCode.y, !SiteCode.y) %>%
-#   rename(RunCode = RunCode.x,
-#          RunDate = RunDate.x,
-#          SiteCode = SiteCode.x)
-# 
-# data_2018_all <- data_transp %>%
-#   left_join(containers, by = join_by(CntrType == CntrType, CntrColor == CntrColor, CntrVol == CntrVol, SampleFilterMethod == SampleFilterMethod, ContainerCode == ContainerCode, ContainerAbbrev == ContainerAbbrev)) %>%
-#   select(!RunDate.y, !RunCode.y, !SiteCode.y)
+transp_all <- transp_all %>% 
+  mutate(constituent = str_split(Constituents, ";")) %>%
+    unnest %>%
+    mutate(Constituents = str_trim(constituent))
 
 ```
 
-```{r}
 
-```
 

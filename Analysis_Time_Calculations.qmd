@@ -49,7 +49,7 @@ data2018 %>%
 
 data2018 %>%
   separate_longer_delim(cols = Constituents, delim = ";") %>%
-  filter(SiteVisitID == "JanS5-2018925102747") %>%
+  # filter(SiteVisitID == "JanS5-2018925102747") %>%
   mutate(HoldTimeMins = as.numeric(lubridate::ymd_hms(LabAnalysisDatetime) - lubridate::ymd_hms(SampleDatetime)) * 60 * 24) %>%
   mutate(HoldTime = seconds_to_period(as.numeric(HoldTimeMins) * 60)) %>%
   mutate(HoldTimeViol = case_when(Constituents == "Cond" ~ HoldTimeMins - 40320,
@@ -182,7 +182,3 @@ data2018 %>%
                                BacIncMins >= "1440" | BacIncMins <= "1680" ~ "TRUE"))
 
 ```
-
-
-
-
