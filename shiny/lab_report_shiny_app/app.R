@@ -24,7 +24,7 @@ ui <- page_sidebar(
   sidebar = sidebar(
     # Creates the selection buttons on the side
     imageOutput("hex", width = "auto", height = "auto"),
-    selectInput("constituent", label = "Select a Constituent", choices = unique(transp_all$constituent)),
+    selectInput("constituent", label = "Select a Constituent", choices = unique(transp_all$Constituent)),
     checkboxGroupInput("runyear", label = "Select a Year", choices = NULL),
     checkboxGroupInput("runcode", label = "Select a Run", choices = NULL),
     checkboxGroupInput("sitecode", label = "Select a Site", choices = NULL)
@@ -36,7 +36,6 @@ ui <- page_sidebar(
     imageOutput("pnwrd", width = "150", height = "150"),
     imageOutput("coa", width = "150", height = "150")),
     max_height = "225px"),
-  card(min_height = "115px", max_height = "116px", bsAlert("qc")),
   nav_panel(title = "Constituents", uiOutput("const_tables"))
 )
 
@@ -107,11 +106,11 @@ server <- function(input, output, session) {
     
   })
   
-  output$const_tables <- renderUI({
+  output$const_tables <- renderUI ({
     const_data <- sitecode()
     
-    table_by_const <- lapply(split(const_data, const_data$constituent), function(const_df) {
-      const <- unique(const_df$constituent)
+    table_by_const <- lapply(split(const_data, const_data$Constituent), function(const_df) {
+      const <- unique(const_df$Constituent)
       
       constituents <- const_data %>% 
         mutate(HoldTimeMins = as.numeric(difftime(LabAnalysisDatetime, SampleDatetime, units = "mins"))) %>%
@@ -158,7 +157,6 @@ server <- function(input, output, session) {
           locations = list(cells_body())
         )
     })
-    
   })
   
 }

@@ -37,9 +37,9 @@ transp_all <- transp_all %>%
   mutate(RunYear = str_sub(RunDate, start = 1, end = 4))
 
 transp_all <- transp_all %>% 
-  mutate(constituent = str_split(Constituents, ";")) %>%
+  mutate(Constituent = str_split(Constituents, ";")) %>%
     unnest %>%
-    mutate(Constituents = str_trim(constituent))
+    mutate(Constituents = str_trim(Constituent))
 
 ```
 
