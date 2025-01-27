@@ -24,7 +24,7 @@ ui <- page_sidebar(
   sidebar = sidebar(
     # Creates the selection buttons on the side
     imageOutput("hex", width = "auto", height = "auto"),
-    selectInput("constituent", label = "Select a Constituent", choices = unique(transp_all$Constituent)),
+    selectInput("consts", label = "Select a Constituent", choices = unique(transp_all$Constituent)),
     checkboxGroupInput("runyear", label = "Select a Year", choices = NULL),
     checkboxGroupInput("runcode", label = "Select a Run", choices = NULL),
     checkboxGroupInput("sitecode", label = "Select a Site", choices = NULL)
@@ -70,18 +70,18 @@ server <- function(input, output, session) {
   deleteFil = FALSE)
   
   # Reactive loop allows run date, run code, and site code to be narrowed down
-  constituent <- reactive({
+  const <- reactive({
     transp_all %>%
-      filter(constituent == input$constituent)
+      filter(Constituent == input$consts)
   })
   
-  observeEvent(constituent(), {
-    runyear_choice <- unique(constituent()$RunYear)
+  observeEvent(const(), {
+    runyear_choice <- unique(const()$RunYear)
     updateCheckboxGroupInput(session = session, "runyear", choices = sort(runyear_choice))
   })
   
   runyear <- reactive({
-    filter(constituent(), RunYear %in% input$runyear)
+    filter(const(), RunYear %in% input$runyear)
   })
   
   observeEvent(runyear(), {
