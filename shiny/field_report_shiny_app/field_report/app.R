@@ -48,28 +48,28 @@ ui <- page_sidebar(
 server <- function(input, output, session) {
   
   output$hex <- renderImage({
-    list(src = "~/Desktop/GitHub/Penobscot_Water/shiny/logos/hex.png",
+    list(src = "../../../shiny/logos/hex.png",
          width = 200, 
          height = 225)
   },
   deleteFile = FALSE)
   
   output$pin <- renderImage({
-    list(src = "~/Desktop/GitHub/Penobscot_Water/shiny/logos/pin_logo.png",
+    list(src = "../../../shiny/logos/pin_logo.png",
          width = 200, 
          height = 200)
   },
   deleteFile = FALSE)
   
   output$pnwrd <- renderImage({
-    list(src = "~/Desktop/GitHub/Penobscot_Water/shiny/logos/pnwrd_logo.png",
+    list(src = "../../../shiny/logos/pnwrd_logo.png",
          width = 200, 
          height = 200)
   },
   deleteFile = FALSE)
   
   output$coa <- renderImage({
-    list(src = "~/Desktop/GitHub/Penobscot_Water/shiny/logos/coa_logo.png",
+    list(src = "../../../shiny/logos/coa_logo.png",
          width = 200, 
          height = 200)
   },
@@ -292,7 +292,7 @@ server <- function(input, output, session) {
               )
             ) %>%
             cols_align(align = "center") %>%
-            opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 5, page_size_values = c(5, 10, 25, 50, 100)) %>%
+            opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 100, page_size_values = c(5, 10, 25, 50, 100)) %>%
             tab_style(
               style = cell_borders(
                 sides = c("all"),
@@ -375,7 +375,7 @@ server <- function(input, output, session) {
             cols_align("right") %>% 
             tab_header(title = glue("Profile Measurements: {site_code}")) %>%
             opt_row_striping() %>%
-            opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%
+            opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 100, page_size_values = c(10, 25, 50, 100)) %>%
             tab_style(
               style = cell_borders(
                 sides = c("all"),
@@ -410,7 +410,7 @@ server <- function(input, output, session) {
             gt() %>%
             tab_header(title = glue("Non-Profile Measurements: {site_code}")) %>%
             opt_row_striping() %>%
-            opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(10, 25, 50, 100)) %>%
+            opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 100, page_size_values = c(10, 25, 50, 100)) %>%
             tab_style(
               style = cell_borders(
                 sides = c("all"),

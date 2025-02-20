@@ -18,6 +18,7 @@ library(lintr)
 library(quarto)
 library(shinyalert)
 library(shinyBS)
+library(hms)
 
 # User Interface for App
 ui <- page_sidebar(
@@ -42,28 +43,28 @@ ui <- page_sidebar(
 # Server for App
 server <- function(input, output, session) {
   output$hex <- renderImage({
-    list(src = "~/Desktop/GitHub/Penobscot_Water/shiny/logos/hex.png",
+    list(src = "../../shiny/logos/hex.png",
          width = 200, 
          height = 225)
   },
   deleteFile = FALSE)
   
   output$pin <- renderImage({
-    list(src = "~/Desktop/GitHub/Penobscot_Water/shiny/logos/pin_logo.png",
+    list(src = "../../shiny/logos/pin_logo.png",
          width = 200, 
          height = 200)
   },
   deleteFile = FALSE)
   
   output$pnwrd <- renderImage({
-    list(src = "~/Desktop/GitHub/Penobscot_Water/shiny/logos/pnwrd_logo.png",
+    list(src = "../../shiny/logos/pnwrd_logo.png",
          width = 200, 
          height = 200)
   },
   deleteFile = FALSE)
   
   output$coa <- renderImage({
-    list(src = "~/Desktop/GitHub/Penobscot_Water/shiny/logos/coa_logo.png",
+    list(src = "../../shiny/logos/coa_logo.png",
          width = 200, 
          height = 200)
   },
@@ -142,7 +143,7 @@ server <- function(input, output, session) {
           "Result" = "ResultValue"
         ) %>%
         gt() %>%
-        opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 10, page_size_values = c(5, 10, 25, 50, 100)) %>%
+        opt_interactive(use_sorting = TRUE, use_filters = TRUE, use_page_size_select = TRUE, page_size_default = 100, page_size_values = c(5, 10, 25, 50, 100)) %>%
         tab_style(
           style = cell_fill(color = "#B3E0A6"),
           locations = cells_body(columns = c(HoldTimeViol), rows = HoldTimeViol < 0)

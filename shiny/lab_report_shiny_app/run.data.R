@@ -8,11 +8,11 @@ data2018_primary$SampleDatetime <- as.POSIXct(data2018_primary$SampleDatetime, f
 data2018_primary$Date <- as.Date(data2018_primary$SampleDatetime)
 data2018_primary$Time <- format(data2018_primary$SampleDatetime, format = "%H:%M:%S")
 
-transport_temp <- read.table("~/Desktop/GitHub/Penobscot_Water/data/c_FieldTransportTemps.txt",
+transport_temp <- read.table("data/c_FieldTransportTemps.txt",
                              header = TRUE,
                              sep = ",")
 
-containers <- read.table("~/Desktop/GitHub/Penobscot_Water/data/0_ContainerMgmt.txt",
+containers <- read.table("data/0_ContainerMgmt.txt",
                          header = TRUE,
                          sep = ",")
 
